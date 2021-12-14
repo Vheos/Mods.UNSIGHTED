@@ -48,13 +48,12 @@
         {
             _decayDelay.Format("Decay delay");
             _decayRate.Format("Decay rate");
-             Indent++;
+            using (Indent)
             {                
-                _decayRateIsPercentOfMaz.Format("percent of max value");
-                Indent--;
+                _decayRateIsPercentOfMaz.Format("percent of max value");                   
             }
-
             _gainPerSwordHit.Format("per sword hit");
+
             _gainPerAxeHit.Format("per axe hit");
             _gainPerShurikenHit.Format("per shuriken hit");
             _gainPerGunHit.Format("per gun hit");
@@ -65,6 +64,26 @@
             _comboBarFormatAsPercentIncrease.Format("Format as percent increase");
             _comboBarHideProgressBar.Format("Hide progress bar");
         }
+        override protected void LoadPreset(string presetName)
+        {
+            switch (presetName)
+            {
+                case nameof(Preset.Coop_NewGameExtra_HardMode):
+                    ForceApply();
+                    _decayDelay.Value = 1f;
+                    _decayRate.Value = 0.5f;
+                    _decayRateIsPercentOfMaz.Value = true;
+                    _gainPerSwordHit.Value = 0.5f;
+                    _gainPerAxeHit.Value = 0.1f;
+                    _gainPerShurikenHit.Value = 0.05f;
+                    _gainPerGunHit.Value = 0.01f;
+                    _syringeGainRate.Value = 0f;
+
+                    _comboBarFormatAsPercentIncrease.Value = true;
+                    _comboBarHideProgressBar.Value = false;
+                    break;
+            }
+        }
 
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
@@ -73,7 +92,7 @@
         [HarmonyPatch(typeof(ComboBar), nameof(ComboBar.AddComboValue), new[] { typeof(float) }), HarmonyPrefix]
         static private bool ComboBar_AddComboValue_Pre(ComboBar __instance, ref float ammountToAddInCombo)
         {
-            if (UnityEngine.Time.time == PseudoSingleton<PlayersManager>.instance.players[__instance.playerNum].myCharacter.myCharacterCollider.lastTimePerfectParry)
+            if (Time.time == PseudoSingleton<PlayersManager>.instance.players[__instance.playerNum].myCharacter.myCharacterCollider.lastTimePerfectParry)
                 ammountToAddInCombo = _gainPerParry;
             else if (ammountToAddInCombo < 0f)
                 ammountToAddInCombo = _gainPerHitTaken;
@@ -139,7 +158,7 @@
             float decayBase = _decayRateIsPercentOfMaz ? __instance.comboValue - 1f : 1f;
             while (__instance.comboValue >= 1f)
             {
-                __instance.comboValue -= UnityEngine.Time.deltaTime * _decayRate * decayBase;
+                __instance.comboValue -= Time.deltaTime * _decayRate * decayBase;
                 __instance.UpdateComboBar();
                 yield return null;
             }

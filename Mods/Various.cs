@@ -1,16 +1,16 @@
 ﻿namespace Vheos.Mods.UNSIGHTED
 {
     using System;
+    using System.Linq;
     using System.Collections;
-    using HarmonyLib;
+    using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.SceneManagement;
+    using HarmonyLib;
     using Tools.ModdingCore;
-    using Vheos.Tools.Extensions.Math;
-    using Vheos.Tools.Extensions.General;
-    using System.Collections.Generic;
-    using Vheos.Tools.Extensions.Collections;
-    using System.Linq;
+    using Tools.Extensions.Math;
+    using Tools.Extensions.General;
+    using Tools.Extensions.Collections;
 
     public class Various : AMod
     {
@@ -22,6 +22,8 @@
         static private ModSetting<int> _maxActiveCogTypes;
         static private ModSetting<float> _nonSpinnerMoveSpeed;
         static private ModSetting<float> _spinnerStaminaDrainRate;
+        static private ModSetting<bool> _spinnerRemoveStaminaGain;
+        static private ModSetting<bool> _pauseRecoveryOnStaminaGain;
         static private ModSetting<float> _runnerChipSpeedMultiplier;
         override protected void Initialize()
         {
@@ -47,6 +49,23 @@
             _nonSpinnerMoveSpeed.Format("Movement speed (non-spinner)");
             _spinnerStaminaDrainRate.Format("Spinner stamina drain rate");
             _runnerChipSpeedMultiplier.Format("Runner chip speed multiplier");
+        }
+        override protected void LoadPreset(string presetName)
+        {
+            switch (presetName)
+            {
+                case nameof(Preset.Coop_NewGameExtra_HardMode):
+                    ForceApply();
+                    _skipIntroLogos.Value = true;
+                    _startingChipSlots.Value = 0;
+                    _linearChipSlotCosts.Value = 750;
+                    _cogSlots.Value = 6;
+                    _maxActiveCogTypes.Value = 1;
+                    _nonSpinnerMoveSpeed.Value = 6.6f;
+                    _spinnerStaminaDrainRate.Value = 2f;
+                    _runnerChipSpeedMultiplier.Value = 1.1f;
+                    break;
+            }
         }
 
         // Privates
@@ -85,7 +104,7 @@
                 yield break;
             }
 
-            UnityEngine.Time.timeScale = 1f;
+            Time.timeScale = 1f;
             __instance.CheckBestResolution();
             __instance.sceneLoadingObject = SceneManager.LoadSceneAsync("TitleScreen");
             __instance.sceneLoadingObject.allowSceneActivation = true;
@@ -154,7 +173,7 @@
             float speed = ORIGINAL_MOVEMENT_SPEED;
 
             if (__instance.ridingSpinner && _spinnerStaminaDrainRate > 1f)
-                __instance.DrainStamina(UnityEngine.Time.deltaTime * (_spinnerStaminaDrainRate - 1), false);
+                __instance.DrainStamina(Time.deltaTime * (_spinnerStaminaDrainRate - 1), false);
             else
             {
                 speed = _nonSpinnerMoveSpeed;
@@ -164,6 +183,26 @@
             }
 
             __instance.originalSpeed = __instance.speed = speed;
+        }
+
+
+        [HarmonyPatch(typeof(BasicCharacterController), nameof(BasicCharacterController.FillStamina)), HarmonyPrefix]
+        static private bool BasicCharacterController_FillStamina_Pre(BasicCharacterController __instance, ref float value)
+        {
+            if (_spinnerRemoveStaminaGain && __instance.ridingSpinner)
+                return false;
+
+            float previousStamina = __instance.myInfo.currentStamina;
+            __instance.myInfo.currentStamina += value;
+            __instance.myInfo.currentStamina.SetClampMax(__instance.myInfo.totalStamina);
+
+            if (__instance.myInfo.currentStamina != previousStamina)
+                __instance.lastStaminaRechargeTime = Time.time;
+
+            if (_pauseRecoveryOnStaminaGain)
+                __instance.lastStaminaUsageTime = Time.time;
+
+            return false;
         }
     }
 }

@@ -12,14 +12,14 @@
     public class ParryChallenge : AMod
     {
         // Settings
-        static private ModSetting<Preset> _preset;
+        static private ModSetting<SpawnPreset> _preset;
         static private ModSetting<float> _spawnInterval;
         static private ModSetting<Vector4>[] _spawnData;
         static private ModSetting<Vector3> _rewardThresholds;
         static private ModSetting<bool> _removeRewardPlayerStrings;
         override protected void Initialize()
         {
-            _preset = CreateSetting(nameof(_preset), Preset.Spiders);
+            _preset = CreateSetting(nameof(_preset), SpawnPreset.Vanilla);
             _spawnInterval = CreateSetting(nameof(_spawnInterval), 3f, FloatRange(0f, 5f));
             _rewardThresholds = CreateSetting(nameof(_rewardThresholds), new Vector3(15, 35, 80));
             _spawnData = new ModSetting<Vector4>[9];
@@ -40,6 +40,17 @@
                 _spawnData[i].Format($"Spawn data {i + 1}");
             _rewardThresholds.Format("Reward thresholds");
         }
+        override protected void LoadPreset(string presetName)
+        {
+            switch (presetName)
+            {
+                case nameof(Preset.Coop_NewGameExtra_HardMode):
+                    ForceApply();
+                    _preset.Value = SpawnPreset.Vanilla;
+                    _spawnInterval.Value = 1f;
+                    break;
+            }
+        }
 
         // Privates
         void RemoveRewardPlayerStrings()
@@ -47,11 +58,8 @@
             if (!_removeRewardPlayerStrings)
                 return;
 
+            PseudoSingleton<Helpers>.instance.GetPlayerData().dataStrings.RemoveAll(t => t.Contains("EnduranceReward"));
             _removeRewardPlayerStrings.SetSilently(false);
-            List<string> playerDataStrings = PseudoSingleton<Helpers>.instance.GetPlayerData().dataStrings;
-            playerDataStrings.Remove("LowEnduranceReward");
-            playerDataStrings.Remove("MediumEnduranceReward");
-            playerDataStrings.Remove("HighEnduranceReward");
         }
         static private void LoadPreset()
         {
@@ -60,7 +68,18 @@
 
             switch (_preset.Value)
             {
-                case Preset.Spiders:
+                case SpawnPreset.Vanilla:
+                    _spawnData[0].Value = new Vector4(0, 2, 0, 0);
+                    _spawnData[1].Value = new Vector4(6, 0, 2, 0);
+                    _spawnData[2].Value = new Vector4(16, 0, 0, 1);
+                    _spawnData[3].Value = new Vector4(26, 0, 0, 2);
+                    _spawnData[4].Value = new Vector4(36, 1, 1, 1);
+                    _spawnData[5].Value = new Vector4(51, 1, 2, 1);
+                    _spawnData[6].Value = new Vector4(101, 2, 2, 2);
+                    _rewardThresholds.Value = new Vector3(15, 35, 80);
+                    _spawnInterval.Value = 3f;
+                    break;
+                case SpawnPreset.Spiders:
                     _spawnData[0].Value = new Vector4(0, 3, 0, 0);
                     _spawnData[1].Value = new Vector4(6, 6, 0, 0);
                     _spawnData[2].Value = new Vector4(18, 9, 0, 0);
@@ -71,7 +90,7 @@
                     _spawnData[7].Value = new Vector4(168, 24, 0, 0);
                     _spawnData[8].Value = new Vector4(216, 27, 0, 0);
                     break;
-                case Preset.Gunners:
+                case SpawnPreset.Gunners:
                     _spawnData[0].Value = new Vector4(0, 0, 2, 0);
                     _spawnData[1].Value = new Vector4(8, 0, 4, 0);
                     _spawnData[2].Value = new Vector4(24, 0, 6, 0);
@@ -82,7 +101,7 @@
                     _spawnData[7].Value = new Vector4(224, 0, 16, 0);
                     _spawnData[8].Value = new Vector4(288, 0, 18, 0);
                     break;
-                case Preset.Sharks:
+                case SpawnPreset.Sharks:
                     _spawnData[0].Value = new Vector4(0, 0, 0, 0);
                     _spawnData[1].Value = new Vector4(2, 0, 0, 0);
                     _spawnData[2].Value = new Vector4(6, 0, 0, 0);
@@ -93,7 +112,7 @@
                     _spawnData[7].Value = new Vector4(56, 0, 0, 0);
                     _spawnData[8].Value = new Vector4(72, 0, 0, 0);
                     break;
-                case Preset.CombinedEasy:
+                case SpawnPreset.CombinedEasy:
                     _spawnData[0].Value = new Vector4(0, 1, 1, 1);
                     _spawnData[1].Value = new Vector4(8, 2, 1, 1);
                     _spawnData[2].Value = new Vector4(18, 2, 2, 1);
@@ -104,7 +123,7 @@
                     _spawnData[7].Value = new Vector4(116, 5, 4, 1);
                     _spawnData[8].Value = new Vector4(144, 5, 5, 1);
                     break;
-                case Preset.CombinedHard:
+                case SpawnPreset.CombinedHard:
                     _spawnInterval.Value = 3f;
                     _spawnData[0].Value = new Vector4(0, 3, 0, 0);
                     _spawnData[1].Value = new Vector4(6, 3, 2, 0);
@@ -118,13 +137,15 @@
                     break;
             }
 
-            _rewardThresholds.Value = new Vector3(_spawnData[2].Value.x, _spawnData[4].Value.x, _spawnData[6].Value.x);
+            if (_preset != SpawnPreset.Vanilla)
+                _rewardThresholds.Value = new Vector3(_spawnData[2].Value.x, _spawnData[4].Value.x, _spawnData[6].Value.x);
         }
 
         // Defines
-        private enum Preset
+        private enum SpawnPreset
         {
-            Spiders = 0,
+            Vanilla = 0,
+            Spiders,
             Gunners,
             Sharks,
             CombinedEasy,
@@ -158,19 +179,20 @@
 
             // Rewards
             List<string> playerDataStrings = PseudoSingleton<Helpers>.instance.GetPlayerData().dataStrings;
+            string presetPostfix = _preset == SpawnPreset.Vanilla ? "" : _preset.Value.ToString();
             if (__instance.numberOfParries >= _rewardThresholds.Value.z)
             {
-                __instance.rewardName = playerDataStrings.TryAddUnique("HighEnduranceReward") ? "Bolts4" : "Bolts3";
+                __instance.rewardName = playerDataStrings.TryAddUnique("HighEnduranceReward" + presetPostfix) ? "Bolts4" : "Bolts3";
                 yield return __instance.GivePlayerEnduranceReward();
             }
             if (__instance.numberOfParries >= _rewardThresholds.Value.y)
             {
-                __instance.rewardName = playerDataStrings.TryAddUnique("MediumEnduranceReward") ? "Bolts3" : "Bolts2";
+                __instance.rewardName = playerDataStrings.TryAddUnique("MediumEnduranceReward" + presetPostfix) ? "Bolts3" : "Bolts2";
                 yield return __instance.GivePlayerEnduranceReward();
             }
             if (__instance.numberOfParries >= _rewardThresholds.Value.x)
             {
-                __instance.rewardName = playerDataStrings.TryAddUnique("LowEnduranceReward") ? "Bolts2" : "Bolts1";
+                __instance.rewardName = playerDataStrings.TryAddUnique("LowEnduranceReward" + presetPostfix) ? "Bolts2" : "Bolts1";
                 yield return __instance.GivePlayerEnduranceReward();
             }
 

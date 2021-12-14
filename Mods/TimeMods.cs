@@ -9,7 +9,7 @@
     using Tools.Extensions.Math;
 
 
-    public class Time : AMod
+    public class TimeMods : AMod
     {
         // Settings
         static private ModSetting<float> _gameSpeed;
@@ -33,17 +33,16 @@
             _slowMotionDurationMultiplier = CreateSetting(nameof(_slowMotionDurationMultiplier), 1f, FloatRange(0f, 2f));
             _slowMotionValue = CreateSetting(nameof(_slowMotionValue), ORIGINAL_SLOMO_VALUE, FloatRange(0f, 1f));
 
-            _gameSpeed.AddEvent(() => UnityEngine.Time.timeScale = 1f);
+            _gameSpeed.AddEvent(() => Time.timeScale = 1f);
         }
         override protected void SetFormatting()
         {
             _gameSpeed.Format("Game speed");
             _minutesPerSecond.Format("Minutes per second");
-            Indent++;
+            using (Indent)
             {
                 _fishingTimeMultiplier.Format("Fishing time multiplier");
                 _parryMinigameTimeMultiplier.Format("Parry minigame time multiplier");
-                Indent--;
             }
             _hideClockTime.Format("Hide clock time");
             _hideClockDay.Format("Hide clock day");
@@ -51,6 +50,26 @@
             _slowMotionDurationMultiplier.Format("Slow motion duration multiplier");
             _slowMotionValue.Format("Slow motion value");
         }
+        override protected void LoadPreset(string presetName)
+        {
+            switch (presetName)
+            {
+                case nameof(Preset.Coop_NewGameExtra_HardMode):
+                    ForceApply();
+                    _gameSpeed.Value = 2 / 3f;
+                    _minutesPerSecond.Value = 1.2f;
+                    _fishingTimeMultiplier.Value = 0.2f;
+                    _parryMinigameTimeMultiplier.Value = 0.1f;
+                    _frameStopDurationMultiplier.Value = 0.75f;
+                    _slowMotionDurationMultiplier.Value = 0f;
+                    _slowMotionValue.Value = 0f;                    
+                    _hideClockTime.Value = false;
+                    _hideClockDay.Value = true;
+                    break;
+            }
+        }
+        protected override string ModName
+        => "Time";
 
         // Privates
         private const float ORIGINAL_SLOMO_VALUE = 0.3f;
@@ -73,7 +92,7 @@
 #pragma warning disable IDE0051, IDE0060, IDE1006
 
         // Game speed
-        [HarmonyPatch(typeof(UnityEngine.Time), nameof(UnityEngine.Time.timeScale), MethodType.Setter), HarmonyPrefix]
+        [HarmonyPatch(typeof(Time), nameof(Time.timeScale), MethodType.Setter), HarmonyPrefix]
         static private void Time_timeScale_Post(ref float value)
         => value *= _gameSpeed;
 
@@ -116,7 +135,7 @@
         [HarmonyPatch(typeof(gameTime), nameof(gameTime.CanAddInGameSeconds)), HarmonyPrefix]
         static private bool gameTime_CanAddInGameSeconds_Pre(gameTime __instance, ref bool __result)
         {
-            __result = UnityEngine.Time.timeScale >= 0f
+            __result = Time.timeScale >= 0f
                     && PseudoSingleton<LevelController>.instance != null
                     && !PlayerInfo.cutscene;
             return false;
@@ -137,7 +156,7 @@
                 yield return new WaitForSecondsRealtime(frameStopDuration);
 
             original.MoveNext();
-            UnityEngine.Time.timeScale = _slowMotionValue;
+            Time.timeScale = _slowMotionValue;
             float slowMotion = duration * _slowMotionDurationMultiplier / _gameSpeed;
             if (slowMotion > 0f)
                 yield return new WaitForSecondsRealtime(slowMotion);

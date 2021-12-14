@@ -2,62 +2,100 @@
 {
     using System;
     using System.Collections.Generic;
-    using HarmonyLib;
     using UnityEngine;
-    using UnityEngine.PostProcessing;
+    using HarmonyLib;
     using Tools.ModdingCore;
     using Tools.Extensions.Math;
 
     public class Camera : AMod
     {
         // Settings
-        static private ModSetting<float> _zoom;
-        static private ModSetting<float> _aimWeight;
-
-        static private ModSetting<float> _stretchMax;
-        static private ModSetting<float> _stretchUpdateSpeed;
-        static private ModSetting<Vector2> _maxDistanceFromPlayer1;
-        static private ModSetting<bool> _dontTeleportPlayer2;
-
-        static private ModSetting<float> _shakeMultiplier;
-        static private ModSetting<float> _exposureLerpTarget;
-        static private ModSetting<float> _exposureLerpAlpha;
-
+        static private ModSetting<int> _zoom;
+        static private ModSetting<int> _aimWeight;
+        static private ModSetting<int> _shakeMultiplier;
+        static private ModSetting<int> _maxCoopStretch;
+        static private ModSetting<int> _coopStretchSpeed;
+        static private ModSetting<bool> _prioritizePlayer1;
+        static private ModSetting<bool> _teleportPlayer2;
         override protected void Initialize()
         {
-            _zoom = CreateSetting(nameof(_zoom), 1f, FloatRange(0.5f, 2f));
-            _aimWeight = CreateSetting(nameof(_aimWeight), 1f, FloatRange(0f, 2f));
+            _zoom = CreateSetting(nameof(_zoom), 100, IntRange(33, 300));
+            _aimWeight = CreateSetting(nameof(_aimWeight), 100, IntRange(0, 200));
+            _shakeMultiplier = CreateSetting(nameof(_shakeMultiplier), 100, IntRange(0, 200));
 
-            _stretchMax = CreateSetting(nameof(_stretchMax), 1f, FloatRange(1f, 2f));
-            _stretchUpdateSpeed = CreateSetting(nameof(_stretchUpdateSpeed), 0.1f, FloatRange(0f, 1f));
-            _maxDistanceFromPlayer1 = CreateSetting(nameof(_maxDistanceFromPlayer1), MAIN_PLAYER_MAX_CAMERA_DISTANCE);
-            _dontTeleportPlayer2 = CreateSetting(nameof(_dontTeleportPlayer2), false);
-
-            _exposureLerpTarget = CreateSetting(nameof(_exposureLerpTarget), 1f, FloatRange(0f, 2f));
-            _exposureLerpAlpha = CreateSetting(nameof(_exposureLerpAlpha), 0f, FloatRange(0f, 1f));
-            _shakeMultiplier = CreateSetting(nameof(_shakeMultiplier), 1f, FloatRange(0f, 2f));
+            _maxCoopStretch = CreateSetting(nameof(_maxCoopStretch), 100, IntRange(100, 200));
+            _coopStretchSpeed = CreateSetting(nameof(_coopStretchSpeed), 50, IntRange(1, 100));
+            _prioritizePlayer1 = CreateSetting(nameof(_prioritizePlayer1), true);
+            _teleportPlayer2 = CreateSetting(nameof(_teleportPlayer2), true);
         }
         override protected void SetFormatting()
         {
             _zoom.Format("Zoom");
+            _zoom.Description =
+                "How close the camera is to the in-world sprites (doesn't affect UI)\n" +
+                "Lower values will help you see more of the area, but might trigger some visual glitches, especially in smaller areas\n\n" +
+                "Unit: percent of original screen size";
             _aimWeight.Format("Aim weight");
-
-            _stretchMax.Format("Max multiplayer stretch");
-            _stretchUpdateSpeed.Format("Update speed");
-            _maxDistanceFromPlayer1.Format("Max camera distance from player 1");
-            _dontTeleportPlayer2.Format("Don't teleport player 2");
-
+            _aimWeight.Description =
+                "How closely the camera follows your mouse (or right thumbstick)\n" +
+                "Higher values will make aiming more dynamic\n" +
+                "Set to 0 to always center the camera on the player (or the players' midpoint, if in co-op)\n\n" +
+                "Unit: percent of original follow distance";
             _shakeMultiplier.Format("Shake multiplier");
-            _exposureLerpTarget.Format("Exposure lerp target");
-            _exposureLerpAlpha.Format("Exposure lerp alpha");
+            _shakeMultiplier.Description =
+                "How violently the camera shakes when taking damage, performing heavy attacks, etc.\n" +
+                "Lower values will make combat more readable, but might remove the OOMPH factor from some hefty actions\n\n" +
+                "Unit: percent of original screen shake strength";
 
+            _maxCoopStretch.Format("Max co-op stretch");
+            _maxCoopStretch.Description =
+                "How far will the screen stretch to keep both players on-screen\n" +
+                "Stretching the screen too much will trigger visual glitches\n\n" +
+                $"Unit: percent of total screen size, accounting for \"{_zoom.Name}\" setting";
+            using (Indent)
+            {
+                _coopStretchSpeed.Format("speed", _maxCoopStretch, v => v > 100);
+                _coopStretchSpeed.Description =
+                    "How quickly the screen stretches catch up with players\n" +
+                    "Lower values will make the stretching smoother, but possibly too slow to keep both players on-screen\n\n" +
+                    "Unit: arbitrary exponential-like scale";
+            }
+            _prioritizePlayer1.Format("Proritize player 1 on-screen");
+            _prioritizePlayer1.Description =
+                "Makes sure player 1 is always on-screen and with a decent view range, even if it means pushing player 2 off-screen\n\n" +
+                "This is the default in-game behaviour, and it's pretty damn disgusting, so disable it if you value your co-opartner at all";
+            _teleportPlayer2.Format("Teleport player 2 off-screen");
+            _teleportPlayer2.Description =
+                "When player 2 goes off-screen, they get instantly teleported to player 1\n\n" +
+                "Yet another archaic mechanic to treat player 2 as a baby at best, and a vegetable at worst";
         }
+        override protected void LoadPreset(string presetName)
+        {
+            switch (presetName)
+            {
+                case nameof(Preset.Coop_NewGameExtra_HardMode):
+                    ForceApply();
+                    _zoom.Value = 100;
+                    _aimWeight.Value = 50;
+                    _shakeMultiplier.Value = 75;
+
+                    _maxCoopStretch.Value = 200;
+                    _coopStretchSpeed.Value = 50;
+                    _prioritizePlayer1.Value = true;
+                    _teleportPlayer2.Value = true;
+                    break;
+            }
+        }
+        override protected string Description =>
+            "Mods related to the camera and screen\n\n" +
+            "Examples:\n" +
+            "• Change camera zoom to see more\n" +
+            "• Enable co-op screen stretching\n" +
+            "• Put an end to player 2's oppression";
 
         // Privates
         private const float ORIGINAL_ORTOGRAPHIC_SIZE = 9f;
-        static private readonly Vector2 MAIN_PLAYER_MAX_CAMERA_DISTANCE = new Vector2(7f, 3f);
         static private float _currentCameraZoom = 1f;
-
 
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
@@ -69,10 +107,10 @@
             if (PseudoSingleton<LevelController>.instance.inGameCutsceneScene)
                 return;
 
-            float totalZoom = _zoom;
-            Vector2 cameraSize = 2 * ORIGINAL_ORTOGRAPHIC_SIZE / _zoom * new Vector2(__instance.cameraView.aspect, 1);
-
-            if (_stretchMax > 1f && PlayerInfo.NumberOfAlivePlayers() > 1)
+            float totalZoom = _zoom / 100f;
+            Vector2 cameraSize = 2 * ORIGINAL_ORTOGRAPHIC_SIZE / totalZoom * new Vector2(__instance.cameraView.aspect, 1);
+            float maxStretch = _maxCoopStretch / 100f;
+            if (maxStretch > 1f && PlayerInfo.NumberOfAlivePlayers() > 1)
             {
                 List<PlayerInfo> players = PseudoSingleton<PlayersManager>.instance.players;
                 Vector2 Player1Pos = players[0].myCharacter.myAnimations.myAnimator.myTransform.position;
@@ -80,15 +118,15 @@
 
                 Vector2 offset = Player1Pos.OffsetTo(Player2Pos).Abs();
                 float unitDistance = offset.Div(cameraSize).MaxComp();
-                float stretchZoom = unitDistance.MapClamped(1/3f, _stretchMax, 1f, _stretchMax).Inv();
+                float stretchZoom = unitDistance.MapClamped(1 / 3f, maxStretch, 1f, maxStretch).Inv();
                 totalZoom *= stretchZoom;
             }
 
-            _currentCameraZoom.SetLerp(totalZoom, _stretchUpdateSpeed);
+            _currentCameraZoom.SetLerp(totalZoom, _coopStretchSpeed.Value.Map(1, 100, 0.01f, 0.20f));
             __instance.cameraView.orthographicSize = ORIGINAL_ORTOGRAPHIC_SIZE / _currentCameraZoom;
             __instance.UICamera.orthographicSize = ORIGINAL_ORTOGRAPHIC_SIZE / _currentCameraZoom;
-            __instance.cameraSizeX = cameraSize.x / _currentCameraZoom;
-            __instance.cameraSizeY = cameraSize.y / _currentCameraZoom;
+            __instance.cameraSizeX = cameraSize.x;
+            __instance.cameraSizeY = cameraSize.y;
         }
 
         [HarmonyPatch(typeof(WorldLightController), nameof(WorldLightController.OnEnable)), HarmonyPostfix]
@@ -98,12 +136,20 @@
         // Aim weight
         [HarmonyPatch(typeof(CameraSystem), nameof(CameraSystem.CursorPositions)), HarmonyPostfix]
         static private void CameraSystem_CursorPositions_Post(CameraSystem __instance, ref Vector3 __result)
-        => __result *= _aimWeight;
+        => __result *= _aimWeight / 100f;
+
+        // Shake
+        [HarmonyPatch(typeof(CameraSystem), nameof(CameraSystem.cameraShake)), HarmonyPrefix]
+        static private void CameraSystem_cameraShake_Post(CameraSystem __instance, ref float strenght)
+        => strenght *= _shakeMultiplier / 100f;
 
         // Max distance from main player
         [HarmonyPatch(typeof(CameraSystem), nameof(CameraSystem.GetTargetsAveragePosition)), HarmonyPrefix]
         static private bool CameraSystem_GetTargetsAveragePosition_Pre(CameraSystem __instance, ref Vector3 __result)
         {
+            if (_prioritizePlayer1)
+                return true;
+
             if (__instance.targetsList.Count == 0)
                 __result = __instance.myPosition;
 
@@ -112,46 +158,13 @@
                 if (target != null && target.gameObject.activeInHierarchy)
                     r += target.position.XY();
             r /= __instance.targetsList.Count;
-
-            Vector2 mainPlayerPos = PseudoSingleton<PlayersManager>.instance.GetFirstAlivePlayer().myCharacter.myAnimations.myAnimator.transform.position;
-            r = r.Clamp(mainPlayerPos - _maxDistanceFromPlayer1, mainPlayerPos + _maxDistanceFromPlayer1);
             __result = r.Append(-15f);
             return false;
         }
 
-        // Teleport when outside camera
+        // Teleport player 2
         [HarmonyPatch(typeof(BasicCharacterController), nameof(BasicCharacterController.TeleportToPlayer1)), HarmonyPrefix]
         static private bool BasicCharacterController_TeleportToPlayer1_Pre(BasicCharacterController __instance)
-        => !_dontTeleportPlayer2;
-
-        // Shake
-        [HarmonyPatch(typeof(CameraSystem), nameof(CameraSystem.cameraShake)), HarmonyPrefix]
-        static private void CameraSystem_cameraShake_Post(CameraSystem __instance, ref float strenght)
-        => strenght *= _shakeMultiplier;
-
-        // Exposure
-        [HarmonyPatch(typeof(Lists), nameof(Lists.Start)), HarmonyPostfix]
-        static private void Lists_Start_Post(Lists __instance)
-        {
-            PostProcessingProfile[] GetCameraProfiles(AreaDescription areaDescription)
-            => new[]
-            {
-                areaDescription.morningCameraProfile,
-                areaDescription.dayCameraProfile,
-                areaDescription.eveningCameraProfile,
-                areaDescription.nightCameraProfile
-            };
-
-            var processedProfiles = new HashSet<PostProcessingProfile>();
-            foreach (var areaDescription in __instance.areaDatabase.areas)
-                foreach (var profile in GetCameraProfiles(areaDescription))
-                    if (!processedProfiles.Contains(profile))
-                    {
-                        var settings = profile.colorGrading.settings;
-                        settings.basic.postExposure.SetLerp(_exposureLerpTarget, _exposureLerpAlpha);
-                        profile.colorGrading.settings = settings;
-                        processedProfiles.Add(profile);
-                    }
-        }
+        => _teleportPlayer2;
     }
 }

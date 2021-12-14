@@ -1,10 +1,11 @@
 ﻿namespace Vheos.Mods.UNSIGHTED
 {
     using System;
-    using System.Collections;
+    using System.Linq;
     using System.Reflection;
     using BepInEx;
     using Tools.ModdingCore;
+    using Utility = Tools.UtilityN.Utility;
 
     [BepInDependency("com.bepis.bepinex.configurationmanager", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInPlugin(GUID, NAME, VERSION)]
@@ -17,35 +18,23 @@
         #endregion
 
         // User logic
-        override public Assembly CurrentAssembly
+        override protected Assembly CurrentAssembly
         => Assembly.GetExecutingAssembly();
-        public override Type[] ModsOrderingList
+        override protected Type[] ModsOrderingList
         => new[]
-        {
-            typeof(Time),
+        {            
             typeof(Combat),
             typeof(Combo),
+            typeof(Guard),            
+
+            typeof(TimeMods),
             typeof(Camera),
-            typeof(ParryChallenge),
+            typeof(Visual), 
+            
             typeof(Various),
+            typeof(ParryChallenge),
         };
-
-    }
-
-    static public class Extensions
-    {
-        static public object MoveNextThenGetCurrent(this IEnumerator t)
-        {
-            t.MoveNext();
-            return t.Current;
-        }
-
-        static public T ChooseThresholdValue<T>(this float t, T defaultValue, params (float Threshold, T Value)[] thresholdValuePairs)
-        {
-            for (int i = thresholdValuePairs.Length - 1; i >= 0; i--)
-                if (t >= thresholdValuePairs[i].Threshold)
-                    return thresholdValuePairs[i].Value;
-            return defaultValue;
-        }
+        override protected string[] PresetNames
+        => Utility.GetEnumValuesAsStrings<Preset>().ToArray();
     }
 }

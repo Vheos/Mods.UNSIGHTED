@@ -67,12 +67,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mods\Visual.cs" />
+    <Compile Include="PresetEnum.cs" />
+    <Compile Include="InternalExtensions.cs" />
+    <Compile Include="Mods\Parry.cs" />
     <Compile Include="Mods\Combo.cs" />
     <Compile Include="Mods\ParryChallenge.cs" />
     <Compile Include="Mods\Various.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Mods\Time.cs" />
+    <Compile Include="Mods\TimeMods.cs" />
     <Compile Include="Mods\Camera.cs" />
     <Compile Include="Mods\Combat.cs" />
   </ItemGroup>
