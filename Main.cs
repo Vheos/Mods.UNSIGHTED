@@ -30,12 +30,14 @@
 
             typeof(TimeMods),
             typeof(Camera),
-            typeof(Visual),
+            typeof(Audiovisual),
 
             typeof(Various),
             typeof(ParryChallenge),
         };
         override protected string[] PresetNames
         => Utility.GetEnumValuesAsStrings<Preset>().ToArray();
+        override protected bool DelayedInitializeCondition
+        => PseudoSingleton<GlobalGameManager>.instance != null;
     }
 }

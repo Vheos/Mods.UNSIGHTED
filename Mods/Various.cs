@@ -2,19 +2,20 @@
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.SceneManagement;
     using HarmonyLib;
     using Tools.ModdingCore;
     using Tools.Extensions.UnityObjects;
     using Tools.Extensions.Math;
+    using Tools.UtilityN;
 
     public class Various : AMod
     {
         // Settings
         static private ModSetting<bool> _skipIntroLogos;
         static private ModSetting<bool> _pauseStaminaRecoveryOnGain;
-
         static private ModSetting<int> _staminaHealGain;
         static private ModSetting<int> _staminaHealDuration;
         static private ModSetting<bool> _staminaHealCancelling;
@@ -27,7 +28,7 @@
             _pauseStaminaRecoveryOnGain = CreateSetting(nameof(_pauseStaminaRecoveryOnGain), true);
 
             _staminaHealGain = CreateSetting(nameof(_staminaHealGain), 100, IntRange(0, 100));
-            _staminaHealDuration = CreateSetting(nameof(_staminaHealDuration), 100, IntRange(0, 200));
+            _staminaHealDuration = CreateSetting(nameof(_staminaHealDuration), 100, IntRange(50, 200));
             _staminaHealCancelling = CreateSetting(nameof(_staminaHealCancelling), true);
             _enemyHPMultiplier = CreateSetting(nameof(_enemyHPMultiplier), 100, IntRange(25, 400));
             _enemyBossHPMultiplier = CreateSetting(nameof(_enemyBossHPMultiplier), 100, IntRange(25, 400));
@@ -100,7 +101,7 @@
             "\n• Make enemies in groups attack more often";
 
         // Privates
-        private const int ORIGINAL_STAMINA_CHARGE_DURATION = 660;
+        private const float ORIGINAL_STAMINA_CHARGE_DURATION = 0.66f;
         static private bool PlayerHaveMeleeWeapon_Original(PlayerInfo player)
         {
             foreach (string text in PseudoSingleton<GlobalGameData>.instance.currentData.playerDataSlots[PseudoSingleton<GlobalGameData>.instance.loadedSlot].playersEquipData[player.playerNum].weapons)
@@ -205,6 +206,7 @@
                 yield return original.Current;
         }
 
+        // Attack rhythm
         [HarmonyPatch(typeof(EnemyController), nameof(EnemyController.AttackCoroutine)), HarmonyPostfix]
         static private IEnumerator EnemyController_AttackCoroutine_Post(IEnumerator original, EnemyController __instance, bool dontRegisterAttack, bool waitForAttackRythm)
         {

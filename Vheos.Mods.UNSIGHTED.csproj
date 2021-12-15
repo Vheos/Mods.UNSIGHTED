@@ -69,7 +69,7 @@
   <ItemGroup>
     <Compile Include="Mods\Movement.cs" />
     <Compile Include="Mods\ChipsCogs.cs" />
-    <Compile Include="Mods\Visual.cs" />
+    <Compile Include="Mods\Audiovisual.cs" />
     <Compile Include="PresetEnum.cs" />
     <Compile Include="InternalExtensions.cs" />
     <Compile Include="Mods\Guard.cs" />
@@ -80,7 +80,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Mods\TimeMods.cs" />
     <Compile Include="Mods\Camera.cs" />
-    <Compile Include="Mods\Combat.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Tools\Extensions\Vheos.Tools.Extensions.csproj">

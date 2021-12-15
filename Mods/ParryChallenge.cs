@@ -8,32 +8,53 @@
     using Tools.ModdingCore;
     using Tools.Extensions.Math;
     using Tools.Extensions.Collections;
+    using Vheos.Tools.Extensions.General;
 
     public class ParryChallenge : AMod
     {
         // Settings
-        static private ModSetting<SpawnPreset> _preset;
+        static private ModSetting<bool> _allowAttacking;
         static private ModSetting<int> _spawnInterval;
-        static private ModSetting<Vector3> _rewardThresholds;
         static private ModSetting<bool> _separateFirstTimeRewards;
         static private ModSetting<bool> _resetFirstTimeRewards;
+        static private ModSetting<SpawnPreset> _preset;
+        static private ModSetting<Vector3> _rewardThresholds;
         static private ModSetting<Vector4>[] _spawnTable;
         override protected void Initialize()
         {
-            _preset = CreateSetting(nameof(_preset), SpawnPreset.Vanilla);
+            _allowAttacking = CreateSetting(nameof(_allowAttacking), false);
             _spawnInterval = CreateSetting(nameof(_spawnInterval), 3, IntRange(0, 10));
-            _rewardThresholds = CreateSetting(nameof(_rewardThresholds), new Vector3(15, 35, 80));
             _separateFirstTimeRewards = CreateSetting(nameof(_separateFirstTimeRewards), true);
             _resetFirstTimeRewards = CreateSetting(nameof(_resetFirstTimeRewards), false);
+            _preset = CreateSetting(nameof(_preset), SpawnPreset.Vanilla);
+            _rewardThresholds = CreateSetting(nameof(_rewardThresholds), new Vector3(15, 35, 80));
             _spawnTable = new ModSetting<Vector4>[9];
             for (int i = 0; i < _spawnTable.Length; i++)
                 _spawnTable[i] = CreateSetting(nameof(_spawnTable) + (i + 1), new Vector4(0, 0, 0, 0));
 
             _preset.AddEvent(LoadSpawnPreset);
-            _resetFirstTimeRewards.AddEvent(RemoveRewardPlayerStrings);
+            _resetFirstTimeRewards.AddEvent(ResetFirstTimeRewardsFromConfig);
         }
         override protected void SetFormatting()
         {
+            _allowAttacking.Format("Allow attacking");
+            _allowAttacking.Description =
+                "Allows attacking during the challenge, making it possible to control the number of attacking enemies by either killing or freezing them";
+            _spawnInterval.Format("Spawn interval");
+            _spawnInterval.Description =
+                "How long is the pause between spawning new enemies after previous ones have been killed or new wave has started" +
+                "\nSet to 0 to instantly spawn (and respawn) all enemies" +
+                "\n\nUnit: seconds";
+            _separateFirstTimeRewards.Format("Per-preset first-time rewards");
+            _separateFirstTimeRewards.Description =
+                "Each preset will keep track of their own first-time rewards";
+            using (Indent)
+            {
+                _resetFirstTimeRewards.IsAdvanced = true;
+                _resetFirstTimeRewards.Format("reset");
+                _resetFirstTimeRewards.Description =
+                    "Press this button to reset all first-time reward tags, allowing you to collect them again";
+            }
             _preset.Format("Preset");
             _preset.Description =
                 $"{SpawnPreset.Vanilla} - the original parry challenge" +
@@ -42,13 +63,6 @@
                 $"\n{SpawnPreset.Sharks} - only sharks, +1 per wave" +
                 $"\n{SpawnPreset.MixEasy} - spawns more spiders and gunners per wave, but only 1 shark" +
                 $"\n{SpawnPreset.MixHard} - spawns more spiders, gunners, and sharks per wave";
-
-            _spawnInterval.Format("Spawn interval");
-            _spawnInterval.Description =
-                "How long is the pause between spawning new enemies after previous ones have been killed or new wave has started" +
-                "\nSet to 0 to instantly spawn (and respawn) all enemies" +
-                "\n\nUnit: seconds";
-
             _rewardThresholds.Format("Reward thresholds");
             _rewardThresholds.Description =
                 "How many parries you need to get each reward tier" +
@@ -57,16 +71,6 @@
                 "\nZ - first-time 1500 bolts, then 500" +
                 "\n\nEach tier also gives you all lower tier rewards" +
                 "\nThat is, if you reach the highest tier on your first try ever, you'll get a total of 2100 bolts (1500 + 500 + 100)";
-            _separateFirstTimeRewards.Format("Per-preset first-time rewards");
-            _separateFirstTimeRewards.Description =
-                "Each preset will have their own first-time rewards";
-            using (Indent)
-            {
-                _resetFirstTimeRewards.IsAdvanced = true;
-                _resetFirstTimeRewards.Format("reset");
-                _resetFirstTimeRewards.Description =
-                    "Press this button to reset all first-time reward tags, allowing you to collect them again";
-            }
             CreateHeader("Waves").Description =
                 "What enemies spawn in each wave and when does it start" +
                 "\nX - number of parries required to start the wave" +
@@ -88,8 +92,10 @@
             {
                 case nameof(Preset.Coop_NewGameExtra_HardMode):
                     ForceApply();
-                    _preset.Value = SpawnPreset.Vanilla;
+                    _allowAttacking.Value = false;
                     _spawnInterval.Value = 1;
+                    _separateFirstTimeRewards.Value = true;
+                    _preset.Value = SpawnPreset.Vanilla;
                     break;
             }
         }
@@ -102,13 +108,13 @@
             "\n• Change thresholds for getting rewards";
 
         // Privates
-        void RemoveRewardPlayerStrings()
+        static private void ResetFirstTimeRewardsFromConfig()
         {
             if (!_resetFirstTimeRewards)
                 return;
 
-            PseudoSingleton<Helpers>.instance.GetPlayerData().dataStrings.RemoveAll(t => t.Contains("EnduranceReward"));
             _resetFirstTimeRewards.SetSilently(false);
+            PseudoSingleton<Helpers>.instance.GetPlayerData().dataStrings.RemoveAll(t => t.Contains("EnduranceReward"));            
         }
         static private void LoadSpawnPreset()
         {
@@ -118,7 +124,6 @@
             switch (_preset.Value)
             {
                 case SpawnPreset.Vanilla:
-                    _spawnInterval.Value = 3;
                     _rewardThresholds.Value = new Vector3(15, 35, 80);
                     _spawnTable[0].Value = new Vector4(0, 2, 0, 0);
                     _spawnTable[1].Value = new Vector4(6, 0, 2, 0);
@@ -151,15 +156,15 @@
                     _spawnTable[8].Value = new Vector4(288, 0, 18, 0);
                     break;
                 case SpawnPreset.Sharks:
-                    _spawnTable[0].Value = new Vector4(0, 0, 0, 0);
-                    _spawnTable[1].Value = new Vector4(2, 0, 0, 0);
-                    _spawnTable[2].Value = new Vector4(6, 0, 0, 0);
-                    _spawnTable[3].Value = new Vector4(12, 0, 0, 0);
-                    _spawnTable[4].Value = new Vector4(20, 0, 0, 0);
-                    _spawnTable[5].Value = new Vector4(30, 0, 0, 0);
-                    _spawnTable[6].Value = new Vector4(42, 0, 0, 0);
-                    _spawnTable[7].Value = new Vector4(56, 0, 0, 0);
-                    _spawnTable[8].Value = new Vector4(72, 0, 0, 0);
+                    _spawnTable[0].Value = new Vector4(0, 0, 0, 1);
+                    _spawnTable[1].Value = new Vector4(2, 0, 0, 2);
+                    _spawnTable[2].Value = new Vector4(6, 0, 0, 3);
+                    _spawnTable[3].Value = new Vector4(12, 0, 0, 4);
+                    _spawnTable[4].Value = new Vector4(20, 0, 0, 5);
+                    _spawnTable[5].Value = new Vector4(30, 0, 0, 6);
+                    _spawnTable[6].Value = new Vector4(42, 0, 0, 7);
+                    _spawnTable[7].Value = new Vector4(56, 0, 0, 8);
+                    _spawnTable[8].Value = new Vector4(72, 0, 0, 9);
                     break;
                 case SpawnPreset.MixEasy:
                     _spawnTable[0].Value = new Vector4(0, 1, 1, 1);
@@ -188,6 +193,8 @@
             if (_preset != SpawnPreset.Vanilla)
                 _rewardThresholds.Value = new Vector3(_spawnTable[2].Value.x, _spawnTable[4].Value.x, _spawnTable[6].Value.x);
         }
+        static internal bool IsParryChallengeActive()
+        => PseudoSingleton<GymMinigame>.instance.TryNonNull(out var gymMinigame) && gymMinigame.duringMinigame;
 
         // Defines
         private enum SpawnPreset
@@ -304,5 +311,9 @@
 
             return false;
         }
+
+        [HarmonyPatch(typeof(BasicCharacterController), nameof(BasicCharacterController.DetectFireInput)), HarmonyPrefix]
+        static private bool BasicCharacterController_DetectFireInput_Pre(BasicCharacterController __instance)
+        => _allowAttacking || !IsParryChallengeActive();
     }
 }

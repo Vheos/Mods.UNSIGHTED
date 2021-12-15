@@ -104,8 +104,6 @@
         => PseudoSingleton<PlayersManager>.instance.TryNonNull(out var playerManager)
         && (playerManager.playerObjects[0].gameObject.activeInHierarchy && playerManager.playerObjects[0].myCharacter.fishing
         || playerManager.playerObjects[1].gameObject.activeInHierarchy && playerManager.playerObjects[1].myCharacter.fishing);
-        static private bool IsDuringParryMinigame()
-        => PseudoSingleton<GymMinigame>.instance.TryNonNull(out var gymMinigame) && gymMinigame.duringMinigame;
 
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
@@ -128,7 +126,7 @@
                 float timeFlow = _gameToEngineTimeRatio.Value / 100f;
                 if (IsAnyPlayerFishing())
                     timeFlow *= _fishingTimerSpeed.Value / 100f;
-                if (IsDuringParryMinigame())
+                if (ParryChallenge.IsParryChallengeActive())
                     timeFlow *= _parryChallengeTimeMultiplier.Value / 100f;
 
                 if (timeFlow > 0 && __instance.CanAddInGameSeconds())
