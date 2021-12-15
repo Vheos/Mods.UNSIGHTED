@@ -37,7 +37,5 @@
         };
         override protected string[] PresetNames
         => Utility.GetEnumValuesAsStrings<Preset>().ToArray();
-        override protected bool DelayedInitializeCondition
-        => PseudoSingleton<GlobalGameManager>.instance != null;
     }
 }
