@@ -12,57 +12,88 @@
     public class Combo : AMod
     {
         // Settings
-        static private ModSetting<float> _decayDelay;
-        static private ModSetting<float> _decayRate;
-        static private ModSetting<bool> _decayRateIsPercentOfMaz;
-
-        static private ModSetting<float> _gainPerGunHit;
-        static private ModSetting<float> _gainPerSwordHit;
-        static private ModSetting<float> _gainPerAxeHit;
-        static private ModSetting<float> _gainPerShurikenHit;
-        static private ModSetting<float> _gainPerParry;
-        static private ModSetting<float> _gainPerHitTaken;
-        static private ModSetting<float> _syringeGainRate;
-
-        static private ModSetting<bool> _comboBarFormatAsPercentIncrease;
-        static private ModSetting<bool> _comboBarHideProgressBar;
-
+        static private ModSetting<float> _duration;
+        static private ModSetting<int> _decreaseRate;
+        static private ModSetting<bool> _decayRateIsPercent;
+        static private ModSetting<int> _gainPerSwordHit;
+        static private ModSetting<int> _gainPerAxeHit;
+        static private ModSetting<int> _gainPerGunHit;
+        static private ModSetting<int> _gainPerShurikenHit;
+        static private ModSetting<int> _gainPerParry;
+        static private ModSetting<int> _lossPerHitTaken;
+        static private ModSetting<bool> _lossPerHitTakenIsPercent;
+        static private ModSetting<int> _comboChipBonus;
+        static private ModSetting<int> _syringeGainRate;
+        static private ModSetting<bool> _syringeGainRateAffectedByCombo;
         override protected void Initialize()
         {
-            _decayDelay = CreateSetting(nameof(_decayDelay), 5f, FloatRange(0f, 10f));
-            _decayRate = CreateSetting(nameof(_decayRate), 0.125f, FloatRange(0f, 1f));
-            _decayRateIsPercentOfMaz = CreateSetting(nameof(_decayRateIsPercentOfMaz), false);
+            _duration = CreateSetting(nameof(_duration), 5f, FloatRange(0f, 5f));
+            _decreaseRate = CreateSetting(nameof(_decreaseRate), 13, IntRange(0, 100));
+            _decayRateIsPercent = CreateSetting(nameof(_decayRateIsPercent), false);
 
-            _gainPerSwordHit = CreateSetting(nameof(_gainPerSwordHit), 0.04f, FloatRange(0f, 1f));
-            _gainPerAxeHit = CreateSetting(nameof(_gainPerAxeHit), 0.1f, FloatRange(0f, 1f));
-            _gainPerShurikenHit = CreateSetting(nameof(_gainPerShurikenHit), 0.04f, FloatRange(0f, 1f));
-            _gainPerGunHit = CreateSetting(nameof(_gainPerGunHit), 0.015f, FloatRange(0f, 1f));
-            _gainPerParry = CreateSetting(nameof(_gainPerParry), 0.05f, FloatRange(0f, 1f));
-            _gainPerHitTaken = CreateSetting(nameof(_gainPerHitTaken), -0.6f, FloatRange(0f, 1f));
-            _syringeGainRate = CreateSetting(nameof(_syringeGainRate), 0.25f, FloatRange(0f, 1f));
+            _gainPerSwordHit = CreateSetting(nameof(_gainPerSwordHit), 4, IntRange(0, 25));
+            _gainPerAxeHit = CreateSetting(nameof(_gainPerAxeHit), 10, IntRange(0, 25));
+            _gainPerGunHit = CreateSetting(nameof(_gainPerGunHit), 2, IntRange(0, 25));
+            _gainPerShurikenHit = CreateSetting(nameof(_gainPerShurikenHit), 4, IntRange(0, 25));
 
-            _comboBarFormatAsPercentIncrease = CreateSetting(nameof(_comboBarFormatAsPercentIncrease), false);
-            _comboBarHideProgressBar = CreateSetting(nameof(_comboBarHideProgressBar), false);
+            _gainPerParry = CreateSetting(nameof(_gainPerParry), 5, IntRange(0, 25));
+            _lossPerHitTaken = CreateSetting(nameof(_lossPerHitTaken), 60, IntRange(0, 100));
+            _lossPerHitTakenIsPercent = CreateSetting(nameof(_lossPerHitTakenIsPercent), false);
+
+            _comboChipBonus = CreateSetting(nameof(_comboChipBonus), 50, IntRange(0, 100));
+            _syringeGainRate = CreateSetting(nameof(_syringeGainRate), 50, IntRange(0, 100));
+            _syringeGainRateAffectedByCombo = CreateSetting(nameof(_syringeGainRateAffectedByCombo), true);
         }
         override protected void SetFormatting()
         {
-            _decayDelay.Format("Decay delay");
-            _decayRate.Format("Decay rate");
+            _duration.Format("Duration");
+            _duration.Description =
+                "How long your combo stays up (resets with every attack / parry)" +
+                "\nLower values will encourage more proactive and aggressive combat style" +
+                "\n\nUnit: seconds";
+            _decreaseRate.Format("Decrease rate");
+            _decreaseRate.Description =
+                "How quickly your combo decreases after not attacking / parrying for the duration" +
+                "\n\nUnit: percent points per second, or percent of last combo value per second";
             using (Indent)
-            {                
-                _decayRateIsPercentOfMaz.Format("percent of max value");                   
+                _decayRateIsPercent.Format("percent of last value", _decreaseRate, t => t > 0);
+
+            CreateHeader("Gains per hit").Description =
+                "How much combo you gain for each enemy hit with the given weapon type" +
+                "\n\nUnit: percent points";
+            using (Indent)
+            {
+                _gainPerSwordHit.Format("sword");
+                _gainPerAxeHit.Format("axe");
+                _gainPerShurikenHit.Format("shuriken");
+                _gainPerGunHit.Format("gun");
             }
-            _gainPerSwordHit.Format("per sword hit");
 
-            _gainPerAxeHit.Format("per axe hit");
-            _gainPerShurikenHit.Format("per shuriken hit");
-            _gainPerGunHit.Format("per gun hit");
-            _gainPerParry.Format("per parry");
-            _gainPerHitTaken.Format("per hit taken");
-            _syringeGainRate.Format("combo to syringe rate");
+            _gainPerParry.Format("Gain per enemy parried");
+            _gainPerParry.Description =
+                "How much combo you gain for each successfully parried enemy";
+            _lossPerHitTaken.Format("Loss on getting hit");
+            _lossPerHitTaken.Description =
+                "How much combo you lose when you get hit, regardless of damage taken" +
+                "\n\nUnit: percent points, or percent of last combo value";
+            using (Indent)
+                _lossPerHitTakenIsPercent.Format("percent of last value", _lossPerHitTaken, t => t > 0);
 
-            _comboBarFormatAsPercentIncrease.Format("Format as percent increase");
-            _comboBarHideProgressBar.Format("Hide progress bar");
+            _comboChipBonus.Format("\"Combo Chip\" bonus");
+            _comboChipBonus.Description =
+                "How much extra combo you get per each equipped \"Combo Chip\"" +
+                "\n\nUnit: percent of gained combo, stacks additively";
+            _syringeGainRate.Format("Syringe gain rate");
+            _syringeGainRate.Description =
+                "How much of gained combo is converted to syringe refill" +
+                "\nSet to 0 for a more survival (or Dark Souls) feel" +
+                "\n\nUnit: percent of gained combo";
+            using (Indent)
+            {
+                _syringeGainRateAffectedByCombo.Format("scale with combo");
+                _syringeGainRateAffectedByCombo.Description =
+                    "Multiplies the combo-to-syringe conversion rate by current combo";
+            }
         }
         override protected void LoadPreset(string presetName)
         {
@@ -70,20 +101,23 @@
             {
                 case nameof(Preset.Coop_NewGameExtra_HardMode):
                     ForceApply();
-                    _decayDelay.Value = 1f;
-                    _decayRate.Value = 0.5f;
-                    _decayRateIsPercentOfMaz.Value = true;
-                    _gainPerSwordHit.Value = 0.5f;
-                    _gainPerAxeHit.Value = 0.1f;
-                    _gainPerShurikenHit.Value = 0.05f;
-                    _gainPerGunHit.Value = 0.01f;
-                    _syringeGainRate.Value = 0f;
-
-                    _comboBarFormatAsPercentIncrease.Value = true;
-                    _comboBarHideProgressBar.Value = false;
+                    _duration.Value = 1f;
+                    _decreaseRate.Value = 50;
+                    _decayRateIsPercent.Value = true;
+                    _gainPerSwordHit.Value = 5;
+                    _gainPerAxeHit.Value = 10;
+                    _gainPerGunHit.Value = 1;
+                    _gainPerShurikenHit.Value = 5;
+                    _syringeGainRate.Value = 0;
                     break;
             }
         }
+        override protected string Description =>
+            "Mods related to the combo system" +
+            "\n\nExamples:" +
+            "\n• Change combo duration and decrease rate" +
+            "\n• Change combo gain values per weapon type" +
+            "\n• Change syringe gained along with combo";
 
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
@@ -95,10 +129,19 @@
             if (Time.time == PseudoSingleton<PlayersManager>.instance.players[__instance.playerNum].myCharacter.myCharacterCollider.lastTimePerfectParry)
                 ammountToAddInCombo = _gainPerParry;
             else if (ammountToAddInCombo < 0f)
-                ammountToAddInCombo = _gainPerHitTaken;
+            {
+                ammountToAddInCombo = -_lossPerHitTaken;
+                if (_lossPerHitTakenIsPercent)
+                    ammountToAddInCombo *= __instance.comboValue - 1;
+            }
 
-            PseudoSingleton<LifeBarsManager>.instance.syringeList[__instance.playerNum].AddSyringeValue(ammountToAddInCombo * _syringeGainRate, false, true);
-            ammountToAddInCombo *= 1f + 0.5f * PseudoSingleton<Helpers>.instance.NumberOfChipsEquipped("ComboChipA", __instance.playerNum);
+            ammountToAddInCombo /= 100f;
+            float syringeGain = ammountToAddInCombo * _syringeGainRate / 2f / 100f;
+            if (!_syringeGainRateAffectedByCombo)
+                syringeGain /= __instance.comboValue;
+            PseudoSingleton<LifeBarsManager>.instance.syringeList[__instance.playerNum].AddSyringeValue(syringeGain, false, true);
+
+            ammountToAddInCombo *= 1f + _comboChipBonus / 100f * PseudoSingleton<Helpers>.instance.NumberOfChipsEquipped("ComboChipA", __instance.playerNum);
             __instance.CheckMaxComboValue();
             __instance.comboValue += ammountToAddInCombo;
             __instance.comboValue.SetClamp(1, __instance.maxComboValue);
@@ -119,6 +162,8 @@
         [HarmonyPatch(typeof(ComboBar), nameof(ComboBar.AddComboValue), new[] { typeof(MeleeWeaponClass), typeof(bool), typeof(bool), typeof(int) }), HarmonyPrefix]
         static private bool ComboBar_AddComboValue2_Pre(ComboBar __instance, ref int __result, MeleeWeaponClass meleeWeaponClass, bool projectileDamage, bool enemyWasStunned, int damage)
         {
+            __result = damage.Mul(__instance.comboValue).Round();
+
             float comboIncrease = 0f;
             if (projectileDamage)
                 comboIncrease = _gainPerGunHit;
@@ -129,10 +174,13 @@
             else if (meleeWeaponClass == MeleeWeaponClass.Shuriken)
                 comboIncrease = _gainPerShurikenHit;
 
-            PseudoSingleton<LifeBarsManager>.instance.syringeList[__instance.playerNum].AddSyringeValue(comboIncrease * _syringeGainRate, false, true);
-            comboIncrease *= 1f + 0.5f * PseudoSingleton<Helpers>.instance.NumberOfChipsEquipped("ComboChipA", __instance.playerNum);
+            comboIncrease /= 100f;
+            float syringeGain = comboIncrease * _syringeGainRate / 2f / 100f;
+            if (!_syringeGainRateAffectedByCombo)
+                syringeGain /= __instance.comboValue;
+            PseudoSingleton<LifeBarsManager>.instance.syringeList[__instance.playerNum].AddSyringeValue(syringeGain, false, true);
 
-            __result = damage.Mul(__instance.comboValue).Round();
+            comboIncrease *= 1f + _comboChipBonus / 100f * PseudoSingleton<Helpers>.instance.NumberOfChipsEquipped("ComboChipA", __instance.playerNum);
             __instance.CheckMaxComboValue();
             __instance.comboValue += comboIncrease;
             __instance.comboValue.SetClamp(1, __instance.maxComboValue);
@@ -154,44 +202,16 @@
         static private IEnumerator ComboBar_DecreaseComboBar_Post(IEnumerator original, ComboBar __instance)
         {
             __instance.UpdateComboBar();
-            yield return gameTime.WaitForSeconds(_decayDelay);
-            float decayBase = _decayRateIsPercentOfMaz ? __instance.comboValue - 1f : 1f;
+            yield return gameTime.WaitForSeconds(_duration);
+            float decayBase = _decayRateIsPercent ? __instance.comboValue - 1f : 1f;
             while (__instance.comboValue >= 1f)
             {
-                __instance.comboValue -= Time.deltaTime * _decayRate * decayBase;
+                __instance.comboValue -= gameTime.deltaTime * _decreaseRate / 100f * decayBase;
                 __instance.UpdateComboBar();
                 yield return null;
             }
 
             __instance.comboValue = 1f;
-        }
-
-        [HarmonyPatch(typeof(ComboBar), nameof(ComboBar.SetComboText)), HarmonyPrefix]
-        static private bool ComboBar_SetComboText_Pre(ComboBar __instance)
-        {
-            if (!_comboBarFormatAsPercentIncrease)
-                return true;
-
-            float percentIncrease = __instance.comboValue.Sub(1).Mul(100).Round().ClampMin(1);
-
-            __instance.valueText.text = $"+{percentIncrease:F0}%";
-            __instance.valueText.keepSizeLarge = true;
-            __instance.valueText.ApplyText(false, true, "", true);
-            return false;
-        }
-
-        [HarmonyPatch(typeof(ComboBar), nameof(ComboBar.OnEnable)), HarmonyPrefix]
-        static private bool ComboBar_OnEnable_Post(ComboBar __instance)
-        {
-            // progress bar
-            __instance.FindChild("EmptyBar").SetActive(!_comboBarHideProgressBar);
-            __instance.barFill.gameObject.SetActive(!_comboBarHideProgressBar);
-
-            // format as percent increase
-            float comboNameScale = _comboBarFormatAsPercentIncrease ? 0.8f : 1f;
-            __instance.transform.Find("ComboName").localScale = comboNameScale.ToVector3();
-
-            return false;
         }
     }
 }

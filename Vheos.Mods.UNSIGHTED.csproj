@@ -67,10 +67,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mods\Movement.cs" />
+    <Compile Include="Mods\ChipsCogs.cs" />
     <Compile Include="Mods\Visual.cs" />
     <Compile Include="PresetEnum.cs" />
     <Compile Include="InternalExtensions.cs" />
-    <Compile Include="Mods\Parry.cs" />
+    <Compile Include="Mods\Guard.cs" />
     <Compile Include="Mods\Combo.cs" />
     <Compile Include="Mods\ParryChallenge.cs" />
     <Compile Include="Mods\Various.cs" />

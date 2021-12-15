@@ -32,42 +32,42 @@
         {
             _zoom.Format("Zoom");
             _zoom.Description =
-                "How close the camera is to the in-world sprites (doesn't affect UI)\n" +
-                "Lower values will help you see more of the area, but might trigger some visual glitches, especially in smaller areas\n\n" +
-                "Unit: percent of original screen size";
+                "How close the camera is to the in-world sprites (doesn't affect UI)" +
+                "\nLower values will help you see more of the area, but might trigger some visual glitches, especially in smaller areas" +
+                "\n\nUnit: percent of original screen size";
             _aimWeight.Format("Aim weight");
             _aimWeight.Description =
-                "How closely the camera follows your mouse (or right thumbstick)\n" +
-                "Higher values will make aiming more dynamic\n" +
-                "Set to 0 to always center the camera on the player (or the players' midpoint, if in co-op)\n\n" +
-                "Unit: percent of original follow distance";
+                "How closely the camera follows your mouse (or right thumbstick)" +
+                "\nHigher values will make aiming more dynamic" +
+                "\nSet to 0 to always center the camera on the player (or the players' midpoint, if in co-op)" +
+                "\n\nUnit: percent of original follow distance";
             _shakeMultiplier.Format("Shake multiplier");
             _shakeMultiplier.Description =
-                "How violently the camera shakes when taking damage, performing heavy attacks, etc.\n" +
-                "Lower values will make combat more readable, but might remove the OOMPH factor from some hefty actions\n\n" +
-                "Unit: percent of original screen shake strength";
+                "How violently the camera shakes when taking damage, performing heavy attacks, etc." +
+                "\nLower values will make combat more readable, but might remove the OOMPH factor from some hefty actions" +
+                "\n\nUnit: percent of original screen shake strength";
 
             _maxCoopStretch.Format("Max co-op stretch");
             _maxCoopStretch.Description =
-                "How far will the screen stretch to keep both players on-screen\n" +
-                "Stretching the screen too much will trigger visual glitches\n\n" +
-                $"Unit: percent of total screen size, accounting for \"{_zoom.Name}\" setting";
+                "How far will the screen stretch to keep both players on-screen" +
+                "\nStretching the screen too much will trigger visual glitches" +
+                $"\n\nUnit: percent of total screen size, accounting for \"{_zoom.Name}\" setting";
             using (Indent)
             {
                 _coopStretchSpeed.Format("speed", _maxCoopStretch, v => v > 100);
                 _coopStretchSpeed.Description =
-                    "How quickly the screen stretches catch up with players\n" +
-                    "Lower values will make the stretching smoother, but possibly too slow to keep both players on-screen\n\n" +
-                    "Unit: arbitrary exponential-like scale";
+                    "How quickly the screen stretches catch up with players" +
+                    "\nLower values will make the stretching smoother, but possibly too slow to keep both players on-screen" +
+                    "\n\nUnit: arbitrary exponential-like scale";
             }
             _prioritizePlayer1.Format("Proritize player 1 on-screen");
             _prioritizePlayer1.Description =
-                "Makes sure player 1 is always on-screen and with a decent view range, even if it means pushing player 2 off-screen\n\n" +
-                "This is the default in-game behaviour, and it's pretty damn disgusting, so disable it if you value your co-opartner at all";
+                "Makes sure player 1 is always on-screen and with a decent view range, even if it means pushing player 2 off-screen" +
+                "\n\nThis is the default in-game behaviour, and it's pretty damn disgusting, so disable it if you value your co-opartner at all";
             _teleportPlayer2.Format("Teleport player 2 off-screen");
             _teleportPlayer2.Description =
-                "When player 2 goes off-screen, they get instantly teleported to player 1\n\n" +
-                "Yet another archaic mechanic to treat player 2 as a baby at best, and a vegetable at worst";
+                "When player 2 goes off-screen, they get instantly teleported to player 1" +
+                "\n\nYet another archaic mechanic to treat player 2 as a baby at best, and a vegetable at worst";
         }
         override protected void LoadPreset(string presetName)
         {
@@ -87,11 +87,11 @@
             }
         }
         override protected string Description =>
-            "Mods related to the camera and screen\n\n" +
-            "Examples:\n" +
-            "• Change camera zoom to see more\n" +
-            "• Enable co-op screen stretching\n" +
-            "• Put an end to player 2's oppression";
+            "Mods related to the camera and screen" +
+            "\n\nExamples:" +
+            "\n• Change camera zoom to see more" +
+            "\n• Enable co-op screen stretching" +
+            "\n• Put an end to player 2's oppression";
 
         // Privates
         private const float ORIGINAL_ORTOGRAPHIC_SIZE = 9f;

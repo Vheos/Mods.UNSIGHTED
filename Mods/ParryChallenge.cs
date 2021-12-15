@@ -13,32 +13,74 @@
     {
         // Settings
         static private ModSetting<SpawnPreset> _preset;
-        static private ModSetting<float> _spawnInterval;
-        static private ModSetting<Vector4>[] _spawnData;
+        static private ModSetting<int> _spawnInterval;
         static private ModSetting<Vector3> _rewardThresholds;
-        static private ModSetting<bool> _removeRewardPlayerStrings;
+        static private ModSetting<bool> _separateFirstTimeRewards;
+        static private ModSetting<bool> _resetFirstTimeRewards;
+        static private ModSetting<Vector4>[] _spawnTable;
         override protected void Initialize()
         {
             _preset = CreateSetting(nameof(_preset), SpawnPreset.Vanilla);
-            _spawnInterval = CreateSetting(nameof(_spawnInterval), 3f, FloatRange(0f, 5f));
+            _spawnInterval = CreateSetting(nameof(_spawnInterval), 3, IntRange(0, 10));
             _rewardThresholds = CreateSetting(nameof(_rewardThresholds), new Vector3(15, 35, 80));
-            _spawnData = new ModSetting<Vector4>[9];
-            for (int i = 0; i < _spawnData.Length; i++)
-                _spawnData[i] = CreateSetting(nameof(_spawnData) + (i + 1), new Vector4(-1, 0, 0, 0));
-            _removeRewardPlayerStrings = CreateSetting(nameof(_removeRewardPlayerStrings), false);
+            _separateFirstTimeRewards = CreateSetting(nameof(_separateFirstTimeRewards), true);
+            _resetFirstTimeRewards = CreateSetting(nameof(_resetFirstTimeRewards), false);
+            _spawnTable = new ModSetting<Vector4>[9];
+            for (int i = 0; i < _spawnTable.Length; i++)
+                _spawnTable[i] = CreateSetting(nameof(_spawnTable) + (i + 1), new Vector4(0, 0, 0, 0));
 
-
-            _removeRewardPlayerStrings.AddEvent(RemoveRewardPlayerStrings);
-            _preset.AddEvent(LoadPreset);
+            _preset.AddEvent(LoadSpawnPreset);
+            _resetFirstTimeRewards.AddEvent(RemoveRewardPlayerStrings);
         }
         override protected void SetFormatting()
         {
-            _spawnInterval.Format("Spawn interval");
-            _removeRewardPlayerStrings.Format("Remove reward player strings");
             _preset.Format("Preset");
-            for (int i = 0; i < _spawnData.Length; i++)
-                _spawnData[i].Format($"Spawn data {i + 1}");
+            _preset.Description =
+                $"{SpawnPreset.Vanilla} - the original parry challenge" +
+                $"\n{SpawnPreset.Spiders} - only spiders, +3 per wave" +
+                $"\n{SpawnPreset.Gunners} - only gunners, +2 per wave" +
+                $"\n{SpawnPreset.Sharks} - only sharks, +1 per wave" +
+                $"\n{SpawnPreset.MixEasy} - spawns more spiders and gunners per wave, but only 1 shark" +
+                $"\n{SpawnPreset.MixHard} - spawns more spiders, gunners, and sharks per wave";
+
+            _spawnInterval.Format("Spawn interval");
+            _spawnInterval.Description =
+                "How long is the pause between spawning new enemies after previous ones have been killed or new wave has started" +
+                "\nSet to 0 to instantly spawn (and respawn) all enemies" +
+                "\n\nUnit: seconds";
+
             _rewardThresholds.Format("Reward thresholds");
+            _rewardThresholds.Description =
+                "How many parries you need to get each reward tier" +
+                "\nX - first-time 100 bolts, then 25" +
+                "\nY - first-time 500 bolts, then 100" +
+                "\nZ - first-time 1500 bolts, then 500" +
+                "\n\nEach tier also gives you all lower tier rewards" +
+                "\nThat is, if you reach the highest tier on your first try ever, you'll get a total of 2100 bolts (1500 + 500 + 100)";
+            _separateFirstTimeRewards.Format("Per-preset first-time rewards");
+            _separateFirstTimeRewards.Description =
+                "Each preset will have their own first-time rewards";
+            using (Indent)
+            {
+                _resetFirstTimeRewards.IsAdvanced = true;
+                _resetFirstTimeRewards.Format("reset");
+                _resetFirstTimeRewards.Description =
+                    "Press this button to reset all first-time reward tags, allowing you to collect them again";
+            }
+            CreateHeader("Waves").Description =
+                "What enemies spawn in each wave and when does it start" +
+                "\nX - number of parries required to start the wave" +
+                "\nY - number of spiders in the wave" +
+                "\nZ - number of gunner in the wave" +
+                "\nW - number of sharks in the wave" +
+                "\n\nRequired parries must be in ascending order (from lowest to highest)";
+            using (Indent)
+            {
+                _spawnTable[0].Format($"#1");
+                _spawnTable[1].Format($"#2");
+                for (int i = 2; i < _spawnTable.Length; i++)
+                    _spawnTable[i].Format($"#{i + 1}", _spawnTable[i - 1], t => t.x > 0);
+            }
         }
         override protected void LoadPreset(string presetName)
         {
@@ -47,98 +89,104 @@
                 case nameof(Preset.Coop_NewGameExtra_HardMode):
                     ForceApply();
                     _preset.Value = SpawnPreset.Vanilla;
-                    _spawnInterval.Value = 1f;
+                    _spawnInterval.Value = 1;
                     break;
             }
         }
+        override protected string ModName
+        => "Parry Challenge Editor";
+        override protected string Description =>
+            "Allows you to customize the parry challenge" +
+            "\n\nExamples:" +
+            "\n• Change when and which enemies spawn" +
+            "\n• Change thresholds for getting rewards";
 
         // Privates
         void RemoveRewardPlayerStrings()
         {
-            if (!_removeRewardPlayerStrings)
+            if (!_resetFirstTimeRewards)
                 return;
 
             PseudoSingleton<Helpers>.instance.GetPlayerData().dataStrings.RemoveAll(t => t.Contains("EnduranceReward"));
-            _removeRewardPlayerStrings.SetSilently(false);
+            _resetFirstTimeRewards.SetSilently(false);
         }
-        static private void LoadPreset()
+        static private void LoadSpawnPreset()
         {
-            foreach (var spawnData in _spawnData)
-                spawnData.Reset();
+            foreach (var row in _spawnTable)
+                row.Reset();
 
             switch (_preset.Value)
             {
                 case SpawnPreset.Vanilla:
-                    _spawnData[0].Value = new Vector4(0, 2, 0, 0);
-                    _spawnData[1].Value = new Vector4(6, 0, 2, 0);
-                    _spawnData[2].Value = new Vector4(16, 0, 0, 1);
-                    _spawnData[3].Value = new Vector4(26, 0, 0, 2);
-                    _spawnData[4].Value = new Vector4(36, 1, 1, 1);
-                    _spawnData[5].Value = new Vector4(51, 1, 2, 1);
-                    _spawnData[6].Value = new Vector4(101, 2, 2, 2);
+                    _spawnInterval.Value = 3;
                     _rewardThresholds.Value = new Vector3(15, 35, 80);
-                    _spawnInterval.Value = 3f;
+                    _spawnTable[0].Value = new Vector4(0, 2, 0, 0);
+                    _spawnTable[1].Value = new Vector4(6, 0, 2, 0);
+                    _spawnTable[2].Value = new Vector4(16, 0, 0, 1);
+                    _spawnTable[3].Value = new Vector4(26, 0, 0, 2);
+                    _spawnTable[4].Value = new Vector4(36, 1, 1, 1);
+                    _spawnTable[5].Value = new Vector4(51, 1, 2, 1);
+                    _spawnTable[6].Value = new Vector4(101, 2, 2, 2);
                     break;
                 case SpawnPreset.Spiders:
-                    _spawnData[0].Value = new Vector4(0, 3, 0, 0);
-                    _spawnData[1].Value = new Vector4(6, 6, 0, 0);
-                    _spawnData[2].Value = new Vector4(18, 9, 0, 0);
-                    _spawnData[3].Value = new Vector4(36, 12, 0, 0);
-                    _spawnData[4].Value = new Vector4(60, 15, 0, 0);
-                    _spawnData[5].Value = new Vector4(90, 18, 0, 0);
-                    _spawnData[6].Value = new Vector4(126, 21, 0, 0);
-                    _spawnData[7].Value = new Vector4(168, 24, 0, 0);
-                    _spawnData[8].Value = new Vector4(216, 27, 0, 0);
+                    _spawnTable[0].Value = new Vector4(0, 3, 0, 0);
+                    _spawnTable[1].Value = new Vector4(6, 6, 0, 0);
+                    _spawnTable[2].Value = new Vector4(18, 9, 0, 0);
+                    _spawnTable[3].Value = new Vector4(36, 12, 0, 0);
+                    _spawnTable[4].Value = new Vector4(60, 15, 0, 0);
+                    _spawnTable[5].Value = new Vector4(90, 18, 0, 0);
+                    _spawnTable[6].Value = new Vector4(126, 21, 0, 0);
+                    _spawnTable[7].Value = new Vector4(168, 24, 0, 0);
+                    _spawnTable[8].Value = new Vector4(216, 27, 0, 0);
                     break;
                 case SpawnPreset.Gunners:
-                    _spawnData[0].Value = new Vector4(0, 0, 2, 0);
-                    _spawnData[1].Value = new Vector4(8, 0, 4, 0);
-                    _spawnData[2].Value = new Vector4(24, 0, 6, 0);
-                    _spawnData[3].Value = new Vector4(48, 0, 8, 0);
-                    _spawnData[4].Value = new Vector4(80, 0, 10, 0);
-                    _spawnData[5].Value = new Vector4(120, 0, 12, 0);
-                    _spawnData[6].Value = new Vector4(168, 0, 14, 0);
-                    _spawnData[7].Value = new Vector4(224, 0, 16, 0);
-                    _spawnData[8].Value = new Vector4(288, 0, 18, 0);
+                    _spawnTable[0].Value = new Vector4(0, 0, 2, 0);
+                    _spawnTable[1].Value = new Vector4(8, 0, 4, 0);
+                    _spawnTable[2].Value = new Vector4(24, 0, 6, 0);
+                    _spawnTable[3].Value = new Vector4(48, 0, 8, 0);
+                    _spawnTable[4].Value = new Vector4(80, 0, 10, 0);
+                    _spawnTable[5].Value = new Vector4(120, 0, 12, 0);
+                    _spawnTable[6].Value = new Vector4(168, 0, 14, 0);
+                    _spawnTable[7].Value = new Vector4(224, 0, 16, 0);
+                    _spawnTable[8].Value = new Vector4(288, 0, 18, 0);
                     break;
                 case SpawnPreset.Sharks:
-                    _spawnData[0].Value = new Vector4(0, 0, 0, 0);
-                    _spawnData[1].Value = new Vector4(2, 0, 0, 0);
-                    _spawnData[2].Value = new Vector4(6, 0, 0, 0);
-                    _spawnData[3].Value = new Vector4(12, 0, 0, 0);
-                    _spawnData[4].Value = new Vector4(20, 0, 0, 0);
-                    _spawnData[5].Value = new Vector4(30, 0, 0, 0);
-                    _spawnData[6].Value = new Vector4(42, 0, 0, 0);
-                    _spawnData[7].Value = new Vector4(56, 0, 0, 0);
-                    _spawnData[8].Value = new Vector4(72, 0, 0, 0);
+                    _spawnTable[0].Value = new Vector4(0, 0, 0, 0);
+                    _spawnTable[1].Value = new Vector4(2, 0, 0, 0);
+                    _spawnTable[2].Value = new Vector4(6, 0, 0, 0);
+                    _spawnTable[3].Value = new Vector4(12, 0, 0, 0);
+                    _spawnTable[4].Value = new Vector4(20, 0, 0, 0);
+                    _spawnTable[5].Value = new Vector4(30, 0, 0, 0);
+                    _spawnTable[6].Value = new Vector4(42, 0, 0, 0);
+                    _spawnTable[7].Value = new Vector4(56, 0, 0, 0);
+                    _spawnTable[8].Value = new Vector4(72, 0, 0, 0);
                     break;
-                case SpawnPreset.CombinedEasy:
-                    _spawnData[0].Value = new Vector4(0, 1, 1, 1);
-                    _spawnData[1].Value = new Vector4(8, 2, 1, 1);
-                    _spawnData[2].Value = new Vector4(18, 2, 2, 1);
-                    _spawnData[3].Value = new Vector4(32, 3, 2, 1);
-                    _spawnData[4].Value = new Vector4(48, 3, 3, 1);
-                    _spawnData[5].Value = new Vector4(68, 4, 3, 1);
-                    _spawnData[6].Value = new Vector4(90, 4, 4, 1);
-                    _spawnData[7].Value = new Vector4(116, 5, 4, 1);
-                    _spawnData[8].Value = new Vector4(144, 5, 5, 1);
+                case SpawnPreset.MixEasy:
+                    _spawnTable[0].Value = new Vector4(0, 1, 1, 1);
+                    _spawnTable[1].Value = new Vector4(8, 2, 1, 1);
+                    _spawnTable[2].Value = new Vector4(18, 2, 2, 1);
+                    _spawnTable[3].Value = new Vector4(32, 3, 2, 1);
+                    _spawnTable[4].Value = new Vector4(48, 3, 3, 1);
+                    _spawnTable[5].Value = new Vector4(68, 4, 3, 1);
+                    _spawnTable[6].Value = new Vector4(90, 4, 4, 1);
+                    _spawnTable[7].Value = new Vector4(116, 5, 4, 1);
+                    _spawnTable[8].Value = new Vector4(144, 5, 5, 1);
                     break;
-                case SpawnPreset.CombinedHard:
-                    _spawnInterval.Value = 3f;
-                    _spawnData[0].Value = new Vector4(0, 3, 0, 0);
-                    _spawnData[1].Value = new Vector4(6, 3, 2, 0);
-                    _spawnData[2].Value = new Vector4(20, 3, 2, 1);
-                    _spawnData[3].Value = new Vector4(36, 6, 2, 1);
-                    _spawnData[4].Value = new Vector4(58, 6, 4, 1);
-                    _spawnData[5].Value = new Vector4(88, 6, 4, 2);
-                    _spawnData[6].Value = new Vector4(120, 9, 4, 2);
-                    _spawnData[7].Value = new Vector4(158, 9, 6, 2);
-                    _spawnData[8].Value = new Vector4(204, 9, 6, 3);
+                case SpawnPreset.MixHard:
+                    _spawnTable[0].Value = new Vector4(0, 3, 0, 0);
+                    _spawnTable[1].Value = new Vector4(6, 3, 2, 0);
+                    _spawnTable[2].Value = new Vector4(20, 3, 2, 1);
+                    _spawnTable[3].Value = new Vector4(36, 6, 2, 1);
+                    _spawnTable[4].Value = new Vector4(58, 6, 4, 1);
+                    _spawnTable[5].Value = new Vector4(88, 6, 4, 2);
+                    _spawnTable[6].Value = new Vector4(120, 9, 4, 2);
+                    _spawnTable[7].Value = new Vector4(158, 9, 6, 2);
+                    _spawnTable[8].Value = new Vector4(204, 9, 6, 3);
                     break;
             }
 
             if (_preset != SpawnPreset.Vanilla)
-                _rewardThresholds.Value = new Vector3(_spawnData[2].Value.x, _spawnData[4].Value.x, _spawnData[6].Value.x);
+                _rewardThresholds.Value = new Vector3(_spawnTable[2].Value.x, _spawnTable[4].Value.x, _spawnTable[6].Value.x);
         }
 
         // Defines
@@ -148,8 +196,8 @@
             Spiders,
             Gunners,
             Sharks,
-            CombinedEasy,
-            CombinedHard,
+            MixEasy,
+            MixHard,
         }
 
         // Hooks
@@ -179,7 +227,9 @@
 
             // Rewards
             List<string> playerDataStrings = PseudoSingleton<Helpers>.instance.GetPlayerData().dataStrings;
-            string presetPostfix = _preset == SpawnPreset.Vanilla ? "" : _preset.Value.ToString();
+            string presetPostfix = _separateFirstTimeRewards && _preset == SpawnPreset.Vanilla
+                                 ? _preset.Value.ToString()
+                                 : "";
             if (__instance.numberOfParries >= _rewardThresholds.Value.z)
             {
                 __instance.rewardName = playerDataStrings.TryAddUnique("HighEnduranceReward" + presetPostfix) ? "Bolts4" : "Bolts3";
@@ -212,13 +262,13 @@
 
             while (true)
             {
-                for (int i = _spawnData.Length - 1; i >= 0; i--)
-                    if (_spawnData[i].Value.x >= 0
-                    && __instance.numberOfParries >= _spawnData[i].Value.x)
+                for (int i = _spawnTable.Length - 1; i >= 0; i--)
+                    if (_spawnTable[i].IsVisible
+                    && __instance.numberOfParries >= _spawnTable[i].Value.x)
                     {
-                        __instance.maxSpiders = _spawnData[i].Value.y.Round();
-                        __instance.maxSlugs = _spawnData[i].Value.z.Round();
-                        __instance.maxSharks = _spawnData[i].Value.w.Round();
+                        __instance.maxSpiders = _spawnTable[i].Value.y.Round();
+                        __instance.maxSlugs = _spawnTable[i].Value.z.Round();
+                        __instance.maxSharks = _spawnTable[i].Value.w.Round();
                         break;
                     }
 
@@ -231,7 +281,7 @@
                     __instance.SpawnEnemy(__instance.sharkPrefab);
 
                 if (_spawnInterval > 0)
-                    yield return new WaitForSeconds(_spawnInterval);
+                    yield return gameTime.WaitForSeconds(_spawnInterval);
             }
         }
 
@@ -244,9 +294,9 @@
             __instance.numberOfParries++;
             __instance.UpdateText();
 
-            for (int i = _spawnData.Length - 1; i >= 0; i--)
-                if (_spawnData[i].Value.x >= 0
-                && __instance.numberOfParries >= _spawnData[i].Value.x)
+            for (int i = _spawnTable.Length - 1; i >= 0; i--)
+                if (_spawnTable[i].IsVisible
+                && __instance.numberOfParries >= _spawnTable[i].Value.x)
                 {
                     PseudoSingleton<FmodMusicController>.instance.SetMusicParameter("parrychallenge", i);
                     break;

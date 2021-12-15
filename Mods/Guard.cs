@@ -2,10 +2,9 @@
 {
     using System;
     using System.Collections;
-    using HarmonyLib;
     using UnityEngine;
+    using HarmonyLib;
     using Tools.ModdingCore;
-    using Tools.Extensions.Math;
 
     public class Guard : AMod
     {
@@ -13,6 +12,8 @@
         static private ModSetting<int> _parryDuration;
         static private ModSetting<int> _deflectDuration;
         static private ModSetting<int> _optionalDeflectDuration;
+        static private ModSetting<int> _guardStaminaCost;
+        static private ModSetting<bool> _guardStaminaCostIsPercent;
         static private ModSetting<int> _parryStaminaGain;
         static private ModSetting<bool> _parryStaminaGainIsPercent;
         static private ModSetting<bool> _guardWithoutMeleeWeapon;
@@ -22,9 +23,10 @@
             _parryDuration = CreateSetting(nameof(_parryDuration), 175, IntRange(0, 1000));
             _deflectDuration = CreateSetting(nameof(_deflectDuration), 325, IntRange(0, 1000));
             _optionalDeflectDuration = CreateSetting(nameof(_optionalDeflectDuration), 50, IntRange(0, 1000));
+            _guardStaminaCost = CreateSetting(nameof(_guardStaminaCost), ORIGINAL_GUARD_STAMINA_COST, IntRange(0, 100));
+            _guardStaminaCostIsPercent = CreateSetting(nameof(_guardStaminaCostIsPercent), false);
             _parryStaminaGain = CreateSetting(nameof(_parryStaminaGain), 100, IntRange(0, 100));
             _parryStaminaGainIsPercent = CreateSetting(nameof(_parryStaminaGainIsPercent), true);
-
             _guardWithoutMeleeWeapon = CreateSetting(nameof(_guardWithoutMeleeWeapon), false);
             _parryWithoutMeleeWeapon = CreateSetting(nameof(_parryWithoutMeleeWeapon), true);
         }
@@ -32,18 +34,18 @@
         {
             _parryDuration.Format("Parry duration");
             _parryDuration.Description =
-                "How quickly you need to react to perform a parry\n" +
-                "Higher values will make parrying easier, but root you in place for longer\n\n" +
-                "Unit: milliseconds";
+                "How quickly you need to react to perform a parry" +
+                "\nHigher values will make parrying easier, but root you in place for longer" +
+                "\n\nUnit: milliseconds";
             _deflectDuration.Format("Deflect duration");
-            _deflectDuration.Description = 
-                "How long (after parry window ends) you can deflect bullets and attacks\n" +
-                "Lower values will make guarding more responsive\n\n" +
-                "Unit: milliseconds";
+            _deflectDuration.Description =
+                "How long (after parry window ends) you can deflect bullets and attacks" +
+                "\nLower values will make guarding more responsive" +
+                "\n\nUnit: milliseconds";
             _optionalDeflectDuration.Format("Max guard duration");
             _optionalDeflectDuration.Description =
-                "How much you can extend the deflect window if you keep the button pressed\n\n" +
-                "Unit: milliseconds";
+                "How much you can extend the deflect window if you keep the button pressed" +
+                "\n\nUnit: milliseconds";
             _guardWithoutMeleeWeapon.Format("Guard without melee weapon");
             _guardWithoutMeleeWeapon.Description =
                 "Allows you to guard even if you don't have any melee weapon equipped";
@@ -53,12 +55,18 @@
                 _parryWithoutMeleeWeapon.Description =
                      "Allows you to not only deflect, but also parry without a melee weapon";
             }
+            _guardStaminaCost.Format("Guard stamina cost");
+            _guardStaminaCost.Description =
+                "How much stamina you lose when you start guarding" +
+                "\n\nUnit: stamina points or percent of max stamina";
+            using (Indent)
+                _guardStaminaCostIsPercent.Format("percent of max stamina", _guardStaminaCost, t => t > 0);
 
-            _parryStaminaGain.Format("Parry stamina gain");
+            _parryStaminaGain.Format("Guard stamina cost");
             _parryStaminaGain.Description =
-                "How much stamina is regained when you successfully parry" +
-                "Set to 0 to make parrying a little less OP\n\n" +
-                "Unit: stamina points or percent of max stamina";
+                "How much stamina you regain after a successfully parry" +
+                "Set to 0 to make parrying a little less spammable" +
+                "\n\nUnit: stamina points or percent of max stamina";
             using (Indent)
                 _parryStaminaGainIsPercent.Format("percent of max stamina", _parryStaminaGain, t => t > 0);
         }
@@ -73,22 +81,24 @@
                     _optionalDeflectDuration.Value = 600;
                     _guardWithoutMeleeWeapon.Value = true;
                     _parryWithoutMeleeWeapon.Value = false;
-                    _parryStaminaGain.Value = 3;
+                    _guardStaminaCost.Value = 6;
+                    _guardStaminaCostIsPercent.Value = false;
+                    _parryStaminaGain.Value = 0;
                     _parryStaminaGainIsPercent.Value = false;
                     break;
             }
         }
         override protected string Description =>
-            "Mods related to the guarding mechanic\n\n" +
-            "Examples:\n" +
-            "• Change \"perfect\" and \"normal\" parry windows\n" +
-            "• Guard longer by holding the button\n" +
-            "• Guard without melee weapons\n\n" +
-            "Dictionary:\n" +
-            "• Parry - in-game \"perfect parry\", triggers when you guard early enough\n" +
-            "• Deflect - in-game \"normal parry\", triggers when you guard too late for parry\n" +
-            "• Optional deflect - cancellable part of the guard action, but in vanilla lasts only 50ms\n" +
-            "• Guard - the entirety of the action, consisting of the 3 parts above";
+            "Mods related to the guarding mechanic" +
+            "\n\nExamples:" +
+            "\n• Change \"perfect\" and \"normal\" parry windows" +
+            "\n• Guard longer by holding the button" +
+            "\n• Guard without melee weapons" +
+            "\n\nDictionary:" +
+            "\n• Parry - \"perfect parry\", triggers when you guard early enough" +
+            "\n• Deflect - \"normal parry\", triggers when you guard too late for parry" +
+            "\n• Optional deflect - cancellable part of the guard action" +
+            "\n• Guard - the whole action, consisting of the 3 parts above";
 
         // Privates
         static private bool PlayerHaveMeleeWeapon_Original(PlayerInfo player)
@@ -100,6 +110,7 @@
                     return true;
             return false;
         }
+        private const int ORIGINAL_GUARD_STAMINA_COST = 6;
 
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
@@ -108,6 +119,22 @@
         [HarmonyPatch(typeof(BasicCharacterController), nameof(BasicCharacterController.GuardCoroutine)), HarmonyPostfix]
         static private IEnumerator BasicCharacterController_GuardCoroutine_Post(IEnumerator original, BasicCharacterController __instance)
         {
+            // Stamina cost
+            float extraCost = 0f;
+
+            if (_guardStaminaCost != ORIGINAL_GUARD_STAMINA_COST)
+            {
+                extraCost = _guardStaminaCost - ORIGINAL_GUARD_STAMINA_COST;
+                if (_guardStaminaCostIsPercent)
+                    extraCost *= __instance.myInfo.totalStamina / 100f;
+            }           
+
+            if (extraCost > 0)
+                __instance.DrainStamina(+extraCost);
+            else if (extraCost < 0)
+                __instance.FillStamina(-extraCost);
+
+            // Coroutine
             bool hasMeleeWeapon = PlayerHaveMeleeWeapon_Original(__instance.myInfo);
 
             original.MoveNext();

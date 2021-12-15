@@ -22,15 +22,16 @@
         => Assembly.GetExecutingAssembly();
         override protected Type[] ModsOrderingList
         => new[]
-        {            
-            typeof(Combat),
+        {
+            typeof(Movement),
+            typeof(Guard),
             typeof(Combo),
-            typeof(Guard),            
+            typeof(ChipsCogs),
 
             typeof(TimeMods),
             typeof(Camera),
-            typeof(Visual), 
-            
+            typeof(Visual),
+
             typeof(Various),
             typeof(ParryChallenge),
         };
