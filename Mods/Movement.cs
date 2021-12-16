@@ -55,19 +55,26 @@
                 "\n\nUnit: stamina points per second";
             _spinnerStaminaGains.Format("Spinner stamina gains");
             _spinnerStaminaGains.Description =
-                "Makes you recover stamina when quitting spinner mode and per water skip";
+                "Makes you regain some stamina when you stop spinning or skip on water";
         }
         override protected void LoadPreset(string presetName)
         {
             switch (presetName)
             {
-                case nameof(Preset.Coop_NewGameExtra_HardMode):
+                case nameof(Preset.Vheos_HardMode):
                     ForceApply();
+                    _moveSpeedMultiplier.Value = 100;
+                    _runSpeedMultiplier.Value = 167;
+                    _runnerChipSpeedBonus.Value = 10;
+                    _runnerChipStaminaRecovery.Value = false;
+                    _runStaminaDrain.Value = 2f;
+                    _spinStaminaDrain.Value = 3f;
+                    _spinnerStaminaGains.Value = false;
                     break;
             }
         }
         override protected string Description =>
-            "Mods related to movement speeds and stamina" +
+            "Mods related to movement (speed and stamina)" +
             "\n\nExamples:" +
             "\n• Change move/run speed" +
             "\n• Change run/spin stamina drain" +
@@ -135,7 +142,10 @@
                     {
                         speed *= 1 + _runnerChipSpeedBonus / 100f;
                         if (!_runnerChipStaminaRecovery)
+                        {
                             __instance.lastStaminaUsageTime = Time.time;
+                            __instance.lastStaminaRechargeTime = Time.time;
+                        }
                     }
                 }
             }

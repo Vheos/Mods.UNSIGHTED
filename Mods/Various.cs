@@ -41,7 +41,7 @@
                 "Skips all the unskippable logo animations, as well as the input choice screen, and goes straight to the main menu" +
                 "\nYou'll save about 30 seconds of your precious life each time you start the game";
 
-            _staminaHealGain.Format("\"Stamina Heal\" percent gain");
+            _staminaHealGain.Format("\"Stamina Heal\" gain");
             _staminaHealGain.Description =
                 "How much stamina you recover when you perform the \"Stamina Heal\" action" +
                 "\n(double tap the \"Sprint\" button while standing still)" +
@@ -56,7 +56,7 @@
                 "\nDisable this to make \"Stamina Heal\" more punishable in combat";
             _pauseStaminaRecoveryOnGain.Format("Pause stamina recovery on gain");
             _pauseStaminaRecoveryOnGain.Description =
-                "Pauses your natural stamina recovery whenever you gain stamina by other means, as if you have just lost it instead";
+                "Pauses your natural stamina recovery whenever you gain stamina by other means";
 
             _enemyHPMultiplier.Format("Enemy HP");
             _enemyHPMultiplier.Description =
@@ -78,16 +78,17 @@
         {
             switch (presetName)
             {
-                case nameof(Preset.Coop_NewGameExtra_HardMode):
+                case nameof(Preset.Vheos_HardMode):
                     ForceApply();
                     _skipIntroLogos.Value = true;
-                    _pauseStaminaRecoveryOnGain.Value = false;
 
                     _staminaHealGain.Value = 50;
-                    _staminaHealDuration.Value = 660;
-                    _staminaHealCancelling.Value = true;
-                    _enemyHPMultiplier.Value = 167;
-                    _enemyBossHPMultiplier.Value = 120;
+                    _staminaHealDuration.Value = 100;
+                    _staminaHealCancelling.Value = false;
+                    _pauseStaminaRecoveryOnGain.Value = false;
+
+                    _enemyHPMultiplier.Value = 200;
+                    _enemyBossHPMultiplier.Value = 125;
                     _randomizeEnemyGroupAttackRhythm.Value = true;
                     break;
             }
@@ -197,7 +198,7 @@
                 yield return gameTime.WaitForSeconds(frameDuration * 2);
 
             original.MoveNext();
-            __instance.staminaChargeEffect = _staminaHealCancelling;
+            __instance.staminaChargeEffect = !_staminaHealCancelling;
             if (frameDuration > 0)
                 yield return gameTime.WaitForSeconds(frameDuration * 6);
             __instance.staminaChargeEffect = false;
@@ -213,7 +214,7 @@
             if (waitForAttackRythm)
             {
                 float interval = _randomizeEnemyGroupAttackRhythm
-                               ? UnityEngine.Random.Range(0, 0.75f)
+                               ? UnityEngine.Random.Range(0f, 0.75f)
                                : 0.75f;
 
                 while (Time.time - EnemyController.lastAttackTime < interval)

@@ -53,7 +53,7 @@
                 _resetFirstTimeRewards.IsAdvanced = true;
                 _resetFirstTimeRewards.Format("reset");
                 _resetFirstTimeRewards.Description =
-                    "Press this button to reset all first-time reward tags, allowing you to collect them again";
+                    "Resets all first-time reward tags, allowing you to collect them again";
             }
             _preset.Format("Preset");
             _preset.Description =
@@ -90,12 +90,12 @@
         {
             switch (presetName)
             {
-                case nameof(Preset.Coop_NewGameExtra_HardMode):
+                case nameof(Preset.Vheos_HardMode):
                     ForceApply();
-                    _allowAttacking.Value = false;
+                    _allowAttacking.Value = true;
                     _spawnInterval.Value = 1;
                     _separateFirstTimeRewards.Value = true;
-                    _preset.Value = SpawnPreset.Vanilla;
+                    _preset.Value = SpawnPreset.MixHard;
                     break;
             }
         }
@@ -114,7 +114,7 @@
                 return;
 
             _resetFirstTimeRewards.SetSilently(false);
-            PseudoSingleton<Helpers>.instance.GetPlayerData().dataStrings.RemoveAll(t => t.Contains("EnduranceReward"));            
+            PseudoSingleton<Helpers>.instance.GetPlayerData().dataStrings.RemoveAll(t => t.Contains("EnduranceReward"));
         }
         static private void LoadSpawnPreset()
         {
@@ -270,7 +270,9 @@
             while (true)
             {
                 for (int i = _spawnTable.Length - 1; i >= 0; i--)
-                    if (_spawnTable[i].IsVisible
+                    if (i == 0
+                    || _spawnTable[i].IsVisible
+                    && _spawnTable[i].Value.x > 0
                     && __instance.numberOfParries >= _spawnTable[i].Value.x)
                     {
                         __instance.maxSpiders = _spawnTable[i].Value.y.Round();
@@ -302,7 +304,9 @@
             __instance.UpdateText();
 
             for (int i = _spawnTable.Length - 1; i >= 0; i--)
-                if (_spawnTable[i].IsVisible
+                if (i == 0
+                || _spawnTable[i].IsVisible
+                && _spawnTable[i].Value.x > 0
                 && __instance.numberOfParries >= _spawnTable[i].Value.x)
                 {
                     PseudoSingleton<FmodMusicController>.instance.SetMusicParameter("parrychallenge", i);

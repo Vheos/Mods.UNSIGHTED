@@ -8,10 +8,11 @@
     using Tools.Extensions.General;
     using Tools.Extensions.Math;
 
-    public class TimeMods : AMod
+    public class TimeMods : AMod, IUpdatable
     {
         // Settings
         static private ModSetting<int> _engineSpeedMultiplier;
+        static private ModSetting<int> _cutsceneSpeedMultiplier;
         static private ModSetting<int> _gameToEngineTimeRatio;
         static private ModSetting<int> _fishingTimerSpeed;
         static private ModSetting<int> _parryChallengeTimeMultiplier;
@@ -21,6 +22,7 @@
         override protected void Initialize()
         {
             _engineSpeedMultiplier = CreateSetting(nameof(_engineSpeedMultiplier), 100, IntRange(50, 200));
+            _cutsceneSpeedMultiplier = CreateSetting(nameof(_cutsceneSpeedMultiplier), 100, IntRange(100, 400));
             _gameToEngineTimeRatio = CreateSetting(nameof(_gameToEngineTimeRatio), 48, IntRange(0, 120));
             _fishingTimerSpeed = CreateSetting(nameof(_fishingTimerSpeed), 0, IntRange(0, 100));
             _parryChallengeTimeMultiplier = CreateSetting(nameof(_parryChallengeTimeMultiplier), 0, IntRange(0, 100));
@@ -29,7 +31,9 @@
             _slowMotionSpeed = CreateSetting(nameof(_slowMotionSpeed), 30, IntRange(0, 100));
 
             // Events
-            _engineSpeedMultiplier.AddEvent(() => Time.timeScale = 1f);
+            _engineSpeedMultiplier.AddEventSilently(() => Time.timeScale = 1f);
+            AddEventOnEnabled(RestartTimerCoroutine);
+            AddEventOnDisabled(RestartTimerCoroutine);
         }
         override protected void SetFormatting()
         {
@@ -38,6 +42,13 @@
                 "How quickly the game runs (doesn't affect most UI)" +
                 "\nLower to make the combat less dependent on quick reactions, and to make exploration under time limit less stressful" +
                 "\n\nUnit: percent of original engine speed";
+            using (Indent)
+            {
+                _cutsceneSpeedMultiplier.Format("cutscene speed");
+                _cutsceneSpeedMultiplier.Description =
+                    "How quickly the game runs when you can't control your character" +
+                    $"\n\nUnit: percent of \"{_engineSpeedMultiplier.Name}\"";
+            }
             _gameToEngineTimeRatio.Format("Timer speed");
             _gameToEngineTimeRatio.Description =
                 "How quickly the timer (minutes, hours and days) progresses" +
@@ -49,11 +60,11 @@
                 _fishingTimerSpeed.Format("fishing multiplier");
                 _fishingTimerSpeed.Description =
                     "How quickly the timer progress when fishing" +
-                    $"\n\nUnit: percent of total timer speed, accounting for \"{_gameToEngineTimeRatio.Name}\"";
+                    $"\n\nUnit: percent of \"{_gameToEngineTimeRatio.Name}\"";
                 _parryChallengeTimeMultiplier.Format("parry challenge multiplier");
                 _parryChallengeTimeMultiplier.Description =
                     "How quickly the timer progress when doing the parry challenge" +
-                    $"\n\nUnit: percent of total timer speed, accounting for \"{_gameToEngineTimeRatio.Name}\"";
+                    $"\n\nUnit: percent of \"{_gameToEngineTimeRatio.Name}\"";
             }
             _frameStopDurationMultiplier.Format("Frame stop duration");
             _frameStopDurationMultiplier.Description =
@@ -78,9 +89,10 @@
         {
             switch (presetName)
             {
-                case nameof(Preset.Coop_NewGameExtra_HardMode):
+                case nameof(Preset.Vheos_HardMode):
                     ForceApply();
                     _engineSpeedMultiplier.Value = 67;
+                    _cutsceneSpeedMultiplier.Value = 200;
                     _gameToEngineTimeRatio.Value = 72;
                     _fishingTimerSpeed.Value = 20;
                     _parryChallengeTimeMultiplier.Value = 10;
@@ -98,15 +110,34 @@
             "\n• Change the whole engine speed" +
             "\n• Change the in-game timer speed" +
             "\n• Change the cinematic framestop / slowmo";
+        public void OnUpdate()
+        {
+            if (!_previousIsCutscene && PlayerInfo.cutscene)
+                Time.timeScale = _cutsceneSpeedMultiplier / 100f;
+            else if (_previousIsCutscene && !PlayerInfo.cutscene)
+                Time.timeScale = 1f;
+
+            _previousIsCutscene = PlayerInfo.cutscene;
+        }
 
         // Privates
+        static private bool _previousIsCutscene;
         static private bool IsAnyPlayerFishing()
         => PseudoSingleton<PlayersManager>.instance.TryNonNull(out var playerManager)
         && (playerManager.playerObjects[0].gameObject.activeInHierarchy && playerManager.playerObjects[0].myCharacter.fishing
         || playerManager.playerObjects[1].gameObject.activeInHierarchy && playerManager.playerObjects[1].myCharacter.fishing);
+        static private void RestartTimerCoroutine()
+        {
+            if (!PseudoSingleton<gameTime>.instance.TryNonNull(out var gameTime))
+                return;
+
+            gameTime.StopCoroutine("InGameTimeCounter");
+            gameTime.StartCoroutine("InGameTimeCounter");
+        }
 
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
+
 
         // Game speed
         [HarmonyPatch(typeof(Time), nameof(Time.timeScale), MethodType.Setter), HarmonyPrefix]
@@ -140,18 +171,14 @@
                     yield return gameTime.WaitForSeconds(timeFlow.Inv());
                 }
                 else
-                {
-                    if (PseudoSingleton<InGameClock>.instance.TryNonNull(out var clock))
-                        clock.clockText.transform.localScale = clock.dayText.transform.localScale = Vector3.zero;
                     yield return gameTime.WaitForSeconds(1f);
-                }
             }
         }
 
         [HarmonyPatch(typeof(gameTime), nameof(gameTime.CanAddInGameSeconds)), HarmonyPrefix]
         static private bool gameTime_CanAddInGameSeconds_Pre(gameTime __instance, ref bool __result)
         {
-            __result = Time.timeScale >= 0f
+            __result = Time.timeScale > 0f
                     && PseudoSingleton<LevelController>.instance != null
                     && !PlayerInfo.cutscene;
             return false;
@@ -167,7 +194,7 @@
                 yield return gameTime.IndependentWaitSeconds(frameStopDuration);
 
             original.MoveNext();
-            Time.timeScale = _slowMotionSpeed;
+            Time.timeScale = _slowMotionSpeed / 100f;
             float slowMotion = duration * (_slowMotionDurationMultiplier / 100f) / (_engineSpeedMultiplier / 100f);
             if (slowMotion > 0f)
                 yield return gameTime.IndependentWaitSeconds(slowMotion);

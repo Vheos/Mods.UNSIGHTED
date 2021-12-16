@@ -1,5 +1,5 @@
 ﻿public enum Preset
 {
-    Coop_FirstPlaythrough,
-    Coop_NewGameExtra_HardMode,
+    Vheos_HardMode,
+    Vheos_UI,
 }

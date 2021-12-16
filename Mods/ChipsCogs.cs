@@ -51,7 +51,7 @@
         {
             switch (presetName)
             {
-                case nameof(Preset.Coop_NewGameExtra_HardMode):
+                case nameof(Preset.Vheos_HardMode):
                     ForceApply();
                     _startingChipSlots.Value = 0;
                     _linearChipSlotCosts.Value = 750;

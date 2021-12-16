@@ -13,8 +13,8 @@
     {
         #region SETTINGS
         public const string GUID = "Vheos.Mods.UNSIGHTED";
-        public const string NAME = "Vheos Mod Pack";
-        public const string VERSION = "0.1.0";
+        public const string NAME = "UNSIGHTED+";
+        public const string VERSION = "1.0.0";
         #endregion
 
         // User logic
@@ -23,13 +23,14 @@
         override protected Type[] ModsOrderingList
         => new[]
         {
+            typeof(TimeMods),
             typeof(Movement),
             typeof(Guard),
             typeof(Combo),
-            typeof(ChipsCogs),
-
-            typeof(TimeMods),
+            typeof(ChipsCogs),          
             typeof(Camera),
+
+            typeof(UI),
             typeof(Audiovisual),
 
             typeof(Various),

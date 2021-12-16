@@ -65,8 +65,8 @@
             {
                 _gainPerSwordHit.Format("sword");
                 _gainPerAxeHit.Format("axe");
-                _gainPerShurikenHit.Format("shuriken");
                 _gainPerGunHit.Format("gun");
+                _gainPerShurikenHit.Format("shuriken");
             }
 
             _gainPerParry.Format("Gain per enemy parried");
@@ -79,9 +79,9 @@
             using (Indent)
                 _lossPerHitTakenIsPercent.Format("percent of last value", _lossPerHitTaken, t => t > 0);
 
-            _comboChipBonus.Format("\"Combo Chip\" bonus");
+            _comboChipBonus.Format("\"Fast Combo Chip\" bonus");
             _comboChipBonus.Description =
-                "How much extra combo you get per each equipped \"Combo Chip\"" +
+                "How much extra combo you get per each equipped \"Fast Combo Chip\"" +
                 "\n\nUnit: percent of gained combo, stacks additively";
             _syringeGainRate.Format("Syringe gain rate");
             _syringeGainRate.Description =
@@ -90,7 +90,7 @@
                 "\n\nUnit: percent of gained combo";
             using (Indent)
             {
-                _syringeGainRateAffectedByCombo.Format("scale with combo");
+                _syringeGainRateAffectedByCombo.Format("scale with combo", _syringeGainRate, t => t > 0);
                 _syringeGainRateAffectedByCombo.Description =
                     "Multiplies the combo-to-syringe conversion rate by current combo";
             }
@@ -99,16 +99,23 @@
         {
             switch (presetName)
             {
-                case nameof(Preset.Coop_NewGameExtra_HardMode):
+                case nameof(Preset.Vheos_HardMode):
                     ForceApply();
-                    _duration.Value = 1f;
+                    _duration.Value = 2f;
                     _decreaseRate.Value = 50;
                     _decayRateIsPercent.Value = true;
+
                     _gainPerSwordHit.Value = 5;
                     _gainPerAxeHit.Value = 10;
                     _gainPerGunHit.Value = 1;
                     _gainPerShurikenHit.Value = 5;
-                    _syringeGainRate.Value = 0;
+                    _gainPerParry.Value = 0;
+                    _lossPerHitTaken.Value = 100;
+                    _lossPerHitTakenIsPercent.Value = true;
+
+                    _comboChipBonus.Value = 50;
+                    _syringeGainRate.Value = 20;
+                    _syringeGainRateAffectedByCombo.Value = false;
                     break;
             }
         }
@@ -126,14 +133,17 @@
         [HarmonyPatch(typeof(ComboBar), nameof(ComboBar.AddComboValue), new[] { typeof(float) }), HarmonyPrefix]
         static private bool ComboBar_AddComboValue_Pre(ComboBar __instance, ref float ammountToAddInCombo)
         {
-            if (Time.time == PseudoSingleton<PlayersManager>.instance.players[__instance.playerNum].myCharacter.myCharacterCollider.lastTimePerfectParry)
-                ammountToAddInCombo = _gainPerParry;
-            else if (ammountToAddInCombo < 0f)
+            __instance.CheckMaxComboValue();
+            __instance.comboValue.SetClamp(1, __instance.maxComboValue);
+
+            if (ammountToAddInCombo < 0f)
             {
                 ammountToAddInCombo = -_lossPerHitTaken;
                 if (_lossPerHitTakenIsPercent)
                     ammountToAddInCombo *= __instance.comboValue - 1;
             }
+            else if (Time.time == PseudoSingleton<PlayersManager>.instance.players[__instance.playerNum].myCharacter.myCharacterCollider.lastTimePerfectParry)
+                ammountToAddInCombo = _gainPerParry;
 
             ammountToAddInCombo /= 100f;
             float syringeGain = ammountToAddInCombo * _syringeGainRate / 2f / 100f;
@@ -142,7 +152,6 @@
             PseudoSingleton<LifeBarsManager>.instance.syringeList[__instance.playerNum].AddSyringeValue(syringeGain, false, true);
 
             ammountToAddInCombo *= 1f + _comboChipBonus / 100f * PseudoSingleton<Helpers>.instance.NumberOfChipsEquipped("ComboChipA", __instance.playerNum);
-            __instance.CheckMaxComboValue();
             __instance.comboValue += ammountToAddInCombo;
             __instance.comboValue.SetClamp(1, __instance.maxComboValue);
 
@@ -162,6 +171,8 @@
         [HarmonyPatch(typeof(ComboBar), nameof(ComboBar.AddComboValue), new[] { typeof(MeleeWeaponClass), typeof(bool), typeof(bool), typeof(int) }), HarmonyPrefix]
         static private bool ComboBar_AddComboValue2_Pre(ComboBar __instance, ref int __result, MeleeWeaponClass meleeWeaponClass, bool projectileDamage, bool enemyWasStunned, int damage)
         {
+            __instance.CheckMaxComboValue();
+            __instance.comboValue.SetClamp(1, __instance.maxComboValue);
             __result = damage.Mul(__instance.comboValue).Round();
 
             float comboIncrease = 0f;
@@ -181,7 +192,6 @@
             PseudoSingleton<LifeBarsManager>.instance.syringeList[__instance.playerNum].AddSyringeValue(syringeGain, false, true);
 
             comboIncrease *= 1f + _comboChipBonus / 100f * PseudoSingleton<Helpers>.instance.NumberOfChipsEquipped("ComboChipA", __instance.playerNum);
-            __instance.CheckMaxComboValue();
             __instance.comboValue += comboIncrease;
             __instance.comboValue.SetClamp(1, __instance.maxComboValue);
 
@@ -212,6 +222,18 @@
             }
 
             __instance.comboValue = 1f;
+        }
+
+        [HarmonyPatch(typeof(ComboBar), nameof(ComboBar.OnEnable)), HarmonyPrefix]
+        static private bool ComboBar_OnEnable_Pre(ComboBar __instance)
+        => false;
+
+        [HarmonyPatch(typeof(BasicCharacterController), nameof(BasicCharacterController.DeathCoroutine)), HarmonyPostfix]
+        static private void BasicCharacterController_DeathCoroutine_Post(BasicCharacterController __instance)
+        {
+            ComboBar comboBar = PseudoSingleton<LifeBarsManager>.instance.comboBarList[__instance.myInfo.playerNum];
+            comboBar.comboValue = 1;
+            comboBar.gameObject.SetActive(false);
         }
     }
 }

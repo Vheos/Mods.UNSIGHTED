@@ -5,6 +5,7 @@
     using UnityEngine;
     using HarmonyLib;
     using Tools.ModdingCore;
+    using Vheos.Tools.Extensions.Math;
 
     public class Guard : AMod
     {
@@ -12,23 +13,25 @@
         static private ModSetting<int> _parryDuration;
         static private ModSetting<int> _deflectDuration;
         static private ModSetting<int> _optionalDeflectDuration;
+        static private ModSetting<float> _parryHitboxGrowth;
+        static private ModSetting<bool> _guardWithoutMeleeWeapon;
+        static private ModSetting<bool> _parryWithoutMeleeWeapon;
         static private ModSetting<int> _guardStaminaCost;
         static private ModSetting<bool> _guardStaminaCostIsPercent;
         static private ModSetting<int> _parryStaminaGain;
         static private ModSetting<bool> _parryStaminaGainIsPercent;
-        static private ModSetting<bool> _guardWithoutMeleeWeapon;
-        static private ModSetting<bool> _parryWithoutMeleeWeapon;
         override protected void Initialize()
         {
             _parryDuration = CreateSetting(nameof(_parryDuration), 175, IntRange(0, 1000));
+            _parryHitboxGrowth = CreateSetting(nameof(_parryHitboxGrowth), 3f, FloatRange(0f, 5f));
             _deflectDuration = CreateSetting(nameof(_deflectDuration), 325, IntRange(0, 1000));
             _optionalDeflectDuration = CreateSetting(nameof(_optionalDeflectDuration), 50, IntRange(0, 1000));
+            _guardWithoutMeleeWeapon = CreateSetting(nameof(_guardWithoutMeleeWeapon), false);
+            _parryWithoutMeleeWeapon = CreateSetting(nameof(_parryWithoutMeleeWeapon), true);
             _guardStaminaCost = CreateSetting(nameof(_guardStaminaCost), ORIGINAL_GUARD_STAMINA_COST, IntRange(0, 100));
             _guardStaminaCostIsPercent = CreateSetting(nameof(_guardStaminaCostIsPercent), false);
             _parryStaminaGain = CreateSetting(nameof(_parryStaminaGain), 100, IntRange(0, 100));
             _parryStaminaGainIsPercent = CreateSetting(nameof(_parryStaminaGainIsPercent), true);
-            _guardWithoutMeleeWeapon = CreateSetting(nameof(_guardWithoutMeleeWeapon), false);
-            _parryWithoutMeleeWeapon = CreateSetting(nameof(_parryWithoutMeleeWeapon), true);
         }
         override protected void SetFormatting()
         {
@@ -39,13 +42,17 @@
                 "\n\nUnit: milliseconds";
             _deflectDuration.Format("Deflect duration");
             _deflectDuration.Description =
-                "How long (after parry window ends) you can deflect bullets and attacks" +
+                "How long after parry window you can still deflect bullets and attacks" +
                 "\nLower values will make guarding more responsive" +
                 "\n\nUnit: milliseconds";
             _optionalDeflectDuration.Format("Max guard duration");
             _optionalDeflectDuration.Description =
-                "How much you can extend the deflect window if you keep the button pressed" +
+                "How much longer you can deflect if you keep the button pressed" +
                 "\n\nUnit: milliseconds";
+            _parryHitboxGrowth.Format("Parry hitbox growth");
+            _parryHitboxGrowth.Description =
+                "How much bigger your hitbox gets during the parry window" +
+                "\n\nUnit: Unity-defined units";
             _guardWithoutMeleeWeapon.Format("Guard without melee weapon");
             _guardWithoutMeleeWeapon.Description =
                 "Allows you to guard even if you don't have any melee weapon equipped";
@@ -58,15 +65,15 @@
             _guardStaminaCost.Format("Guard stamina cost");
             _guardStaminaCost.Description =
                 "How much stamina you lose when you start guarding" +
-                "\n\nUnit: stamina points or percent of max stamina";
+                "\n\nUnit: stamina points, or percent of max stamina";
             using (Indent)
                 _guardStaminaCostIsPercent.Format("percent of max stamina", _guardStaminaCost, t => t > 0);
 
-            _parryStaminaGain.Format("Guard stamina cost");
+            _parryStaminaGain.Format("Parry stamina gain");
             _parryStaminaGain.Description =
-                "How much stamina you regain after a successfully parry" +
-                "Set to 0 to make parrying a little less spammable" +
-                "\n\nUnit: stamina points or percent of max stamina";
+                "How much stamina you regain after a parry" +
+                "\nSet to 0 to make parrying a little less spammable" +
+                "\n\nUnit: stamina points, or percent of max stamina";
             using (Indent)
                 _parryStaminaGainIsPercent.Format("percent of max stamina", _parryStaminaGain, t => t > 0);
         }
@@ -74,11 +81,12 @@
         {
             switch (presetName)
             {
-                case nameof(Preset.Coop_NewGameExtra_HardMode):
+                case nameof(Preset.Vheos_HardMode):
                     ForceApply();
-                    _parryDuration.Value = 133;
-                    _deflectDuration.Value = 267;
+                    _parryDuration.Value = 160;
+                    _deflectDuration.Value = 240;
                     _optionalDeflectDuration.Value = 600;
+                    _parryHitboxGrowth.Value = 1f;
                     _guardWithoutMeleeWeapon.Value = true;
                     _parryWithoutMeleeWeapon.Value = false;
                     _guardStaminaCost.Value = 6;
@@ -127,7 +135,7 @@
                 extraCost = _guardStaminaCost - ORIGINAL_GUARD_STAMINA_COST;
                 if (_guardStaminaCostIsPercent)
                     extraCost *= __instance.myInfo.totalStamina / 100f;
-            }           
+            }
 
             if (extraCost > 0)
                 __instance.DrainStamina(+extraCost);
@@ -135,10 +143,11 @@
                 __instance.FillStamina(-extraCost);
 
             // Coroutine
-            bool hasMeleeWeapon = PlayerHaveMeleeWeapon_Original(__instance.myInfo);
-
             original.MoveNext();
-            __instance.parryActive = hasMeleeWeapon || _parryWithoutMeleeWeapon;
+            __instance.parryActive = _parryWithoutMeleeWeapon || PlayerHaveMeleeWeapon_Original(__instance.myInfo);
+
+            __instance.parryCollider.SetActive(__instance.parryActive);
+            __instance.parryCollider.GetComponent<BoxCollider2D>().size = new Vector2(1.1f, 0.6f) + _parryHitboxGrowth.Value.ToVector2();
             if (_parryDuration > 0)
                 yield return gameTime.WaitForSeconds(_parryDuration / 1000f);
 

@@ -18,46 +18,19 @@
     {
         // Settings
         static private ModSetting<int> _extraBrightness;
-        static private ModSetting<bool> _damagePopups;
-        static private ModSetting<bool> _statusEffectPopups;
-        static private ModSetting<bool> _criticalPopup;
-        static private ModSetting<bool> _parryPopup;
-        static private ModSetting<bool> _clockTime;
-        static private ModSetting<bool> _clockDay;
-        static private ModSetting<bool> _comboCounter;
-        static private ModSetting<bool> _comboCounterAsPercentIncrease;
-        static private ModSetting<bool> _comboProgressBar;
-        static private Dictionary<SFX, SFXSettings> _sfxSettingsBySFX;
         static private Dictionary<int, PaletteSettings> _paletteSettingsByPlayerID;
-        static private ModSetting<bool> _applyColorPalettes;
+        static private Dictionary<SFX, SFXSettings> _sfxSettingsBySFX;
         override protected void Initialize()
         {
             _extraBrightness = CreateSetting(nameof(_extraBrightness), 0, IntRange(0, 100));
-
-            _damagePopups = CreateSetting(nameof(_damagePopups), false);
-            _statusEffectPopups = CreateSetting(nameof(_statusEffectPopups), false);
-            _criticalPopup = CreateSetting(nameof(_criticalPopup), false);
-            _parryPopup = CreateSetting(nameof(_parryPopup), false);
-
-            _comboCounter = CreateSetting(nameof(_comboCounter), false);
-            _comboCounterAsPercentIncrease = CreateSetting(nameof(_comboCounterAsPercentIncrease), false);
-            _comboProgressBar = CreateSetting(nameof(_comboProgressBar), false);
-
-            _clockTime = CreateSetting(nameof(_clockTime), false);
-            _clockDay = CreateSetting(nameof(_clockDay), false);
-
-            _sfxSettingsBySFX = new Dictionary<SFX, SFXSettings>();
-            foreach (var sfx in Utility.GetEnumValues<SFX>())
-                _sfxSettingsBySFX[sfx] = new SFXSettings(this, sfx);
 
             _paletteSettingsByPlayerID = new Dictionary<int, PaletteSettings>();
             foreach (var playerID in new[] { 0, 1 })
                 _paletteSettingsByPlayerID[playerID] = new PaletteSettings(this, playerID);
 
-            _applyColorPalettes = CreateSetting(nameof(_applyColorPalettes), false);
-
-            // Events
-            AddEventOnConfigClosed(() => UpdateClockVisibility(PseudoSingleton<InGameClock>.instance));
+            _sfxSettingsBySFX = new Dictionary<SFX, SFXSettings>();
+            foreach (var sfx in Utility.GetEnumValues<SFX>())
+                _sfxSettingsBySFX[sfx] = new SFXSettings(this, sfx);
         }
         override protected void SetFormatting()
         {
@@ -68,43 +41,14 @@
                 "\n(requires game restart)" +
                 "\n\nUnit: arbitrary linear scale";
 
-            CreateHeader("Combat popups").Description =
-                "Allows you to hide chosen text popups to make combat less cluttered and more immersive";
+            CreateHeader("Alma's color palette").Description =
+                "Allows you to override Alma's sprite colors" +
+                "\nYou can define separate palettes for each player";
             using (Indent)
             {
-                _damagePopups.Format("damage numbers");
-                _damagePopups.Description =
-                    "Displays damage numbers";
-                _statusEffectPopups.Format("status effects");
-                _statusEffectPopups.Description =
-                    "Displays the big \"BURN!\", \"FROZEN!\" and \"DEF. DOWN!\" popups when inflicting elemental status effects";
-                _criticalPopup.Format("critical hit");
-                _criticalPopup.Description =
-                    "Displays the big red \"CRITICAL!\" popup when attacking a stunned enemy";
-                _parryPopup.Format("parry");
-                _parryPopup.Description =
-                    "Displays the big green \"PERFECT!\" popup when parrying";
+                _paletteSettingsByPlayerID[0].Format("Player 1");
+                _paletteSettingsByPlayerID[1].Format("Player 2");
             }
-
-            _comboCounter.Format("Combo counter");
-            _comboCounter.Description =
-                "Displays the current damage multiplier gained from combo";
-            using (Indent)
-            {
-                _comboCounterAsPercentIncrease.Format("format as percent increase", _comboCounter);
-                _comboCounterAsPercentIncrease.Description =
-                    "Changes the combo counter formatting from a multiplier (eg. 1.23x) to a percent increase (eg. +23%)";
-            }
-            _comboProgressBar.Format("Combo progress bar");
-            _comboProgressBar.Description =
-                "Displays the colorful progress bar below the numerical combo value";
-
-            _clockTime.Format("Clock time");
-            _clockTime.Description =
-                "Displays the hours / minutes counter";
-            _clockDay.Format("Clock day");
-            _clockDay.Description =
-                "Displays the day counter";
 
             CreateHeader("Menu SFX overrides").Description =
                 "Overrides the volume / pitch of chosen menu sound effects";
@@ -122,101 +66,57 @@
                 _sfxSettingsBySFX[SFX.MenuEscape].Description =
                     "Plays when you return to a previous menu screen";
             }
-
-            CreateHeader("Alma's color palette").Description =
-                "Allows you to override Alma's sprite colors" +
-                "\nYou can define separate palettes for each player";
-            using (Indent)
-            {
-                _applyColorPalettes.Format("Apply");
-                _applyColorPalettes.Description =
-                    "Instantly applies all active color overrides";
-                _paletteSettingsByPlayerID[0].Format("Player 1");
-                _paletteSettingsByPlayerID[1].Format("Player 2");
-            }
         }
         override protected void LoadPreset(string presetName)
         {
             switch (presetName)
             {
-                case nameof(Preset.Coop_NewGameExtra_HardMode):
+                case nameof(Preset.Vheos_UI):
                     ForceApply();
                     _extraBrightness.Value = 33;
-                    _statusEffectPopups.Value = true;
-                    _criticalPopup.Value = true;
-                    _parryPopup.Value = true;
-                    _comboCounterAsPercentIncrease.Value = true;
-                    _comboProgressBar.Value = false;
-                    _clockTime.Value = false;
-                    _clockDay.Value = true;
                     break;
             }
         }
         override protected string Description =>
-            "Mods that affect the audio / visual layers of the game" +
+            "Mods that affect the graphics and sound" +
             "\n\nExamples:" +
             "\n• Brighten up dark areas" +
-            "\n• Hide combat popups" +
-            "\n• Hide current day / time" +
-            "\n• Customize combo display" +
-            "\n• Change volume / pitch of menu SFX" +
-            "\n• Customize Alma's color palette";
+            "\n• Customize Alma's color palette" +
+            "\n• Change volume / pitch of menu SFX";
 
         // Privates
         private const float EXPOSURE_LERP_TARGET = 1.5f;
-        static private void UpdateClockVisibility(InGameClock inGameClock)
-        {
-            if (inGameClock == null)
-                return;
-
-            inGameClock.clockText.transform.localScale = _clockTime ? Vector3.one : Vector3.zero;
-            inGameClock.dayText.transform.localScale = _clockDay ? Vector3.one : Vector3.zero;
-        }
-        static private bool HasAnyPlayerJustParried()
-        => PseudoSingleton<PlayersManager>.instance.TryNonNull(out var playerManager)
-        && (playerManager.playerObjects[0].myCharacter.justDidAPerfectParry
-        || playerManager.playerObjects[1].myCharacter.justDidAPerfectParry);
         static private string GetLocalizedString(string key)
         => TranslationSystem.FindTerm("Terms", key, true);
-        static private string GetInternalSFXName(SFX sfx, SoundEffectDatabase sfxDatabase)
-        {
-            switch (sfx)
-            {
-                case SFX.MenuNavigate: return sfxDatabase.menuSelect;
-                case SFX.MenuEnter: return sfxDatabase.menuClick;
-                case SFX.MenuEscape: return sfxDatabase.menuNegative;
-                default: return null;
-            }
-        }
 
         // Defines
         #region SkinSettinsg
         private class PaletteSettings
         {
             // Settings
-            private readonly ModSetting<string> SerializedData;
-            private readonly ModSetting<SaveLoad> SaveLoadSetting;
-            private readonly ModSetting<bool> Toggle;
-            private readonly ModSetting<bool> CommonToggle;
-            private readonly ModSetting<bool> HairToggle;
-            private readonly ModSetting<bool> SkinToggle;
-            private readonly ModSetting<bool> ArmorToggle;
-            private readonly ModSetting<bool> WeaponToggle;
-            private readonly ModSetting<Color> Highlight;
-            private readonly ModSetting<Color> HairDark;
-            private readonly ModSetting<Color> HairRegular;
-            private readonly ModSetting<Color> HairBright;
-            private readonly ModSetting<Color> SkinDark;
-            private readonly ModSetting<Color> SkinRegular;
-            private readonly ModSetting<Color> SkinBright;
-            private readonly ModSetting<Color> ArmorMainDark;
-            private readonly ModSetting<Color> ArmorMainRegular;
-            private readonly ModSetting<Color> ArmorSideDark;
-            private readonly ModSetting<Color> ArmorSideRegular;
-            private readonly ModSetting<Color> WeaponMain;
-            private readonly ModSetting<Color> WeaponSlash;
-            private readonly ModSetting<Color> WeaponFlames;
-            private readonly ModSetting<Color> WeaponSparks;
+            internal readonly ModSetting<string> SerializedData;
+            internal readonly ModSetting<Actions> ActionsSetting;
+            internal readonly ModSetting<bool> Toggle;
+            internal readonly ModSetting<bool> CommonToggle;
+            internal readonly ModSetting<bool> HairToggle;
+            internal readonly ModSetting<bool> SkinToggle;
+            internal readonly ModSetting<bool> ArmorToggle;
+            internal readonly ModSetting<bool> WeaponToggle;
+            internal readonly ModSetting<Color> Highlight;
+            internal readonly ModSetting<Color> HairDark;
+            internal readonly ModSetting<Color> HairRegular;
+            internal readonly ModSetting<Color> HairBright;
+            internal readonly ModSetting<Color> SkinDark;
+            internal readonly ModSetting<Color> SkinRegular;
+            internal readonly ModSetting<Color> SkinBright;
+            internal readonly ModSetting<Color> ArmorMainDark;
+            internal readonly ModSetting<Color> ArmorMainRegular;
+            internal readonly ModSetting<Color> ArmorSideDark;
+            internal readonly ModSetting<Color> ArmorSideRegular;
+            internal readonly ModSetting<Color> WeaponMain;
+            internal readonly ModSetting<Color> WeaponSlash;
+            internal readonly ModSetting<Color> WeaponFlames;
+            internal readonly ModSetting<Color> WeaponSparks;
             internal PaletteSettings(Audiovisual mod, int playerID)
             {
                 _mod = mod;
@@ -224,7 +124,7 @@
                 string keyPrefix = $"Player{_playerID + 1}_";
 
                 SerializedData = _mod.CreateSetting(keyPrefix + nameof(SerializedData), "");
-                SaveLoadSetting = _mod.CreateSetting(keyPrefix + nameof(SaveLoadSetting), (SaveLoad)0);
+                ActionsSetting = _mod.CreateSetting(keyPrefix + nameof(ActionsSetting), (Actions)0);
 
                 Toggle = _mod.CreateSetting(keyPrefix + nameof(Toggle), false);
                 CommonToggle = _mod.CreateSetting(keyPrefix + nameof(CommonToggle), false);
@@ -270,24 +170,32 @@
                 };
 
                 // events
-                SaveLoadSetting.AddEventSilently(SaveLoadFromConfig);
+                ActionsSetting.AddEventSilently(SaveLoadResetFromConfig);
             }
             internal void Format(string name)
             {
+                Toggle.DisplayResetButton = false;
                 Toggle.Format(name.ToString());
                 using (Indent)
                 {
+                    SerializedData.DisplayResetButton = false;
                     SerializedData.Format("Sharecode", Toggle);
                     SerializedData.Description =
                         "Allows you to share your color palette with others <3" +
-                        "\"Load\" converts your settings into a sharecode" +
-                        "\"Save\" converts the sharecode into settings";
-                    SaveLoadSetting.Format("");
+                        "\n\"Load\" converts your settings into a sharecode" +
+                        "\n\"Save\" converts the sharecode into settings" +
+                        "\n\"Reset\" resets all settings to their defaults";
+                    ActionsSetting.DisplayResetButton = false;
+                    ActionsSetting.Format("", Toggle);
+
+                    CommonToggle.DisplayResetButton = false;
                     CommonToggle.Format("Common", Toggle);
                     using (Indent)
                     {
                         Highlight.Format("Highlight", CommonToggle);
                     }
+
+                    HairToggle.DisplayResetButton = false;
                     HairToggle.Format("Hair", Toggle);
                     using (Indent)
                     {
@@ -295,6 +203,8 @@
                         HairRegular.Format("Regular", HairToggle);
                         HairBright.Format("Bright", HairToggle);
                     }
+
+                    SkinToggle.DisplayResetButton = false;
                     SkinToggle.Format("Skin", Toggle);
                     using (Indent)
                     {
@@ -302,6 +212,8 @@
                         SkinRegular.Format("Regular", SkinToggle);
                         SkinBright.Format("Bright", SkinToggle);
                     }
+
+                    ArmorToggle.DisplayResetButton = false;
                     ArmorToggle.Format("Armor", Toggle);
                     using (Indent)
                     {
@@ -310,6 +222,8 @@
                         ArmorSideDark.Format("Side, Dark", ArmorToggle);
                         ArmorSideRegular.Format("Side, Regular", ArmorToggle);
                     }
+
+                    WeaponToggle.DisplayResetButton = false;
                     WeaponToggle.Format("Weapon", Toggle);
                     using (Indent)
                     {
@@ -348,7 +262,7 @@
             {
                 switch (pixelX)
                 {
-                    case 241: color = Highlight; return true;
+                    case 241 when CommonToggle: color = Highlight; return true;
 
                     case 148 when HairToggle: color = HairDark; return true;
                     case 181 when HairToggle: color = HairRegular; return true;
@@ -371,16 +285,27 @@
                     default: color = default; return false;
                 }
             }
-            private void SaveLoadFromConfig()
+            private void SaveLoadResetFromConfig()
             {
-                if (SaveLoadSetting.Value.HasFlag(SaveLoad.Save))
+                if (ActionsSetting.Value.HasFlag(Actions.Save))
                     SerializedData.SetSilently(Serialize());
-                if (SaveLoadSetting.Value.HasFlag(SaveLoad.Load))
+                if (ActionsSetting.Value.HasFlag(Actions.Load))
                     Deserialize(SerializedData);
+                if (ActionsSetting.Value.HasFlag(Actions.Reset))
+                {
+                    SerializedData.SetSilently("");
+                    foreach (var colors in _colorsByToggle)
+                    {
+                        colors.Key.Reset();
+                        foreach (var color in colors.Value)
+                            color.Reset();
+                    }
+                }
+
                 if (PseudoSingleton<PlayersManager>.instance.TryNonNull(out var playerManager))
                     Apply(playerManager);
 
-                SaveLoadSetting.SetSilently(0);
+                ActionsSetting.SetSilently(0);
             }
 
             // De/serialize
@@ -452,10 +377,11 @@
 
             // Defines
             [Flags]
-            private enum SaveLoad
+            internal enum Actions
             {
                 Save = 1 << 0,
                 Load = 1 << 1,
+                Reset = 1 << 2,
             }
         }
         #endregion
@@ -464,9 +390,9 @@
         private class SFXSettings
         {
             // Settings
-            private readonly ModSetting<bool> Toggle;
-            private readonly ModSetting<int> Volume;
-            private readonly ModSetting<int> Pitch;
+            internal readonly ModSetting<bool> Toggle;
+            internal readonly ModSetting<int> Volume;
+            internal readonly ModSetting<int> Pitch;
             internal SFXSettings(Audiovisual mod, SFX sfx)
             {
                 _mod = mod;
@@ -506,6 +432,16 @@
             private readonly Audiovisual _mod;
             private readonly SFX _sfx;
             private string _internalSFXName;
+            private string GetInternalSFXName(SFX sfx, SoundEffectDatabase sfxDatabase)
+            {
+                switch (sfx)
+                {
+                    case SFX.MenuNavigate: return sfxDatabase.menuSelect;
+                    case SFX.MenuEnter: return sfxDatabase.menuClick;
+                    case SFX.MenuEscape: return sfxDatabase.menuNegative;
+                    default: return null;
+                }
+            }
         }
         #endregion
 
@@ -519,82 +455,14 @@
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
 
-        // Exposure
-        [HarmonyPatch(typeof(Lists), nameof(Lists.Start)), HarmonyPostfix]
-        static private void Lists_Start_Post(Lists __instance)
+        // Skin
+        [HarmonyPatch(typeof(PlayersManager), nameof(PlayersManager.UpdatePlayerPalette)), HarmonyPostfix]
+        static private void PlayersManager_UpdatePlayerPalette_Post(PlayersManager __instance, int playerNum)
         {
-            PostProcessingProfile[] GetCameraProfiles(AreaDescription areaDescription)
-            => new[]
-            {
-                areaDescription.morningCameraProfile,
-                areaDescription.dayCameraProfile,
-                areaDescription.eveningCameraProfile,
-                areaDescription.nightCameraProfile
-            };
+            if (!__instance.playerObjects[playerNum].gameObject.activeInHierarchy)
+                return;
 
-            var processedProfiles = new HashSet<PostProcessingProfile>();
-            foreach (var areaDescription in __instance.areaDatabase.areas)
-                foreach (var profile in GetCameraProfiles(areaDescription))
-                    if (!processedProfiles.Contains(profile))
-                    {
-                        var settings = profile.colorGrading.settings;
-                        settings.basic.postExposure.SetLerp(EXPOSURE_LERP_TARGET, _extraBrightness / 100f);
-                        profile.colorGrading.settings = settings;
-                        processedProfiles.Add(profile);
-                    }
-        }
-
-        [HarmonyPatch(typeof(InGameTextController), nameof(InGameTextController.ShowText)), HarmonyPrefix]
-        static private bool InGameTextController_ShowText_Pre(InGameTextController __instance, ref string text)
-        {
-            if (!_damagePopups && text.Any(char.IsDigit))
-                return false;
-            if (!_statusEffectPopups && (text == GetLocalizedString("Burn") || text == GetLocalizedString("Frozen") || text == GetLocalizedString("DefDown")))
-                return false;
-            if (!_criticalPopup && text.Contains("CRITICAL!\n"))
-                text = text.Replace("CRITICAL!\n", null);
-            if (!_parryPopup && text == "PERFECT!" && HasAnyPlayerJustParried())
-                return false;
-
-            return true;
-        }
-
-        // Hide clock
-        [HarmonyPatch(typeof(InGameClock), nameof(InGameClock.UpdateClock)), HarmonyPostfix]
-        static private void InGameClock_Start_Post(InGameClock __instance)
-        => UpdateClockVisibility(__instance);
-
-        [HarmonyPatch(typeof(ComboBar), nameof(ComboBar.SetComboText)), HarmonyPrefix]
-        static private bool ComboBar_SetComboText_Pre(ComboBar __instance)
-        {
-            if (!_comboCounterAsPercentIncrease)
-                return true;
-
-            float percentIncrease = __instance.comboValue.Sub(1).Mul(100).Round().ClampMin(1);
-
-            __instance.valueText.text = $"+{percentIncrease:F0}%";
-            __instance.valueText.keepSizeLarge = true;
-            __instance.valueText.ApplyText(false, true, "", true);
-            return false;
-        }
-
-        [HarmonyPatch(typeof(ComboBar), nameof(ComboBar.OnEnable)), HarmonyPrefix]
-        static private bool ComboBar_OnEnable_Post(ComboBar __instance)
-        {
-            // counter
-            float comboCounterScale = _comboCounter ? 1f : 0f;
-            float comboNameScale = _comboCounter
-                                 ? _comboCounterAsPercentIncrease ? 0.75f : 1f
-                                 : 0f;
-
-            __instance.valueText.transform.localScale = comboCounterScale.ToVector3();
-            __instance.transform.Find("ComboName").localScale = comboNameScale.ToVector3();
-
-            // progress bar
-            __instance.FindChild("EmptyBar").SetActive(_comboProgressBar);
-            __instance.barFill.gameObject.SetActive(_comboProgressBar);
-
-            return false;
+            _paletteSettingsByPlayerID[playerNum].Apply(__instance);
         }
 
         // SFX
@@ -610,14 +478,6 @@
         {
             foreach (var settingsBySFX in _sfxSettingsBySFX)
                 settingsBySFX.Value.TryApply(eventName, ref volume, ref pitch);
-        }
-
-        // Skin
-        [HarmonyPatch(typeof(PlayersManager), nameof(PlayersManager.UpdatePlayerPalette)), HarmonyPostfix]
-        static private void PlayersManager_UpdatePlayerPalette_Post(PlayersManager __instance)
-        {
-            foreach (var settings in _paletteSettingsByPlayerID)
-                settings.Value.Apply(__instance);
         }
     }
 }

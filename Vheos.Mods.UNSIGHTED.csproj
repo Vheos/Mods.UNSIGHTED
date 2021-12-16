@@ -65,8 +65,14 @@
       <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.Physics2DModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mods\UI.cs" />
     <Compile Include="Mods\Movement.cs" />
     <Compile Include="Mods\ChipsCogs.cs" />
     <Compile Include="Mods\Audiovisual.cs" />
