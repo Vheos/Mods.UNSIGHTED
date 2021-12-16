@@ -1,4 +1,11 @@
-# How to:
+# What is this?
+Collection of my personal mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/)! Those include **co-op improvements** (my passion), **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
+
+(actually some people might, I wouldn't know)
+
+
+
+# How to
 - Download [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest/), [ConfigurationManager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases/latest) and [UNSIGHTED+](https://github.com/Vheos777/Mods.UNSIGHTED/releases/latest)
 - Extract all files to the game folder (the one with `UNSIGHTED.exe`)
 - Press `F1` in-game to open the `Configuration Manager` window
@@ -6,10 +13,20 @@
 
 
 
-# Highlight
-One of my proudest features in this mod pack! It's a bit clunky, as the `Configuration Manager` doesn't provide either HSV sliders or numerical RGB input, ***BUT IT WORKS!*** I've even gone the extra mile and written a de/serializer for the color data, so you can copy-paste palettes and share them with others **<3** Take a look at this juicy juice:
+# Highlights
+### Color Palette Editor
+One of my proudest features in this mod pack! It's a bit clunky, as the **Configuration Manager** doesn't provide either HSV sliders or numerical RGB input, ***BUT IT WORKS!*** I've even gone the extra mile and written a de/serializer for the color data, so you can copy-paste palettes and share them with others **<3** Take a look at this juicy juice:
 
 https://user-images.githubusercontent.com/9155825/146345939-7f04ae15-d06b-4dfc-9ab0-853e28c80fc1.mp4
+
+### Equal Rights for Player 2
+**UNSIGHTED** is an well-designed game, with a lot of modern and concious decisions. But there's a tiny hair in this otherwise perfect meal - the archaic, redundant and deeply rooted in the gaming community (for at least as long as **Luigi** exists) **MARGINALIZATION OF THE SECOND PLAYER!** Take a look at this:
+
+https://user-images.githubusercontent.com/9155825/146352205-7a16275b-ae4b-4003-9c39-272b40fbe07c.mp4
+
+Notice how **Player 1** still has a decent line of sight around them, while **Player 2** is already in the gutter? If that wasn't hurtful enough, they will soon be forcefully tossed like a bag of potatoes towards **Player 1**, because god forbid anything *even remotely slows down* the protagonist's adventuring. Obviously, both issues are addressed in the `Camera` section of the mod pack, and this is how the same scene plays out with the `Prioritize player 1` and `Teleport player 2` settings disabled:
+
+https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8f1f-528a6b5a206e.mp4
 
 
 
@@ -119,7 +136,7 @@ https://user-images.githubusercontent.com/9155825/146345939-7f04ae15-d06b-4dfc-9
 
 
 
-# FAQ:
+# FAQ
 - **How to change the default `Configuration Manager` hotkey?**
     - check out `UNSIGHTED\BepInEx\config\com.bepis.bepinex.configurationmanager.cfg` :)
 - **How to unhide a mod?**
@@ -133,12 +150,12 @@ https://user-images.githubusercontent.com/9155825/146345939-7f04ae15-d06b-4dfc-9
 
 
 
-# Contact:
+# Contact
 - write a comment in the [Steam Discussion](https://steamcommunity.com/app/1062110/discussions/)
 - send me a DM on Discord: `Vheos#5865`
 
 
 
-# Changelog:
+# Changelog
 - **1.0.0**
     - Public release \o/
