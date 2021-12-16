@@ -26,3 +26,7 @@
 # Changelog:
 - **1.0.0**
     - Public release \o/
+
+https://raw.githubusercontent.com/Vheos777/Mods.UNSIGHTED/master/ReadmeAssets/CameraJustice.mp4
+
+https://user-images.githubusercontent.com/9155825/146317572-d2e365c9-1dd4-4a6a-bb17-06b04bb27cc7.mp4
