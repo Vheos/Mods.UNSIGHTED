@@ -13,7 +13,7 @@
     {
         #region SETTINGS
         public const string GUID = "Vheos.Mods.UNSIGHTED";
-        public const string NAME = "UNSIGHTED+";
+        public const string NAME = "UNSIGHTED++";
         public const string VERSION = "1.0.0";
         #endregion
 
