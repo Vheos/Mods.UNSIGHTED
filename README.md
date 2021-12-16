@@ -4,6 +4,121 @@
 - Press `F1` in-game to open the `Configuration Manager` window
 - Enjoy <3
 
+
+
+# Highlight
+One of my proudest features in this mod pack! It's a bit clunky, as the `Configuration Manager` doesn't provide either HSV sliders or numerical RGB input, ***BUT IT WORKS!*** I've even gone the extra mile and written a de/serializer for the color data, so you can copy-paste palettes and share them with others **<3** Take a look at this juicy juice:
+
+https://user-images.githubusercontent.com/9155825/146345939-7f04ae15-d06b-4dfc-9ab0-853e28c80fc1.mp4
+
+
+
+# All Settings *(as of [v1.0.0](https://github.com/Vheos777/Mods.UNSIGHTED/releases/tag/v1.0.0))*
+<details>
+    <summary>Time</summary>
+
+- Change the whole engine speed
+- Change the in-game timer speed
+- Change the cinematic framestop / slowmo
+- Override current day, hour and minute
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Time.png)
+</details>
+
+<details>
+    <summary>Movement</summary>
+
+- Change move/run speed 
+- Change run/spin stamina drain 
+- Customize `Runner Chip`
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Movement.png)
+</details>
+
+<details>
+    <summary>Guard</summary>
+
+- Change perfect and normal parry windows 
+- Guard longer by holding the button 
+- Guard without melee weapons 
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Guard.png)
+</details>
+
+<details>
+    <summary>Combo</summary>
+
+- Change combo duration and decrease rate 
+- Change combo gain values per weapon type 
+- Change syringe gained along with combo
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Combo.png)
+</details>
+
+<details>
+    <summary>Chips & Cogs</summary>
+
+- Change starting chip slots and unlock costs 
+- Change number of cog slots 
+- Limit number of active cog types
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/ChipsAndCogs.png)
+</details>
+
+<details>
+    <summary>Camera</summary>
+
+- Change camera zoom to see more 
+- Enable co-op screen stretching 
+- Put an end to player 2's oppression
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Camera.png)
+</details>
+
+<details>
+    <summary>UI</summary>
+
+- Hide combat popups 
+- Hide current day / time 
+- Customize crosshair 
+- Customize combo display
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/UI.png)
+</details>
+
+<details>
+    <summary>Audiovisual</summary>
+
+- Brighten up dark areas 
+- Customize Alma's color palette 
+- Change volume / pitch of menu SFX
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Audiovisual.png)
+</details>
+
+<details>
+    <summary>Parry Challenge</summary>
+    
+- Change spawns and thresholds for each wave
+- Change thresholds for getting rewards
+- Try out the 5 predefined presets
+    
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/ParryChallenge.png)
+</details>
+
+<details>
+    <summary>Various</summary>    
+
+- Skip 30sec of intro logos 
+- Customize the `Stamina Heal` move
+- Scale enemies' and bosses' HP 
+- Make enemies in groups attack more often
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Various.png)
+</details>
+
+
+
 # FAQ:
 - **How to change the default `Configuration Manager` hotkey?**
     - check out `UNSIGHTED\BepInEx\config\com.bepis.bepinex.configurationmanager.cfg` :)
@@ -16,17 +131,14 @@
 - **Can I see the source code?**
     - yep, all my mods are open source and available at [GitHub](https://github.com/stars/Vheos777/lists/mods)! Feel free to study, clone and/or edit the code as you please :)
 
+
+
 # Contact:
 - write a comment in the [Steam Discussion](https://steamcommunity.com/app/1062110/discussions/)
 - send me a DM on Discord: `Vheos#5865`
 
-# Overview:
-**Coming soon!**  
+
 
 # Changelog:
 - **1.0.0**
     - Public release \o/
-
-https://raw.githubusercontent.com/Vheos777/Mods.UNSIGHTED/master/ReadmeAssets/CameraJustice.mp4
-
-https://user-images.githubusercontent.com/9155825/146317572-d2e365c9-1dd4-4a6a-bb17-06b04bb27cc7.mp4
