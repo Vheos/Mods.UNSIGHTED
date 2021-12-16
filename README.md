@@ -151,7 +151,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 
 
 # Contact
-- write a comment in the [Steam Discussion](https://steamcommunity.com/app/1062110/discussions/)
+- write a comment in the [Steam Discussion](https://steamcommunity.com/app/1062110/discussions/0/4739473745767880713/)
 - send me a DM on Discord: `Vheos#5865`
 
 
@@ -160,6 +160,6 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 - **1.1.0**
     - `Time`: added settings to change current day, hour and minute
     - `UI`: added settings to customize the crosshairs
-    - a few  last (first?) minute fixes
+    - a few last (first?) minute fixes
 - **1.0.0**
     - Public release \o/
