@@ -20,11 +20,11 @@ One of my proudest features in this mod pack! It's a bit clunky, as the **Config
 https://user-images.githubusercontent.com/9155825/146345939-7f04ae15-d06b-4dfc-9ab0-853e28c80fc1.mp4
 
 ### Equal Rights for Player 2
-**UNSIGHTED** is an well-designed game, with a lot of modern and concious decisions. But there's a tiny hair in this otherwise perfect meal - the archaic, redundant and deeply rooted in the gaming community (for at least as long as **Luigi** exists) **MARGINALIZATION OF THE SECOND PLAYER!** Take a look at this:
+**UNSIGHTED** is an well-designed game, with a lot of modern and concious decisions. But there's a tiny hair in this otherwise perfect meal - the archaic, redundant and deeply rooted in the gaming community (for at least as long as Luigi exists) **MARGINALIZATION OF THE SECOND PLAYER!** Take a look at this:
 
 https://user-images.githubusercontent.com/9155825/146352205-7a16275b-ae4b-4003-9c39-272b40fbe07c.mp4
 
-Notice how **Player 1** still has a decent line of sight around them, while **Player 2** is already in the gutter? If that wasn't hurtful enough, they will soon be forcefully tossed like a bag of potatoes towards **Player 1**, because god forbid anything *even remotely slows down* the protagonist's adventuring. Obviously, both issues are addressed in the `Camera` section of the mod pack, and this is how the same scene plays out with the `Prioritize player 1` and `Teleport player 2` settings disabled:
+Notice how **Player 1** still has a decent line of sight around them, while **Player 2** is already in the gutter? If that wasn't hurtful enough, they will soon be forcefully hurled like a bag of potatoes to **Player 1**'s location, because god forbid anything *even remotely slows down* the protagonist's adventuring. Obviously, both issues are addressed in the `Camera` section of the mod pack, and this is how the same scene plays out with `Prioritize player 1` disabled and `Co-op camera stretching` settings disabled:
 
 https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8f1f-528a6b5a206e.mp4
 
