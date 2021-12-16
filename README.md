@@ -157,5 +157,9 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 
 
 # Changelog
+- **1.1.0**
+    - `Time`: added settings to change current day, hour and minute
+    - `UI`: added settings to customize the crosshairs
+    - a few  last (first?) minute fixes
 - **1.0.0**
     - Public release \o/
