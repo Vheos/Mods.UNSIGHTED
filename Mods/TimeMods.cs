@@ -19,6 +19,9 @@
         static private ModSetting<int> _frameStopDurationMultiplier;
         static private ModSetting<int> _slowMotionDurationMultiplier;
         static private ModSetting<int> _slowMotionSpeed;
+        static private ModSetting<int> _day;
+        static private ModSetting<int> _hour;
+        static private ModSetting<int> _minute;
         override protected void Initialize()
         {
             _engineSpeedMultiplier = CreateSetting(nameof(_engineSpeedMultiplier), 100, IntRange(50, 200));
@@ -26,14 +29,23 @@
             _gameToEngineTimeRatio = CreateSetting(nameof(_gameToEngineTimeRatio), 48, IntRange(0, 120));
             _fishingTimerSpeed = CreateSetting(nameof(_fishingTimerSpeed), 0, IntRange(0, 100));
             _parryChallengeTimeMultiplier = CreateSetting(nameof(_parryChallengeTimeMultiplier), 0, IntRange(0, 100));
+
             _frameStopDurationMultiplier = CreateSetting(nameof(_frameStopDurationMultiplier), 100, IntRange(0, 200));
             _slowMotionDurationMultiplier = CreateSetting(nameof(_slowMotionDurationMultiplier), 100, IntRange(0, 200));
             _slowMotionSpeed = CreateSetting(nameof(_slowMotionSpeed), 30, IntRange(0, 100));
+
+            _day = CreateSetting(nameof(_day), 0, IntRange(1, 100));
+            _hour = CreateSetting(nameof(_hour), 0, IntRange(0, 23));
+            _minute = CreateSetting(nameof(_minute), 0, IntRange(0, 59));
 
             // Events
             _engineSpeedMultiplier.AddEventSilently(() => Time.timeScale = 1f);
             AddEventOnEnabled(RestartTimerCoroutine);
             AddEventOnDisabled(RestartTimerCoroutine);
+            AddEventOnConfigOpened(ReadGameTime);
+            _day.AddEventSilently(() => GameTime.inGameDays = _day);
+            _hour.AddEventSilently(() => GameTime.inGameHours = _hour);
+            _minute.AddEventSilently(() => GameTime.inGameMinutes = _minute);
         }
         override protected void SetFormatting()
         {
@@ -77,12 +89,21 @@
                 "\n\nUnit: percent of original slow motion duration ";
             using (Indent)
             {
-                _slowMotionSpeed.Format("Slow motion speed", _slowMotionDurationMultiplier, t => t > 0);
+                _slowMotionSpeed.Format("slow motion speed", _slowMotionDurationMultiplier, t => t > 0);
                 _slowMotionSpeed.Description =
                     "How much the game slows down after a frame stop" +
                     "\nValue of 0 will simply extend the frame stop duration" +
                     "\nValue of 100 will have no effect" +
                     $"\n\nUnit: percent of total engine speed, accounting for \"{_engineSpeedMultiplier.Name}\"";
+            }
+
+            CreateHeader("Game time").Description =
+                "Allows you to change current day, hour and minute";
+            using (Indent)
+            {
+                _day.Format("day");
+                _hour.Format("hour");
+                _minute.Format("minute");
             }
         }
         override protected void LoadPreset(string presetName)
@@ -109,7 +130,8 @@
             "\n\nExamples:" +
             "\n• Change the whole engine speed" +
             "\n• Change the in-game timer speed" +
-            "\n• Change the cinematic framestop / slowmo";
+            "\n• Change the cinematic framestop / slowmo" +
+            "\n• Override current day, hour and minute";
         public void OnUpdate()
         {
             if (!_previousIsCutscene && PlayerInfo.cutscene)
@@ -134,6 +156,17 @@
             gameTime.StopCoroutine("InGameTimeCounter");
             gameTime.StartCoroutine("InGameTimeCounter");
         }
+        static private void ReadGameTime()
+        {
+            if (PseudoSingleton<Helpers>.instance == null)
+                return;
+
+            _day.SetSilently(GameTime.inGameDays);
+            _hour.SetSilently(GameTime.inGameHours);
+            _minute.SetSilently(GameTime.inGameMinutes);
+        }
+        static private GameplayTime GameTime
+        => PseudoSingleton<Helpers>.instance.GetPlayerData().currentGameplayTime;
 
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006

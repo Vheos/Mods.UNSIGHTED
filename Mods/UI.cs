@@ -13,6 +13,7 @@
     using Vheos.Tools.UtilityN;
     using System.Collections;
     using System.Text;
+    using UnityEngine.UI;
 
     public class UI : AMod
     {
@@ -26,6 +27,9 @@
         static private ModSetting<bool> _comboProgressBar;
         static private ModSetting<bool> _clockTime;
         static private ModSetting<bool> _clockDay;
+        static private ModSetting<Color> _crosshairBigDiamondColor;
+        static private ModSetting<Color> _crosshairSmallDiamondColor;
+        static private ModSetting<Color> _crosshairDotColor;
         override protected void Initialize()
         {
             _damagePopups = CreateSetting(nameof(_damagePopups), true);
@@ -33,8 +37,12 @@
             _criticalPopup = CreateSetting(nameof(_criticalPopup), true);
             _parryPopup = CreateSetting(nameof(_parryPopup), true);
 
+            _crosshairBigDiamondColor = CreateSetting(nameof(_crosshairBigDiamondColor), Color.white);
+            _crosshairSmallDiamondColor = CreateSetting(nameof(_crosshairSmallDiamondColor), Color.white);
+            _crosshairDotColor = CreateSetting(nameof(_crosshairDotColor), Color.white);
+
             _comboCounter = CreateSetting(nameof(_comboCounter), true);
-            _comboCounterAsPercentIncrease = CreateSetting(nameof(_comboCounterAsPercentIncrease), true);
+            _comboCounterAsPercentIncrease = CreateSetting(nameof(_comboCounterAsPercentIncrease), false);
             _comboProgressBar = CreateSetting(nameof(_comboProgressBar), true);
 
             _clockTime = CreateSetting(nameof(_clockTime), true);
@@ -62,6 +70,17 @@
                 _parryPopup.Format("parry");
                 _parryPopup.Description =
                     "Displays the big green \"PERFECT!\" popup when parrying";
+            }
+
+            CreateHeader("Crosshair").Description =
+                "Allows you to change the colors of each crosshair parts" +
+                "\nIn order to hide a part just set its color's alpha to 0" +
+                "\n(requires entering and leaving menu to take effect)";
+            using (Indent)
+            {
+                _crosshairBigDiamondColor.Format("big diamond");
+                _crosshairSmallDiamondColor.Format("small diamond");
+                _crosshairDotColor.Format("dot");
             }
 
             _comboCounter.Format("Combo counter");
@@ -95,6 +114,10 @@
                     _criticalPopup.Value = false;
                     _parryPopup.Value = false;
 
+                    _crosshairBigDiamondColor.Value = new Color(0, 0, 0, 0);
+                    _crosshairSmallDiamondColor.Value = new Color(1, 1, 1, 0.75f);
+                    _crosshairDotColor.Value = new Color(0, 0, 0, 0);
+
                     _comboCounter.Value = true;
                     _comboCounterAsPercentIncrease.Value = true;
                     _comboProgressBar.Value = true;
@@ -109,6 +132,7 @@
             "\n\nExamples:" +
             "\n• Hide combat popups" +
             "\n• Hide current day / time" +
+            "\n• Customize crosshair" +
             "\n• Customize combo display";
 
         // Privates
@@ -181,6 +205,17 @@
             __instance.barFill.gameObject.SetActive(_comboProgressBar);
 
             return false;
+        }
+
+        // Crosshair
+        [HarmonyPatch(typeof(PlayerAimInterface), nameof(PlayerAimInterface.OnEnable)), HarmonyPostfix]
+        static private void PlayerAimInterface_OnEnable_Post(PlayerAimInterface __instance)
+        {
+            foreach (var image in __instance.mouseCursor.GetComponentsInChildren<Image>(true))
+                image.color = image.name.Contains("1") ? _crosshairDotColor : _crosshairBigDiamondColor;
+
+            foreach (var image in __instance.directionCursor.GetComponentsInChildren<Image>(true))
+                image.color = _crosshairSmallDiamondColor;
         }
     }
 }

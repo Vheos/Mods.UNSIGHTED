@@ -27,14 +27,14 @@
             typeof(Movement),
             typeof(Guard),
             typeof(Combo),
-            typeof(ChipsCogs),          
+            typeof(ChipsCogs),
             typeof(Camera),
 
             typeof(UI),
             typeof(Audiovisual),
 
-            typeof(Various),
             typeof(ParryChallenge),
+            typeof(Various),
         };
         override protected string[] PresetNames
         => Utility.GetEnumValuesAsStrings<Preset>().ToArray();

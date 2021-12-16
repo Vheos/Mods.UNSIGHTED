@@ -15,24 +15,29 @@
     {
         // Settings
         static private ModSetting<bool> _skipIntroLogos;
-        static private ModSetting<bool> _pauseStaminaRecoveryOnGain;
+        static private ModSetting<bool> _runInBackground;
         static private ModSetting<int> _staminaHealGain;
         static private ModSetting<int> _staminaHealDuration;
         static private ModSetting<bool> _staminaHealCancelling;
+        static private ModSetting<bool> _pauseStaminaRecoveryOnGain;
         static private ModSetting<int> _enemyHPMultiplier;
         static private ModSetting<int> _enemyBossHPMultiplier;
         static private ModSetting<bool> _randomizeEnemyGroupAttackRhythm;
         override protected void Initialize()
         {
             _skipIntroLogos = CreateSetting(nameof(_skipIntroLogos), false);
-            _pauseStaminaRecoveryOnGain = CreateSetting(nameof(_pauseStaminaRecoveryOnGain), true);
+            _runInBackground = CreateSetting(nameof(_runInBackground), false);
 
             _staminaHealGain = CreateSetting(nameof(_staminaHealGain), 100, IntRange(0, 100));
             _staminaHealDuration = CreateSetting(nameof(_staminaHealDuration), 100, IntRange(50, 200));
             _staminaHealCancelling = CreateSetting(nameof(_staminaHealCancelling), true);
+            _pauseStaminaRecoveryOnGain = CreateSetting(nameof(_pauseStaminaRecoveryOnGain), true);
+
             _enemyHPMultiplier = CreateSetting(nameof(_enemyHPMultiplier), 100, IntRange(25, 400));
             _enemyBossHPMultiplier = CreateSetting(nameof(_enemyBossHPMultiplier), 100, IntRange(25, 400));
             _randomizeEnemyGroupAttackRhythm = CreateSetting(nameof(_randomizeEnemyGroupAttackRhythm), false);
+
+            _runInBackground.AddEvent(() => Application.runInBackground = _runInBackground);
         }
         override protected void SetFormatting()
         {
@@ -40,6 +45,10 @@
             _skipIntroLogos.Description =
                 "Skips all the unskippable logo animations, as well as the input choice screen, and goes straight to the main menu" +
                 "\nYou'll save about 30 seconds of your precious life each time you start the game";
+            _runInBackground.IsAdvanced = true;
+            _runInBackground.Format("Run in background");
+            _runInBackground.Description =
+                "Makes the game run even when it's not focused";
 
             _staminaHealGain.Format("\"Stamina Heal\" gain");
             _staminaHealGain.Description =

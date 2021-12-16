@@ -38,7 +38,7 @@
             _extraBrightness.Description =
                 "Increases the light exposure of night time and dark areas" +
                 "\nThe darker the original color palette, the more extra exposure it gets (nighttime gardens are affected the most)" +
-                "\n(requires game restart)" +
+                "\n(requires game restart to take effect)" +
                 "\n\nUnit: arbitrary linear scale";
 
             CreateHeader("Alma's color palette").Description =
@@ -123,10 +123,10 @@
                 _playerID = playerID;
                 string keyPrefix = $"Player{_playerID + 1}_";
 
+                Toggle = _mod.CreateSetting(keyPrefix + nameof(Toggle), false);
                 SerializedData = _mod.CreateSetting(keyPrefix + nameof(SerializedData), "");
                 ActionsSetting = _mod.CreateSetting(keyPrefix + nameof(ActionsSetting), (Actions)0);
 
-                Toggle = _mod.CreateSetting(keyPrefix + nameof(Toggle), false);
                 CommonToggle = _mod.CreateSetting(keyPrefix + nameof(CommonToggle), false);
                 HairToggle = _mod.CreateSetting(keyPrefix + nameof(HairToggle), false);
                 SkinToggle = _mod.CreateSetting(keyPrefix + nameof(SkinToggle), false);
@@ -454,6 +454,31 @@
 
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
+
+        // Exposure
+        [HarmonyPatch(typeof(Lists), nameof(Lists.Start)), HarmonyPostfix]
+        static private void Lists_Start_Post(Lists __instance)
+        {
+            PostProcessingProfile[] GetCameraProfiles(AreaDescription areaDescription)
+            => new[]
+            {
+                areaDescription.morningCameraProfile,
+                areaDescription.dayCameraProfile,
+                areaDescription.eveningCameraProfile,
+                areaDescription.nightCameraProfile
+            };
+
+            var processedProfiles = new HashSet<PostProcessingProfile>();
+            foreach (var areaDescription in __instance.areaDatabase.areas)
+                foreach (var profile in GetCameraProfiles(areaDescription))
+                    if (!processedProfiles.Contains(profile))
+                    {
+                        var settings = profile.colorGrading.settings;
+                        settings.basic.postExposure.SetLerp(EXPOSURE_LERP_TARGET, _extraBrightness / 100f);
+                        profile.colorGrading.settings = settings;
+                        processedProfiles.Add(profile);
+                    }
+        }
 
         // Skin
         [HarmonyPatch(typeof(PlayersManager), nameof(PlayersManager.UpdatePlayerPalette)), HarmonyPostfix]
