@@ -100,12 +100,13 @@
             }
         }
         override protected string ModName
-        => "Parry Challenge Editor";
+        => "Parry Challenge";
         override protected string Description =>
             "Allows you to customize the parry challenge" +
             "\n\nExamples:" +
-            "\n• Change when and which enemies spawn" +
-            "\n• Change thresholds for getting rewards";
+            "\n• Change spawns and thresholds for each wave" +
+            "\n• Change thresholds for getting rewards" +
+            "\n• Try out the 5 predefined presets";
 
         // Privates
         static private void ResetFirstTimeRewardsFromConfig()

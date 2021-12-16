@@ -72,6 +72,7 @@
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

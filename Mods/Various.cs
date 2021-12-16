@@ -106,7 +106,7 @@
             "Mods that haven't found their home yet!" +
             "\n\nExamples:" +
             "\n• Skip 30sec of intro logos" +
-            "\n• Customize \"Stamina Heal\"" +
+            "\n• Customize the \"Stamina Heal\" move" +
             "\n• Scale enemies' and bosses' HP" +
             "\n• Make enemies in groups attack more often";
 
