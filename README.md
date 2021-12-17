@@ -1,6 +1,5 @@
-[<img src="https://ko-fi.com/img/githubbutton_sm.svg" width="200" height="25"/>](https://ko-fi.com/vheos777)
-[<img src="https://dcbadge.vercel.app/api/shield/211827301082464256" width="200" height="25"/>]()
-
+[<img src="https://dcbadge.vercel.app/api/shield/211827301082464256" width="175" height="25"/>]()
+[<img src="https://ko-fi.com/img/githubbutton_sm.svg" width="175" height="25"/>](https://ko-fi.com/vheos777)
 
 # What is UNSIGHTED++?
 Collection of my personal mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/)! Those include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
