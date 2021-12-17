@@ -1,5 +1,5 @@
-![](https://dcbadge.vercel.app/api/shield/211827301082464256)
-
+[<img src="https://ko-fi.com/img/githubbutton_sm.svg" width="200" height="25"/>](https://ko-fi.com/vheos777)
+[<img src="https://dcbadge.vercel.app/api/shield/211827301082464256" width="200" height="25"/>]()
 
 
 # What is UNSIGHTED++?
