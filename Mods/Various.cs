@@ -15,6 +15,17 @@
 
     public class Various : AMod
     {
+        // Section
+        override protected string SectionOverride
+        => Sections.VARIOUS;
+        override protected string Description =>
+            "Mods that haven't found their home yet!" +
+            "\n\nExamples:" +
+            "\n• Skip 30sec of intro logos" +
+            "\n• Customize the \"Stamina Heal\" move" +
+            "\n• Scale enemies' and bosses' HP" +
+            "\n• Make enemies in groups attack more often";
+
         // Settings
         static private ModSetting<bool> _skipIntroLogos;
         static private ModSetting<bool> _runInBackground;
@@ -25,7 +36,6 @@
         static private ModSetting<int> _enemyHPMultiplier;
         static private ModSetting<int> _enemyBossHPMultiplier;
         static private ModSetting<bool> _randomizeEnemyGroupAttackRhythm;
-        static private ModSetting<InputDevice> _controllerIcons;
         override protected void Initialize()
         {
             _skipIntroLogos = CreateSetting(nameof(_skipIntroLogos), false);
@@ -39,8 +49,6 @@
             _enemyHPMultiplier = CreateSetting(nameof(_enemyHPMultiplier), 100, IntRange(25, 400));
             _enemyBossHPMultiplier = CreateSetting(nameof(_enemyBossHPMultiplier), 100, IntRange(25, 400));
             _randomizeEnemyGroupAttackRhythm = CreateSetting(nameof(_randomizeEnemyGroupAttackRhythm), false);
-
-            _controllerIcons = CreateSetting(nameof(_controllerIcons), InputDevice.AsDetected);
 
             // Events
             _runInBackground.AddEvent(() => Application.runInBackground = _runInBackground);
@@ -88,17 +96,12 @@
                 "\nBy default, most enemies can't attack at the same time" +
                 "\nInstead, every 0.75sec one random enemy will start attacking" +
                 "\nThis settings makes some enemies attack earlier than expected, sometimes simultaneously with others";
-
-            _controllerIcons.Format("Controller icons");
-            _controllerIcons.Description =
-                "Allows you to override the icons used for controller prompts" +
-                "\nUseful when the game doesn't correctly identify your controller, such as when using third party software to map Sony input to Xbox output";
         }
         override protected void LoadPreset(string presetName)
         {
             switch (presetName)
             {
-                case nameof(Preset.Vheos_HardMode):
+                case nameof(SettingsPreset.Vheos_HardMode):
                     ForceApply();
                     _skipIntroLogos.Value = true;
 
@@ -110,18 +113,9 @@
                     _enemyHPMultiplier.Value = 200;
                     _enemyBossHPMultiplier.Value = 125;
                     _randomizeEnemyGroupAttackRhythm.Value = true;
-
-                    _controllerIcons.Value = InputDevice.DualShock4;
                     break;
             }
         }
-        override protected string Description =>
-            "Mods that haven't found their home yet!" +
-            "\n\nExamples:" +
-            "\n• Skip 30sec of intro logos" +
-            "\n• Customize the \"Stamina Heal\" move" +
-            "\n• Scale enemies' and bosses' HP" +
-            "\n• Make enemies in groups attack more often";
 
         // Privates
         private const float ORIGINAL_STAMINA_CHARGE_DURATION = 0.66f;
@@ -133,25 +127,6 @@
                 && PseudoSingleton<Helpers>.instance.GetWeaponObject(text).meleeWeaponClass != MeleeWeaponClass.Shuriken)
                     return true;
             return false;
-        }
-        static private void TryOverrideInputDevice(ref InputType inputDevice)
-        {
-            switch (_controllerIcons.Value)
-            {
-                case InputDevice.DualShock4: inputDevice = InputType.Ps4; break;
-                case InputDevice.XboxOne: inputDevice = InputType.XboxOne; break;
-                case InputDevice.Switch: inputDevice = InputType.Joycons; break;
-                default: break;
-            }
-        }
-
-        // Defines
-        private enum InputDevice
-        {
-            AsDetected,
-            DualShock4,
-            XboxOne,
-            Switch,
         }
 
         // Hooks
@@ -272,14 +247,5 @@
             while (original.MoveNext())
                 yield return original.Current;
         }
-
-        // Input device icons
-        [HarmonyPatch(typeof(DeviceIconDatabase), nameof(DeviceIconDatabase.GetDeviceIcon)), HarmonyPrefix]
-        static private void DeviceIconDatabase_GetDeviceIcon_Pre(DeviceIconDatabase __instance, ref InputType targetDevice)
-        => TryOverrideInputDevice(ref targetDevice);
-
-        [HarmonyPatch(typeof(DeviceIconDatabase), nameof(DeviceIconDatabase.GetDeviceButtonIcon)), HarmonyPrefix]
-        static private void DeviceIconDatabase_GetDeviceButtonIcon_Pre(DeviceIconDatabase __instance, ref InputType targetDevice)
-        => TryOverrideInputDevice(ref targetDevice);
     }
 }

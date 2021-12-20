@@ -7,6 +7,16 @@
 
     public class Movement : AMod
     {
+        // Section
+        override protected string SectionOverride
+        => Sections.BALANCE;
+        override protected string Description =>
+            "Mods related to movement (speed and stamina)" +
+            "\n\nExamples:" +
+            "\n• Change move/run speed" +
+            "\n• Change run/spin stamina drain" +
+            "\n• Customize \"Runner Chip\"";
+
         // Settings
         static private ModSetting<int> _moveSpeedMultiplier;
         static private ModSetting<int> _runSpeedMultiplier;
@@ -61,7 +71,7 @@
         {
             switch (presetName)
             {
-                case nameof(Preset.Vheos_HardMode):
+                case nameof(SettingsPreset.Vheos_HardMode):
                     ForceApply();
                     _moveSpeedMultiplier.Value = 100;
                     _runSpeedMultiplier.Value = 167;
@@ -73,12 +83,6 @@
                     break;
             }
         }
-        override protected string Description =>
-            "Mods related to movement (speed and stamina)" +
-            "\n\nExamples:" +
-            "\n• Change move/run speed" +
-            "\n• Change run/spin stamina drain" +
-            "\n• Customize \"Runner Chip\"";
 
         // Privates
         private const float ORIGINAL_MOVE_SPEED = 6f;

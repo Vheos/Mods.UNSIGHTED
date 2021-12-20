@@ -16,6 +16,16 @@
 
     public class Audiovisual : AMod
     {
+        // Section
+        override protected string Description =>
+            "Mods that affect the graphics and sound" +
+            "\n\nExamples:" +
+            "\n• Brighten up dark areas" +
+            "\n• Customize Alma's color palette" +
+            "\n• Change volume / pitch of menu SFX";
+        override protected string SectionOverride
+        => Sections.QOL;
+
         // Settings
         static private ModSetting<int> _extraBrightness;
         static private Dictionary<int, PaletteSettings> _paletteSettingsByPlayerID;
@@ -69,18 +79,12 @@
         {
             switch (presetName)
             {
-                case nameof(Preset.Vheos_UI):
+                case nameof(SettingsPreset.Vheos_UI):
                     ForceApply();
                     _extraBrightness.Value = 33;
                     break;
             }
         }
-        override protected string Description =>
-            "Mods that affect the graphics and sound" +
-            "\n\nExamples:" +
-            "\n• Brighten up dark areas" +
-            "\n• Customize Alma's color palette" +
-            "\n• Change volume / pitch of menu SFX";
 
         // Privates
         private const float EXPOSURE_LERP_TARGET = 1.5f;

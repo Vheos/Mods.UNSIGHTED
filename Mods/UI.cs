@@ -14,9 +14,21 @@
     using System.Collections;
     using System.Text;
     using UnityEngine.UI;
+    using Vheos.Tools.Extensions.Collections;
 
     public class UI : AMod
     {
+        // Section
+        override protected string SectionOverride
+        => Sections.QOL;
+        override protected string Description =>
+            "Mods related to the UI (mostly text and popups)" +
+            "\n\nExamples:" +
+            "\n• Hide combat popups" +
+            "\n• Hide current day / time" +
+            "\n• Customize crosshair" +
+            "\n• Customize combo display";
+
         // Settings
         static private ModSetting<bool> _damagePopups;
         static private ModSetting<bool> _statusEffectPopups;
@@ -30,6 +42,7 @@
         static private ModSetting<Color> _crosshairBigDiamondColor;
         static private ModSetting<Color> _crosshairSmallDiamondColor;
         static private ModSetting<Color> _crosshairDotColor;
+        static private ModSetting<ControllerType> _controllerIcons;
         override protected void Initialize()
         {
             _damagePopups = CreateSetting(nameof(_damagePopups), true);
@@ -47,6 +60,8 @@
 
             _clockTime = CreateSetting(nameof(_clockTime), true);
             _clockDay = CreateSetting(nameof(_clockDay), true);
+
+            _controllerIcons = CreateSetting(nameof(_controllerIcons), ControllerType.AsDetected);
 
             // Events
             _clockTime.AddEvent(() => UpdateClockVisibility(PseudoSingleton<InGameClock>.instance));
@@ -102,12 +117,17 @@
             _clockDay.Format("Clock day");
             _clockDay.Description =
                 "Displays the day counter";
+
+            _controllerIcons.Format("Controller icons");
+            _controllerIcons.Description =
+                "Allows you to override the icons used for controller prompts" +
+                "\nUseful when the game doesn't correctly identify your controller, such as when using third party software to map Sony input to Xbox output";
         }
         override protected void LoadPreset(string presetName)
         {
             switch (presetName)
             {
-                case nameof(Preset.Vheos_UI):
+                case nameof(SettingsPreset.Vheos_UI):
                     ForceApply();
                     _damagePopups.Value = true;
                     _statusEffectPopups.Value = false;
@@ -124,16 +144,11 @@
 
                     _clockTime.Value = true;
                     _clockDay.Value = false;
+
+                    _controllerIcons.Value = ControllerType.DualShock4;
                     break;
             }
         }
-        override protected string Description =>
-            "Mods related to the UI (mostly text and popups)" +
-            "\n\nExamples:" +
-            "\n• Hide combat popups" +
-            "\n• Hide current day / time" +
-            "\n• Customize crosshair" +
-            "\n• Customize combo display";
 
         // Privates
         static private void UpdateClockVisibility(InGameClock inGameClock)
@@ -150,6 +165,19 @@
         || playerManager.playerObjects[1].myCharacter.justDidAPerfectParry);
         static private string GetLocalizedString(string key)
         => TranslationSystem.FindTerm("Terms", key, true);
+        static private readonly Dictionary<ControllerType, int[]> CONTROLLER_BUTTON_ICONS_MAP = new Dictionary<ControllerType, int[]>
+        {
+            [ControllerType.DualShock4] = new[] { 1, 0, 3, 2, 4, 5, 6, 7, 10, 11, 8, 9, 13 },
+            [ControllerType.XboxOne] = new[] { 0, 2, 3, 1, 4, 5, 19, 18, 8, 9, 6, 7, -1 },
+        };
+
+        // Defines
+        private enum ControllerType
+        {
+            AsDetected = 0,
+            DualShock4 = 1,
+            XboxOne = 2,
+        }
 
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
@@ -216,6 +244,35 @@
 
             foreach (var image in __instance.directionCursor.GetComponentsInChildren<Image>(true))
                 image.color = _crosshairSmallDiamondColor;
+        }
+
+        // Input device icons
+        [HarmonyPatch(typeof(DeviceIconDatabase), nameof(DeviceIconDatabase.GetDeviceIcon)), HarmonyPrefix]
+        static private void DeviceIconDatabase_GetDeviceIcon_Pre(DeviceIconDatabase __instance, ref InputType targetDevice)
+        {
+            if (_controllerIcons.Value == ControllerType.AsDetected)
+                return;
+
+            targetDevice = (InputType)_controllerIcons.Value;
+        }
+
+        [HarmonyPatch(typeof(DeviceIconDatabase), nameof(DeviceIconDatabase.GetDeviceButtonIcon)), HarmonyPrefix]
+        static private void DeviceIconDatabase_GetDeviceButtonIcon_Pre(DeviceIconDatabase __instance, ref InputType targetDevice, ref int buttonNum)
+        {
+            ControllerType to = _controllerIcons;
+            if (to != ControllerType.DualShock4
+            && to != ControllerType.XboxOne)
+                return;
+
+            ControllerType from = (ControllerType)targetDevice;
+            if (to == from
+            || !CONTROLLER_BUTTON_ICONS_MAP[from].TryFindIndex(buttonNum, out var index)
+            || !CONTROLLER_BUTTON_ICONS_MAP[to].TryGet(index, out var mappedButton)
+            || mappedButton == -1)
+                return;
+
+            targetDevice = (InputType)_controllerIcons.Value;
+            buttonNum = mappedButton;
         }
     }
 }

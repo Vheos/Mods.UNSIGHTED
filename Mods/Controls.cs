@@ -15,10 +15,19 @@
 
     public class Controls : AMod, IDelayedInit
     {
+        // Section
+        override protected string SectionOverride
+        => Sections.QOL;
+        override protected string Description =>
+            "Mods related to keyboard/gamepad controls" +
+            "\n\nExamples:" +
+            "\n• Set hotkeys for weapon sets" +
+            "\n• Allow unbinding/duplicate controls";
+
         // Settings
-        static private ModSetting<string> _undbindButton;
-        static private ModSetting<CustomControls.ConflictResolution> _bindigsConflictResolution;
         static private Dictionary<int, LoadoutSettings> _loadoutSettingsByPlayerID;
+        static private ModSetting<string> _undbindButton;
+        static private ModSetting<BindingConflictResolution> _bindigsConflictResolution;
         override protected void Initialize()
         {
             _loadoutSettingsByPlayerID = new Dictionary<int, LoadoutSettings>();
@@ -26,51 +35,61 @@
                 _loadoutSettingsByPlayerID[playerID] = new LoadoutSettings(this, playerID);
             CustomControls.UpdateButtonsTable();
 
-            _undbindButton = CreateSetting(nameof(_undbindButton), "");
+            _undbindButton = CreateSetting(nameof(_undbindButton), "Delete");
             CustomControls.UnbindButton.Set(() => _undbindButton.ToKeyCode());
 
-            _bindigsConflictResolution = CreateSetting(nameof(_bindigsConflictResolution), CustomControls.ConflictResolution.Swap);
+            _bindigsConflictResolution = CreateSetting(nameof(_bindigsConflictResolution), BindingConflictResolution.Swap);
             CustomControls.BindingsConflictResolution.Set(() => _bindigsConflictResolution);
         }
         override protected void SetFormatting()
         {
             CreateHeader("Loadouts").Description =
-                "Allows you quickly to switch between pre-defined sets of weapons" +
-                "\nHotkeys can be configured in the in-game \"Controls\" menu" +
+                "Set hotkeys to quickly switch between user-defined sets of weapons" +
+                "\nHotkeys can be configured in the in-game \"Controls\" menu:" +
+                "\n• Switch Load. - switches to next loadout (loops back)" +
+                "\n• Loadout 1~4 - switches to the exact loadout" +
                 "\n(requires game restart to take effect)";
             using (Indent)
                 foreach (var settings in _loadoutSettingsByPlayerID)
                     settings.Value.Format();
             _undbindButton.Format("\"Unbind\" button");
             _undbindButton.Description =
-                "Press this when assigning a new button in the controls menu to unbind the button";
+                "Press this when assigning a new button in the controls menu to unbind the button" +
+                "\n\nvalue type: upper-case UnityEngine.KeyCode enum" +
+                "\n(https://docs.unity3d.com/ScriptReference/KeyCode.html)";
             _bindigsConflictResolution.Format("Bindings conflict resolution");
             _bindigsConflictResolution.Description =
                 "What should happen when you try to assign a button that's already bound:" +
-                $"\n{CustomControls.ConflictResolution.Swap} - the two conflicting buttons will swap places" +
-                $"\n{CustomControls.ConflictResolution.Unbind} - the other button binding will be removed" +
-                $"\n{CustomControls.ConflictResolution.Duplicate} - allow for one button to be bound to many actions";
+                $"\n• {BindingConflictResolution.Swap} - the two conflicting buttons will swap places" +
+                $"\n• {BindingConflictResolution.Unbind} - the other button binding will be removed" +
+                $"\n• {BindingConflictResolution.Duplicate} - allow for one button to be bound to many actions";
         }
         override protected void LoadPreset(string presetName)
         {
             switch (presetName)
             {
-                case nameof(Preset.Vheos_HardMode):
+                case nameof(SettingsPreset.Vheos_HardMode):
                     ForceApply();
+                    _loadoutSettingsByPlayerID[0]._count.Value = 2;
+                    _loadoutSettingsByPlayerID[1]._count.Value = 2;
+                    _undbindButton.Value = KeyCode.Delete.ToString();
+                    _bindigsConflictResolution.Value = BindingConflictResolution.Duplicate;
                     break;
             }
         }
-        override protected string Description =>
-            "";
+        public void OnUpdate()
+        {
+
+        }
 
         // Defines
         #region LoadoutSettings
         private class LoadoutSettings : PerPlayerSettings<Controls>
         {
             // Settings
-            private readonly ModSetting<int> _count;
-            private readonly ModSetting<string> _next;
-            private readonly Loadout[] _loadouts;
+            internal readonly ModSetting<int> _count;
+            internal readonly ModSetting<string> _switch;
+            internal readonly Loadout[] _loadouts;
             internal LoadoutSettings(Controls mod, int playerID) : base(mod, playerID)
             {
                 _count = _mod.CreateSetting(PlayerPrefix + "Count", 1, _mod.IntRange(1, 4));
@@ -78,7 +97,7 @@
                 if (!IsEnabled)
                     return;
 
-                _next = CustomControls.AddControlsButton(playerID, $"Next Loadout");
+                _switch = CustomControls.AddControlsButton(playerID, $"Switch Load.");
                 _loadouts = new Loadout[_count];
                 for (int i = 0; i < _loadouts.Length; i++)
                 {
@@ -103,7 +122,7 @@
                 if (!IsEnabled)
                     return;
 
-                if (ButtonSystem.GetKeyDown(_next.ToKeyCode()))
+                if (ButtonSystem.GetKeyDown(_switch.ToKeyCode()))
                     TrySwitchTo(+1);
                 else
                     foreach (var loadout in _loadouts)
@@ -126,8 +145,8 @@
 
             // Privates
             private const string NOTHING_WEAPON_NAME = "Null";
+            private readonly int _cachedCount;
             private Loadout _currentLoadout;
-            private int _cachedCount;
             private void TrySwitchTo(int offset)
             {
                 if (!VerifyCurrentLoadout())
@@ -183,7 +202,7 @@
             }
 
             // Defines
-            private class Loadout
+            internal class Loadout
             {
                 // Publics
                 public int ID;

@@ -11,6 +11,16 @@
 
     public class Combo : AMod
     {
+        // Section
+        override protected string SectionOverride
+        => Sections.BALANCE;
+        override protected string Description =>
+            "Mods related to the combo system" +
+            "\n\nExamples:" +
+            "\n• Change combo duration and decrease rate" +
+            "\n• Change combo gain values per weapon type" +
+            "\n• Change syringe gained along with combo";
+
         // Settings
         static private ModSetting<float> _duration;
         static private ModSetting<int> _decreaseRate;
@@ -99,7 +109,7 @@
         {
             switch (presetName)
             {
-                case nameof(Preset.Vheos_HardMode):
+                case nameof(SettingsPreset.Vheos_HardMode):
                     ForceApply();
                     _duration.Value = 2f;
                     _decreaseRate.Value = 50;
@@ -119,12 +129,6 @@
                     break;
             }
         }
-        override protected string Description =>
-            "Mods related to the combo system" +
-            "\n\nExamples:" +
-            "\n• Change combo duration and decrease rate" +
-            "\n• Change combo gain values per weapon type" +
-            "\n• Change syringe gained along with combo";
 
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
@@ -170,8 +174,8 @@
             return false;
         }
 
-        [HarmonyPatch(typeof(ComboBar), nameof(ComboBar.AddComboValue), 
-            new[] { typeof(MeleeWeaponClass), typeof(bool), typeof(bool), typeof(int) }), 
+        [HarmonyPatch(typeof(ComboBar), nameof(ComboBar.AddComboValue),
+            new[] { typeof(MeleeWeaponClass), typeof(bool), typeof(bool), typeof(int) }),
             HarmonyPrefix]
         static private bool ComboBar_AddComboValue2_Pre(ComboBar __instance, ref int __result, MeleeWeaponClass meleeWeaponClass, bool projectileDamage, bool enemyWasStunned, int damage)
         {

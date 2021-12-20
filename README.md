@@ -12,27 +12,29 @@ My personal collection of mods for the amazing game [UNSIGHTED](https://store.st
 - Download [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest/), [ConfigurationManager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases/latest) and [UNSIGHTED++](https://github.com/Vheos777/Mods.UNSIGHTED/releases/latest)
 - Extract all files to the game folder (the one with `UNSIGHTED.exe`)
 - Press `F1` in-game to open the `Configuration Manager` window
+- Choose a mod and click `Apply` to expand its settings
+- Click `Collapse` to hide the settings without deactivating the mod
 - Enjoy <3
 
 
 
 # Highlights
 ### Quickslottable Weapon Loadouts
-They're like an hour away from being ready for release, but sadly I won't have a spare hour until after the weekend! In the meantime, feast upon this teaser:
+Now **THIS** is my proudest feature! No more opening menu every minute to switch between shuriken, hookshot, ice-maker and your actual combat weapons. Now you can have switch between your favourite loadouts with the press of one button! Comes with in-game **custom controls system** and **co-op support** :)
 
 https://user-images.githubusercontent.com/9155825/146574388-3daf9b3a-ec14-4690-a4e7-06cfd41fafa9.mp4
 
 ### Color Palette Editor
-One of my proudest features in this mod pack! It's a bit clunky, as the **Configuration Manager** doesn't provide either HSV sliders or numerical RGB input, ***BUT IT WORKS!*** I've even gone the extra mile and written a de/serializer for the color data, so you can copy-paste palettes and share them with others **<3** Take a look at this juicy juice:
+Let the fashion begin! It's a bit clunky, as the **Configuration Manager** doesn't provide either HSV sliders or numerical RGB input, ***BUT IT WORKS!*** I've even gone the extra mile and written a de/serializer for the color data, so you can copy-paste palettes and share them with others **<3** Take a look at this juice:
 
 https://user-images.githubusercontent.com/9155825/146345939-7f04ae15-d06b-4dfc-9ab0-853e28c80fc1.mp4
 
 ### Equal Rights for Player 2
-**UNSIGHTED** treats **Player 2** with way more respect than most games. But there's a tiny hair in this otherwise perfect meal - the archaic and redundant **CAMERA PRIVILEGES!** Take a look at this:
+Actually, **UNSIGHTED** treats **Player 2** with way more respect than most games - but that's not saying much as the bar's set pretty low by the gaming industry. Anyway, **UNSIGHTED** also suffers from *some* **Player 2** marginalization - namely the archaic and redundant **CAMERA PRIVILEGES!** Take a look at this:
 
 https://user-images.githubusercontent.com/9155825/146352205-7a16275b-ae4b-4003-9c39-272b40fbe07c.mp4
 
-Notice how **Player 1** still has a decent line of sight around them, while **Player 2** is already in the gutter? If that wasn't hurtful enough, they will soon be hurled like a bag of potatoes towards **Player 1**'s location, because god forbid anything *even remotely slows down* the protagonist's adventuring. Obviously, both issues are addressed in the `Camera` section of the mod pack, and this is how the same scene plays out with `Prioritize player 1` disabled and `Co-op camera stretching` enabled:
+Notice how **Player 1** still has a decent line of sight around them, while **Player 2** is already in the gutter? If that wasn't hurtful enough, they will soon be hurled like a bag of potatoes towards **Player 1**'s location, because god forbid anything *even remotely slows down* the protagonist's adventuring. Now, in case of puzzle games (and metroidvania is partly that) this is somewhat justified, as stretching the screen too wide might spoil the solution. Still, this could be designed around. As a workaround, I implemented simple `co-op camera stretching` system, as well the options to disable `prioritizing player 1` and `teleporting player 2`:
 
 https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8f1f-528a6b5a206e.mp4
 
@@ -167,6 +169,13 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 
 
 # Changelog
+- **1.2.0**
+    - implemented in-game controls extension system
+    - added new mod `Controls` - set hotkeys for weapon sets, unlock controls binding
+    - added hidden mod `SFX Player` - test in-game sound effects
+    - split mods into 3 sections: `BALANCE`, `QUALITY OF LIFE` and `VARIOUS`
+    - `UI`: added setting to override controller icons (PS4 and Xbox)
+    - `Parry Challenge`: added settings to customize enemy spawn positions    
 - **1.1.0**
     - `Time`: added settings to change current day, hour and minute
     - `UI`: added settings to customize the crosshairs

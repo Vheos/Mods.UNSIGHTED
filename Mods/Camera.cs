@@ -9,6 +9,16 @@
 
     public class Camera : AMod
     {
+        // Section
+        override protected string SectionOverride
+        => Sections.QOL;
+        override protected string Description =>
+            "Mods related to the camera and screen" +
+            "\n\nExamples:" +
+            "\n• Change camera zoom to see more" +
+            "\n• Enable co-op screen stretching" +
+            "\n• Put an end to player 2's oppression";
+
         // Settings
         static private ModSetting<int> _zoom;
         static private ModSetting<bool> _controlZoomWithMouseScroll;
@@ -77,7 +87,7 @@
         {
             switch (presetName)
             {
-                case nameof(Preset.Vheos_UI):
+                case nameof(SettingsPreset.Vheos_UI):
                     ForceApply();
                     _zoom.Value = 100;
                     _controlZoomWithMouseScroll.Value = false;
@@ -91,12 +101,6 @@
                     break;
             }
         }
-        override protected string Description =>
-            "Mods related to the camera and screen" +
-            "\n\nExamples:" +
-            "\n• Change camera zoom to see more" +
-            "\n• Enable co-op screen stretching" +
-            "\n• Put an end to player 2's oppression";
 
         // Privates
         private const float ORIGINAL_ORTOGRAPHIC_SIZE = 9f;

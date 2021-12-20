@@ -8,13 +8,28 @@
     using Tools.ModdingCore;
     using Tools.Extensions.Math;
     using Tools.Extensions.Collections;
-    using Vheos.Tools.Extensions.General;
+    using Tools.Extensions.General;
+    using Random = UnityEngine.Random;
 
     public class ParryChallenge : AMod
     {
+        // Section
+        override protected string SectionOverride
+        => Sections.VARIOUS;
+        override protected string ModName
+        => "Parry Challenge";
+        override protected string Description =>
+            "Allows you to customize the parry challenge" +
+            "\n\nExamples:" +
+            "\n• Change spawns and thresholds for each wave" +
+            "\n• Change thresholds for getting rewards" +
+            "\n• Try out the 5 predefined presets";
+
         // Settings
         static private ModSetting<bool> _allowAttacking;
         static private ModSetting<int> _spawnInterval;
+        static private ModSetting<bool> _spawnAnywhere;
+        static private ModSetting<int> _spawnDistanceFromPlayers;
         static private ModSetting<bool> _separateFirstTimeRewards;
         static private ModSetting<bool> _resetFirstTimeRewards;
         static private ModSetting<SpawnPreset> _preset;
@@ -24,6 +39,8 @@
         {
             _allowAttacking = CreateSetting(nameof(_allowAttacking), true);
             _spawnInterval = CreateSetting(nameof(_spawnInterval), 3, IntRange(0, 10));
+            _spawnAnywhere = CreateSetting(nameof(_spawnAnywhere), false);
+            _spawnDistanceFromPlayers = CreateSetting(nameof(_spawnDistanceFromPlayers), 10, IntRange(0, 50));
             _separateFirstTimeRewards = CreateSetting(nameof(_separateFirstTimeRewards), true);
             _resetFirstTimeRewards = CreateSetting(nameof(_resetFirstTimeRewards), false);
             _preset = CreateSetting(nameof(_preset), SpawnPreset.Vanilla);
@@ -45,6 +62,17 @@
                 "How long is the pause between spawning new enemies after previous ones have been killed or new wave has started" +
                 "\nSet to 0 to instantly spawn (and respawn) all enemies" +
                 "\n\nUnit: seconds";
+            _spawnAnywhere.Format("Spawn anywhere");
+            _spawnAnywhere.Description =
+                "Allows enemies to spawn anywhere within the ring" +
+                "\nBy default, enemies only spawn in one of 2 points - whichever is further away from Player 1 at the time of spawn";
+            using (Indent)
+            {
+                _spawnDistanceFromPlayers.Format("Spawn anywhere", _spawnAnywhere);
+                _spawnDistanceFromPlayers.Description =
+                    "Enemies can't spawn within this radius around the players" +
+                    "\n\nUnit: percent of ring height";
+            }
             _separateFirstTimeRewards.Format("Per-preset first-time rewards");
             _separateFirstTimeRewards.Description =
                 "Each preset will keep track of their own first-time rewards";
@@ -90,25 +118,20 @@
         {
             switch (presetName)
             {
-                case nameof(Preset.Vheos_HardMode):
+                case nameof(SettingsPreset.Vheos_HardMode):
                     ForceApply();
                     _allowAttacking.Value = true;
                     _spawnInterval.Value = 1;
+                    _spawnAnywhere.Value = true;
+                    _spawnDistanceFromPlayers.Value = 50;
                     _separateFirstTimeRewards.Value = true;
                     _preset.Value = SpawnPreset.MixHard;
                     break;
             }
         }
-        override protected string ModName
-        => "Parry Challenge";
-        override protected string Description =>
-            "Allows you to customize the parry challenge" +
-            "\n\nExamples:" +
-            "\n• Change spawns and thresholds for each wave" +
-            "\n• Change thresholds for getting rewards" +
-            "\n• Try out the 5 predefined presets";
 
         // Privates
+        static private readonly Rect SPAWN_RECT = Rect.MinMaxRect(-19, -9, +1, +1);
         static private void ResetFirstTimeRewardsFromConfig()
         {
             if (!_resetFirstTimeRewards)
@@ -320,5 +343,34 @@
         [HarmonyPatch(typeof(BasicCharacterController), nameof(BasicCharacterController.DetectFireInput)), HarmonyPrefix]
         static private bool BasicCharacterController_DetectFireInput_Pre(BasicCharacterController __instance)
         => _allowAttacking || !IsParryChallengeActive();
+
+        [HarmonyPatch(typeof(GymMinigame), nameof(GymMinigame.GetPositionAwayFromPlayer)), HarmonyPrefix]
+        static private bool GymMinigame_GetPositionAwayFromPlayer_Pre(GymMinigame __instance, ref Vector3 __result)
+        {
+            int i = 0;
+            bool isValid = false;
+            while (!isValid)
+            {
+                __result = new Vector2(Random.Range(SPAWN_RECT.xMin, SPAWN_RECT.xMax),
+                                       Random.Range(SPAWN_RECT.yMin, SPAWN_RECT.yMax));
+                float minDistance = SPAWN_RECT.height * _spawnDistanceFromPlayers / 100f;
+
+                i++;
+                isValid = true;
+                foreach (var player in PseudoSingleton<PlayersManager>.instance.players)
+                {
+                    Log.Debug($"{__result} ---> {player.myCharacter.myPosition}  =  {__result.DistanceTo(player.myCharacter.myPosition)}  >  {minDistance}");
+                    if (__result.DistanceTo(player.myCharacter.myPosition) <= minDistance)
+                    {
+
+                        isValid = false;
+                        break;
+                    }
+                }
+            }
+
+            Log.Debug($"Spawn took {i} tries");
+            return false;
+        }
     }
 }

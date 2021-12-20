@@ -10,6 +10,17 @@
 
     public class TimeMods : AMod, IUpdatable
     {
+        // Section
+        override protected string SectionOverride
+        => Sections.BALANCE;
+        override protected string Description =>
+            "Mods related to time, both in-game and engine" +
+            "\n\nExamples:" +
+            "\n• Change the whole engine speed" +
+            "\n• Change the in-game timer speed" +
+            "\n• Change the cinematic framestop / slowmo" +
+            "\n• Override current day, hour and minute";
+
         // Settings
         static private ModSetting<int> _engineSpeedMultiplier;
         static private ModSetting<int> _cutsceneSpeedMultiplier;
@@ -110,7 +121,7 @@
         {
             switch (presetName)
             {
-                case nameof(Preset.Vheos_HardMode):
+                case nameof(SettingsPreset.Vheos_HardMode):
                     ForceApply();
                     _engineSpeedMultiplier.Value = 67;
                     _cutsceneSpeedMultiplier.Value = 200;
@@ -125,13 +136,6 @@
         }
         override protected string ModName
         => "Time";
-        override protected string Description =>
-            "Mods related to time, both in-game and engine" +
-            "\n\nExamples:" +
-            "\n• Change the whole engine speed" +
-            "\n• Change the in-game timer speed" +
-            "\n• Change the cinematic framestop / slowmo" +
-            "\n• Override current day, hour and minute";
         public void OnUpdate()
         {
             if (!_previousIsCutscene && PlayerInfo.cutscene)

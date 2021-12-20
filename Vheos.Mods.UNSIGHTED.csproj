@@ -76,6 +76,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Sections.cs" />
     <Compile Include="Getter.cs" />
     <Compile Include="Mods\UI.cs" />
     <Compile Include="Mods\Movement.cs" />

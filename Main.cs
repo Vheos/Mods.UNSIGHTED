@@ -30,22 +30,25 @@
         override protected Type[] ModsOrderingList
         => new[]
         {
+            // Difficulty
             typeof(TimeMods),
             typeof(Movement),
             typeof(Guard),
             typeof(Combo),
             typeof(ChipsCogs),
-            typeof(Controls),
+            typeof(ParryChallenge),
 
+            // QoL
+            typeof(Controls),
             typeof(Camera),
             typeof(UI),
             typeof(Audiovisual),
 
+            // Various
             typeof(Various),
-            typeof(ParryChallenge),
             typeof(SFXPlayer),
         };
         override protected string[] PresetNames
-        => Utility.GetEnumValuesAsStrings<Preset>().ToArray();
+        => Utility.GetEnumValuesAsStrings<SettingsPreset>().ToArray();
     }
 }

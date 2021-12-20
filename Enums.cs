@@ -1,8 +1,15 @@
 ﻿namespace Vheos.Mods.UNSIGHTED
 {
-    public enum Preset
+    internal enum SettingsPreset
     {
         Vheos_HardMode,
         Vheos_UI,
+    }
+
+    internal enum BindingConflictResolution
+    {
+        Swap,
+        Unbind,
+        Duplicate,
     }
 }

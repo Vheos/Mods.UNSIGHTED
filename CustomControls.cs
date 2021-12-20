@@ -26,10 +26,8 @@
         {
             // setting
             string settingGUID = GetSettingGUID(playerID, name);
-            var setting = new ModSetting<string>(typeof(CustomControls).Name, settingGUID, "");
-            setting.Format(settingGUID);
-            setting.IsAdvanced = true;
-
+            var setting = new ModSetting<string>("", settingGUID, KeyCode.None.ToString());
+            setting.IsVisible = false;
 
             string buttonGUID = GetButtonGUID(name);
             if (!_settingsByButtonGUID.ContainsKey(buttonGUID))
@@ -105,8 +103,8 @@
         { get; private set; }
         static internal Getter<KeyCode> UnbindButton
         { get; } = new Getter<KeyCode>();
-        static internal Getter<ConflictResolution> BindingsConflictResolution
-        { get; } = new Getter<ConflictResolution>();
+        static internal Getter<BindingConflictResolution> BindingsConflictResolution
+        { get; } = new Getter<BindingConflictResolution>();
 
         // Privates
         private const int MAX_COLUMNS = 3;
@@ -158,14 +156,6 @@
         static private string GetButtonGUID(string name)
         => $"{typeof(CustomControls).Name}_{name}";
 
-        // Defines
-        internal enum ConflictResolution
-        {
-            Swap,
-            Unbind,
-            Duplicate,
-        }
-
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
 
@@ -200,7 +190,7 @@
 
             // update
             __instance.currentKey = __instance.GetCurrentKey();
-            KeyCode swapKey = BindingsConflictResolution == ConflictResolution.Swap
+            KeyCode swapKey = BindingsConflictResolution == BindingConflictResolution.Swap
                 ? __instance.currentKey : KeyCode.None;
             if (targetKey == UnbindButton)
                 targetKey = KeyCode.None;
@@ -212,7 +202,7 @@
 
             // swap
             if (targetKey != KeyCode.None
-            && BindingsConflictResolution != ConflictResolution.Duplicate)
+            && BindingsConflictResolution != BindingConflictResolution.Duplicate)
             {
                 // vanilla
                 foreach (var (RefName, _) in VANILLA_BUTTON_NAMES)

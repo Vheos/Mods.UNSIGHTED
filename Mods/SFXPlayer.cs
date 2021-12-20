@@ -15,6 +15,14 @@
 
     public class SFXPlayer : AMod
     {
+        // Section
+        override protected string SectionOverride
+        => Sections.VARIOUS;
+        override protected string Description =>
+            "Allows you to sound-test all in-game sound effects";
+        override protected bool IsAdvanced
+        => true;
+
         // Settings
         static private ModSetting<bool> _sfxPlayerToggle;
         static private Dictionary<SFX, ModSetting<bool>> _togglesBySFX;
@@ -31,10 +39,11 @@
         override protected void SetFormatting()
         {
             foreach (var toggle in _togglesBySFX)
+            {
+                toggle.Value.IsAdvanced = true;
                 toggle.Value.Format(toggle.Key.ToString().FirstLetterCapitalized().SplitCamelCase());
+            }
         }
-        override protected string Description =>
-            "";
 
         // Privates
         static private void PlaySFXFromConfig(SFX sfx)

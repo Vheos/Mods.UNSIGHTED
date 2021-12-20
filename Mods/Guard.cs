@@ -9,6 +9,21 @@
 
     public class Guard : AMod
     {
+        // Section
+        override protected string SectionOverride
+        => Sections.BALANCE;
+        override protected string Description =>
+            "Mods related to the guarding mechanic" +
+            "\n\nExamples:" +
+            "\n• Change \"perfect\" and \"normal\" parry windows" +
+            "\n• Guard longer by holding the button" +
+            "\n• Guard without melee weapons" +
+            "\n\nDictionary:" +
+            "\n• Parry - \"perfect parry\", triggers when you guard early enough" +
+            "\n• Deflect - \"normal parry\", triggers when you guard too late for parry" +
+            "\n• Optional deflect - cancellable part of the guard action" +
+            "\n• Guard - the whole action, consisting of the 3 parts above";
+
         // Settings
         static private ModSetting<int> _parryDuration;
         static private ModSetting<int> _deflectDuration;
@@ -81,7 +96,7 @@
         {
             switch (presetName)
             {
-                case nameof(Preset.Vheos_HardMode):
+                case nameof(SettingsPreset.Vheos_HardMode):
                     ForceApply();
                     _parryDuration.Value = 160;
                     _deflectDuration.Value = 240;
@@ -96,17 +111,6 @@
                     break;
             }
         }
-        override protected string Description =>
-            "Mods related to the guarding mechanic" +
-            "\n\nExamples:" +
-            "\n• Change \"perfect\" and \"normal\" parry windows" +
-            "\n• Guard longer by holding the button" +
-            "\n• Guard without melee weapons" +
-            "\n\nDictionary:" +
-            "\n• Parry - \"perfect parry\", triggers when you guard early enough" +
-            "\n• Deflect - \"normal parry\", triggers when you guard too late for parry" +
-            "\n• Optional deflect - cancellable part of the guard action" +
-            "\n• Guard - the whole action, consisting of the 3 parts above";
 
         // Privates
         static private bool PlayerHaveMeleeWeapon_Original(PlayerInfo player)

@@ -14,6 +14,18 @@
 
     public class ChipsCogs : AMod
     {
+        // Section
+        override protected string SectionOverride
+        => Sections.BALANCE;
+        override protected string ModName
+        => "Chips & Cogs";
+        override protected string Description =>
+            "Mods related to the chip and cog systems" +
+            "\n\nExamples:" +
+            "\n• Change starting chip slots and unlock costs" +
+            "\n• Change number of cog slots" +
+            "\n• Limit number of active cog types";
+
         // Settings
         static private ModSetting<int> _startingChipSlots;
         static private ModSetting<int> _linearChipSlotCosts;
@@ -51,7 +63,7 @@
         {
             switch (presetName)
             {
-                case nameof(Preset.Vheos_HardMode):
+                case nameof(SettingsPreset.Vheos_HardMode):
                     ForceApply();
                     _startingChipSlots.Value = 0;
                     _linearChipSlotCosts.Value = 750;
@@ -60,14 +72,6 @@
                     break;
             }
         }
-        override protected string ModName
-        => "Chips & Cogs";
-        override protected string Description =>
-            "Mods related to the chip and cog systems" +
-            "\n\nExamples:" +
-            "\n• Change starting chip slots and unlock costs" +
-            "\n• Change number of cog slots" +
-            "\n• Limit number of active cog types";
 
         // Privates
         static private void TrySetLinearChipSlotCosts(LevelDatabase levelDatabase)
