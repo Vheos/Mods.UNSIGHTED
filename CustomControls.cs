@@ -81,7 +81,7 @@
                 buttonRect.sizeDelta = buttonTotalSize - 2 * BUTTON_PADDING;
 
                 foreach (var text in buttonRect.GetComponentsInChildren<FText>())
-                    text.transform.localScale = textScale;
+                    text.transform.localScale = text.originalScale = textScale;
             }
 
             // navigation
