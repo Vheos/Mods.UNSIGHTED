@@ -22,7 +22,7 @@
         static private ModSetting<Vector4>[] _spawnTable;
         override protected void Initialize()
         {
-            _allowAttacking = CreateSetting(nameof(_allowAttacking), false);
+            _allowAttacking = CreateSetting(nameof(_allowAttacking), true);
             _spawnInterval = CreateSetting(nameof(_spawnInterval), 3, IntRange(0, 10));
             _separateFirstTimeRewards = CreateSetting(nameof(_separateFirstTimeRewards), true);
             _resetFirstTimeRewards = CreateSetting(nameof(_resetFirstTimeRewards), false);

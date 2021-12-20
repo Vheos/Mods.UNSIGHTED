@@ -98,7 +98,7 @@
             }
 
             CreateHeader("Game time").Description =
-                "Allows you to change current day, hour and minute";
+                "Allows you to change current day, hour and minute without affecting death timers";
             using (Indent)
             {
                 _day.Format("day");
@@ -115,9 +115,9 @@
                     _engineSpeedMultiplier.Value = 67;
                     _cutsceneSpeedMultiplier.Value = 200;
                     _gameToEngineTimeRatio.Value = 72;
-                    _fishingTimerSpeed.Value = 20;
+                    _fishingTimerSpeed.Value = 25;
                     _parryChallengeTimeMultiplier.Value = 10;
-                    _frameStopDurationMultiplier.Value = 75;
+                    _frameStopDurationMultiplier.Value = 50;
                     _slowMotionDurationMultiplier.Value = 0;
                     _slowMotionSpeed.Value = 0;
                     break;

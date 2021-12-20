@@ -130,7 +130,9 @@
 #pragma warning disable IDE0051, IDE0060, IDE1006
 
         // Combo multiplier
-        [HarmonyPatch(typeof(ComboBar), nameof(ComboBar.AddComboValue), new[] { typeof(float) }), HarmonyPrefix]
+        [HarmonyPatch(typeof(ComboBar), nameof(ComboBar.AddComboValue),
+            new[] { typeof(float) }),
+            HarmonyPrefix]
         static private bool ComboBar_AddComboValue_Pre(ComboBar __instance, ref float ammountToAddInCombo)
         {
             __instance.CheckMaxComboValue();
@@ -168,7 +170,9 @@
             return false;
         }
 
-        [HarmonyPatch(typeof(ComboBar), nameof(ComboBar.AddComboValue), new[] { typeof(MeleeWeaponClass), typeof(bool), typeof(bool), typeof(int) }), HarmonyPrefix]
+        [HarmonyPatch(typeof(ComboBar), nameof(ComboBar.AddComboValue), 
+            new[] { typeof(MeleeWeaponClass), typeof(bool), typeof(bool), typeof(int) }), 
+            HarmonyPrefix]
         static private bool ComboBar_AddComboValue2_Pre(ComboBar __instance, ref int __result, MeleeWeaponClass meleeWeaponClass, bool projectileDamage, bool enemyWasStunned, int damage)
         {
             __instance.CheckMaxComboValue();

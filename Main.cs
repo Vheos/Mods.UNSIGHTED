@@ -14,12 +14,19 @@
         #region SETTINGS
         public const string GUID = "Vheos.Mods.UNSIGHTED";
         public const string NAME = "UNSIGHTED++";
-        public const string VERSION = "1.1.0";
+        public const string VERSION = "1.2.0";
         #endregion
 
         // User logic
         override protected Assembly CurrentAssembly
         => Assembly.GetExecutingAssembly();
+        protected override void Initialize()
+        {
+            Log.Debug($"Initializing {typeof(CustomControls).Name}...");
+            CustomControls.Initialize();
+        }
+        protected override bool DelayedInitializeCondition
+        => CustomControls.IsFullyInitialized;
         override protected Type[] ModsOrderingList
         => new[]
         {
@@ -28,13 +35,15 @@
             typeof(Guard),
             typeof(Combo),
             typeof(ChipsCogs),
-            typeof(Camera),
+            typeof(Controls),
 
+            typeof(Camera),
             typeof(UI),
             typeof(Audiovisual),
 
-            typeof(ParryChallenge),
             typeof(Various),
+            typeof(ParryChallenge),
+            typeof(SFXPlayer),
         };
         override protected string[] PresetNames
         => Utility.GetEnumValuesAsStrings<Preset>().ToArray();

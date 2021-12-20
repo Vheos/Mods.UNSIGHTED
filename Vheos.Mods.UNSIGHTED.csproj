@@ -76,11 +76,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Getter.cs" />
     <Compile Include="Mods\UI.cs" />
     <Compile Include="Mods\Movement.cs" />
     <Compile Include="Mods\ChipsCogs.cs" />
     <Compile Include="Mods\Audiovisual.cs" />
-    <Compile Include="PresetEnum.cs" />
+    <Compile Include="Mods\SFXPlayer.cs" />
+    <Compile Include="Mods\Controls.cs" />
+    <Compile Include="CustomControls.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="InternalExtensions.cs" />
     <Compile Include="Mods\Guard.cs" />
     <Compile Include="Mods\Combo.cs" />

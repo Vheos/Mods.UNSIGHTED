@@ -25,7 +25,7 @@
             _extraBrightness = CreateSetting(nameof(_extraBrightness), 0, IntRange(0, 100));
 
             _paletteSettingsByPlayerID = new Dictionary<int, PaletteSettings>();
-            foreach (var playerID in new[] { 0, 1 })
+            for (int playerID = 0; playerID < 2; playerID++)
                 _paletteSettingsByPlayerID[playerID] = new PaletteSettings(this, playerID);
 
             _sfxSettingsBySFX = new Dictionary<SFX, SFXSettings>();
@@ -45,10 +45,8 @@
                 "Allows you to override Alma's sprite colors" +
                 "\nYou can define separate palettes for each player";
             using (Indent)
-            {
-                _paletteSettingsByPlayerID[0].Format("Player 1");
-                _paletteSettingsByPlayerID[1].Format("Player 2");
-            }
+                foreach (var settings in _paletteSettingsByPlayerID)
+                    settings.Value.Format();
 
             CreateHeader("Menu SFX overrides").Description =
                 "Overrides the volume / pitch of chosen menu sound effects";
@@ -91,74 +89,68 @@
 
         // Defines
         #region SkinSettinsg
-        private class PaletteSettings
+        private class PaletteSettings : PerPlayerSettings<Audiovisual>
         {
             // Settings
-            internal readonly ModSetting<string> SerializedData;
-            internal readonly ModSetting<Actions> ActionsSetting;
-            internal readonly ModSetting<bool> Toggle;
-            internal readonly ModSetting<bool> CommonToggle;
-            internal readonly ModSetting<bool> HairToggle;
-            internal readonly ModSetting<bool> SkinToggle;
-            internal readonly ModSetting<bool> ArmorToggle;
-            internal readonly ModSetting<bool> WeaponToggle;
-            internal readonly ModSetting<Color> Highlight;
-            internal readonly ModSetting<Color> HairDark;
-            internal readonly ModSetting<Color> HairRegular;
-            internal readonly ModSetting<Color> HairBright;
-            internal readonly ModSetting<Color> SkinDark;
-            internal readonly ModSetting<Color> SkinRegular;
-            internal readonly ModSetting<Color> SkinBright;
-            internal readonly ModSetting<Color> ArmorMainDark;
-            internal readonly ModSetting<Color> ArmorMainRegular;
-            internal readonly ModSetting<Color> ArmorSideDark;
-            internal readonly ModSetting<Color> ArmorSideRegular;
-            internal readonly ModSetting<Color> WeaponMain;
-            internal readonly ModSetting<Color> WeaponSlash;
-            internal readonly ModSetting<Color> WeaponFlames;
-            internal readonly ModSetting<Color> WeaponSparks;
-            internal PaletteSettings(Audiovisual mod, int playerID)
+            private readonly ModSetting<string> SerializedData;
+            private readonly ModSetting<Actions> ActionsSetting;
+            private readonly ModSetting<bool> CommonToggle;
+            private readonly ModSetting<bool> HairToggle;
+            private readonly ModSetting<bool> SkinToggle;
+            private readonly ModSetting<bool> ArmorToggle;
+            private readonly ModSetting<bool> WeaponToggle;
+            private readonly ModSetting<Color> Highlight;
+            private readonly ModSetting<Color> HairDark;
+            private readonly ModSetting<Color> HairRegular;
+            private readonly ModSetting<Color> HairBright;
+            private readonly ModSetting<Color> SkinDark;
+            private readonly ModSetting<Color> SkinRegular;
+            private readonly ModSetting<Color> SkinBright;
+            private readonly ModSetting<Color> ArmorMainDark;
+            private readonly ModSetting<Color> ArmorMainRegular;
+            private readonly ModSetting<Color> ArmorSideDark;
+            private readonly ModSetting<Color> ArmorSideRegular;
+            private readonly ModSetting<Color> WeaponMain;
+            private readonly ModSetting<Color> WeaponSlash;
+            private readonly ModSetting<Color> WeaponFlames;
+            private readonly ModSetting<Color> WeaponSparks;
+            internal PaletteSettings(Audiovisual mod, int playerID) : base(mod, playerID)
             {
-                _mod = mod;
-                _playerID = playerID;
-                string keyPrefix = $"Player{_playerID + 1}_";
+                SerializedData = _mod.CreateSetting(PlayerPrefix + nameof(SerializedData), "");
+                ActionsSetting = _mod.CreateSetting(PlayerPrefix + nameof(ActionsSetting), (Actions)0);
 
-                Toggle = _mod.CreateSetting(keyPrefix + nameof(Toggle), false);
-                SerializedData = _mod.CreateSetting(keyPrefix + nameof(SerializedData), "");
-                ActionsSetting = _mod.CreateSetting(keyPrefix + nameof(ActionsSetting), (Actions)0);
+                CommonToggle = _mod.CreateSetting(PlayerPrefix + nameof(CommonToggle), false);
+                HairToggle = _mod.CreateSetting(PlayerPrefix + nameof(HairToggle), false);
+                SkinToggle = _mod.CreateSetting(PlayerPrefix + nameof(SkinToggle), false);
+                ArmorToggle = _mod.CreateSetting(PlayerPrefix + nameof(ArmorToggle), false);
+                WeaponToggle = _mod.CreateSetting(PlayerPrefix + nameof(WeaponToggle), false);
 
-                CommonToggle = _mod.CreateSetting(keyPrefix + nameof(CommonToggle), false);
-                HairToggle = _mod.CreateSetting(keyPrefix + nameof(HairToggle), false);
-                SkinToggle = _mod.CreateSetting(keyPrefix + nameof(SkinToggle), false);
-                ArmorToggle = _mod.CreateSetting(keyPrefix + nameof(ArmorToggle), false);
-                WeaponToggle = _mod.CreateSetting(keyPrefix + nameof(WeaponToggle), false);
-
-                Highlight = _mod.CreateSetting(keyPrefix + nameof(Highlight), _playerID == 0 ?
+                Highlight = _mod.CreateSetting(PlayerPrefix + nameof(Highlight), _playerID == 0 ?
                     new Color(0.9059f, 0.9451f, 0.9451f, 1f) : new Color(0.7961f, 0.7216f, 0.9843f, 1f));
 
-                HairDark = _mod.CreateSetting(keyPrefix + nameof(HairDark), _playerID == 0 ?
+                HairDark = _mod.CreateSetting(PlayerPrefix + nameof(HairDark), _playerID == 0 ?
                     new Color(0.6f, 0.5804f, 0.549f, 1f) : new Color(0f, 0.0784f, 0.4706f, 1f));
-                HairRegular = _mod.CreateSetting(keyPrefix + nameof(HairRegular), _playerID == 0 ?
+                HairRegular = _mod.CreateSetting(PlayerPrefix + nameof(HairRegular), _playerID == 0 ?
                     new Color(0.7333f, 0.7098f, 0.6784f, 1f) : new Color(0f, 0.1373f, 0.6431f, 1f));
-                HairBright = _mod.CreateSetting(keyPrefix + nameof(HairBright), _playerID == 0 ?
+                HairBright = _mod.CreateSetting(PlayerPrefix + nameof(HairBright), _playerID == 0 ?
                     new Color(0.8706f, 0.8706f, 0.8706f, 1f) : new Color(0f, 0.3843f, 0.9608f, 1f));
 
-                SkinDark = _mod.CreateSetting(keyPrefix + nameof(SkinDark), _playerID == 0 ?
+                SkinDark = _mod.CreateSetting(PlayerPrefix + nameof(SkinDark), _playerID == 0 ?
                     new Color(0.2588f, 0.1294f, 0.1333f, 1f) : new Color(0.2588f, 0.1294f, 0.1333f, 1f));
-                SkinRegular = _mod.CreateSetting(keyPrefix + nameof(SkinRegular), _playerID == 0 ?
+                SkinRegular = _mod.CreateSetting(PlayerPrefix + nameof(SkinRegular), _playerID == 0 ?
                     new Color(0.4627f, 0.2863f, 0.1765f, 1f) : new Color(0.5255f, 0.3961f, 0.2941f, 1f));
-                SkinBright = _mod.CreateSetting(keyPrefix + nameof(SkinBright), _playerID == 0 ?
+                SkinBright = _mod.CreateSetting(PlayerPrefix + nameof(SkinBright), _playerID == 0 ?
                     new Color(0.5255f, 0.4706f, 0.3059f, 1f) : new Color(0.7608f, 0.6353f, 0.4706f, 1f));
 
-                ArmorMainDark = _mod.CreateSetting(keyPrefix + nameof(ArmorMainDark), new Color(0.1255f, 0.102f, 0.2314f, 1f));
-                ArmorMainRegular = _mod.CreateSetting(keyPrefix + nameof(ArmorMainRegular), new Color(0.149f, 0.2275f, 0.5608f, 1f));
-                ArmorSideDark = _mod.CreateSetting(keyPrefix + nameof(ArmorSideDark), new Color(0.5216f, 0.4667f, 0.6588f, 1f));
-                ArmorSideRegular = _mod.CreateSetting(keyPrefix + nameof(ArmorSideRegular), new Color(0.749f, 0.6745f, 0.8078f, 1f));
+                ArmorMainDark = _mod.CreateSetting(PlayerPrefix + nameof(ArmorMainDark), new Color(0.1255f, 0.102f, 0.2314f, 1f));
+                ArmorMainRegular = _mod.CreateSetting(PlayerPrefix + nameof(ArmorMainRegular), new Color(0.149f, 0.2275f, 0.5608f, 1f));
+                ArmorSideDark = _mod.CreateSetting(PlayerPrefix + nameof(ArmorSideDark), new Color(0.5216f, 0.4667f, 0.6588f, 1f));
+                ArmorSideRegular = _mod.CreateSetting(PlayerPrefix + nameof(ArmorSideRegular), new Color(0.749f, 0.6745f, 0.8078f, 1f));
 
-                WeaponMain = _mod.CreateSetting(keyPrefix + nameof(WeaponMain), new Color(0.8902f, 0.8902f, 0.5216f, 1f));
-                WeaponSlash = _mod.CreateSetting(keyPrefix + nameof(WeaponSlash), new Color(0.902f, 0.902f, 0.9216f, 1f));
-                WeaponFlames = _mod.CreateSetting(keyPrefix + nameof(WeaponFlames), new Color(0.6549f, 0.5451f, 0.5608f, 1f));
-                WeaponSparks = _mod.CreateSetting(keyPrefix + nameof(WeaponSparks), new Color(0.8902f, 0.7725f, 0.4549f, 1f));
+                WeaponMain = _mod.CreateSetting(PlayerPrefix + nameof(WeaponMain), new Color(0.8902f, 0.8902f, 0.5216f, 1f));
+                WeaponSlash = _mod.CreateSetting(PlayerPrefix + nameof(WeaponSlash), new Color(0.902f, 0.902f, 0.9216f, 1f));
+                WeaponFlames = _mod.CreateSetting(PlayerPrefix + nameof(WeaponFlames), new Color(0.6549f, 0.5451f, 0.5608f, 1f));
+                WeaponSparks = _mod.CreateSetting(PlayerPrefix + nameof(WeaponSparks), new Color(0.8902f, 0.7725f, 0.4549f, 1f));
 
                 _colorsByToggle = new Dictionary<ModSetting<bool>, ModSetting<Color>[]>()
                 {
@@ -172,10 +164,9 @@
                 // events
                 ActionsSetting.AddEventSilently(SaveLoadResetFromConfig);
             }
-            internal void Format(string name)
+            override public void Format()
             {
-                Toggle.DisplayResetButton = false;
-                Toggle.Format(name.ToString());
+                base.Format();
                 using (Indent)
                 {
                     SerializedData.DisplayResetButton = false;
@@ -234,11 +225,8 @@
                     }
                 }
             }
-            internal string Description
-            {
-                get => Toggle.Description;
-                set => Toggle.Description = value;
-            }
+
+            // Publics
             internal void Apply(PlayersManager playerManager)
             {
                 // Create new palette
@@ -254,8 +242,6 @@
             }
 
             // Privates
-            private readonly Audiovisual _mod;
-            private readonly int _playerID;
             private readonly Dictionary<ModSetting<bool>, ModSetting<Color>[]> _colorsByToggle;
             private int _deserializationIndex;
             private bool TryGetColor(int pixelX, out Color color)
@@ -390,9 +376,9 @@
         private class SFXSettings
         {
             // Settings
-            internal readonly ModSetting<bool> Toggle;
-            internal readonly ModSetting<int> Volume;
-            internal readonly ModSetting<int> Pitch;
+            private readonly ModSetting<bool> Toggle;
+            private readonly ModSetting<int> Volume;
+            private readonly ModSetting<int> Pitch;
             internal SFXSettings(Audiovisual mod, SFX sfx)
             {
                 _mod = mod;
@@ -417,6 +403,8 @@
                 get => Toggle.Description;
                 set => Toggle.Description = value;
             }
+
+            // Publics
             internal void TryApply(string internalSFXName, ref float volume, ref float pitch)
             {
                 if (!Toggle || internalSFXName != _internalSFXName)

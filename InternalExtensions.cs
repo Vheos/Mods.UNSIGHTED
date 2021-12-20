@@ -2,8 +2,10 @@
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
     using BepInEx;
     using Tools.ModdingCore;
+    using UnityEngine;
 
     static public class InternalExtensions
     {
@@ -12,13 +14,61 @@
             t.MoveNext();
             return t.Current;
         }
-
         static public T ChooseThresholdValue<T>(this float t, T defaultValue, params (float Threshold, T Value)[] thresholdValuePairs)
         {
             for (int i = thresholdValuePairs.Length - 1; i >= 0; i--)
                 if (t >= thresholdValuePairs[i].Threshold)
                     return thresholdValuePairs[i].Value;
             return defaultValue;
+        }
+        static public string FirstLetterCapitalized(this string t)
+        {
+            if (string.IsNullOrEmpty(t))
+                return t;
+            return t[0].ToString().ToUpper() + t.Substring(1);
+        }
+        static public bool TryGetComponentInChildren<T>(this GameObject t, out T a) where T : Component
+        {
+            a = t.GetComponentInChildren<T>();
+            return a != null;
+        }
+        static public bool TryGetComponentInChildren<T>(this Component t, out T a) where T : Component
+        => t.gameObject.TryGetComponentInChildren(out a);
+        static public T[,] ToArray2D<T>(this Vector2Int t)
+        => new T[t.x, t.y];
+        static public IEnumerable<T> GetAllComponentsInHierarchy<T>(this Component t, int depth) where T : Component
+        {
+            foreach (var component in t.GetComponents<T>())
+                yield return component;
+
+            if (depth > 0)
+                foreach (Transform child in t.transform)
+                    foreach (var component in child.GetAllComponentsInHierarchy<T>(depth - 1))
+                        yield return component;
+        }
+
+        // IEnumerable
+        static public bool TryFind<T>(this IEnumerable<T> t, Func<T, bool> test, out T r)
+        {
+            foreach (var element in t)
+                if (test(element))
+                {
+                    r = element;
+                    return true;
+                }
+            r = default;
+            return false;
+        }
+        static public bool TryFindIndex<T>(this IEnumerable<T> t, T a, out int r)
+        {
+            r = 0;
+            foreach (var element in t)
+            {
+                if (element.Equals(a))
+                    return true;
+                r++;
+            }
+            return false;
         }
     }
 }
