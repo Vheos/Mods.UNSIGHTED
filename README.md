@@ -42,7 +42,8 @@ https://user-images.githubusercontent.com/9155825/146352205-7a16275b-ae4b-4003-9
 Notice how **Player 1** still has a decent line of sight around them, while **Player 2** is already in the gutter? If that wasn't hurtful enough, they will soon be hurled like a bag of potatoes towards **Player 1**'s location, because god forbid anything *even remotely slows down* the protagonist's adventuring. Now, in case of puzzle games (and metroidvania is partly that) this is somewhat justified, as stretching the screen too wide might spoil the solution. Still, this could be designed around. As a workaround, I implemented simple `co-op camera stretching` system, as well the options to disable `prioritizing player 1` and `teleporting player 2`:
 
 https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8f1f-528a6b5a206e.mp4
-<br/><br/><br/>
+
+<br/>
 
 
 
