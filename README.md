@@ -4,13 +4,13 @@
 
 
 # Table of contents
-- ![What is UNSIGHTED++?](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/README.md#what-is-unsighted)
-- ![Highlights](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/README.md#highlights)
-- ![Settings overview](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/README.md#settings-overview-as-of-v100)
-- ![How to?](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/README.md#how-to)
-- ![FAQ](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/README.md#faq)
-- ![Contact](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/README.md#contact)
-- ![Changelog](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/README.md#changelog)
+- [What is UNSIGHTED++?](https://github.com/Vheos777/Mods.UNSIGHTED#what-is-unsighted)
+- [Highlights](https://github.com/Vheos777/Mods.UNSIGHTED#highlights)
+- [Settings overview](https://github.com/Vheos777/Mods.UNSIGHTED#settings-overview-as-of-v100)
+- [How to?](https://github.com/Vheos777/Mods.UNSIGHTED#how-to)
+- [FAQ](https://github.com/Vheos777/Mods.UNSIGHTED#faq)
+- [Contact](https://github.com/Vheos777/Mods.UNSIGHTED#contact)
+- [Changelog](https://github.com/Vheos777/Mods.UNSIGHTED#changelog)
 <br/>
 
 
@@ -191,8 +191,8 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 
 # Contact
 - [GitHub Issue](https://github.com/Vheos777/Mods.UNSIGHTED/issues)
-- [Reddit post](https://www.reddit.com/r/UNSIGHTED/soon)
 - [Steam discussion](https://steamcommunity.com/app/1062110/discussions/0/4739473745767880713/)
+- [Reddit post](https://www.reddit.com/r/UNSIGHTED/comments/rkhnrg/unsighted/)
 - Discord DM: `Vheos#5865`
 <br/><br/><br/>
 
