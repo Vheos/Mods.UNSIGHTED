@@ -1,6 +1,19 @@
 [<img src="https://dcbadge.vercel.app/api/shield/211827301082464256" width="175" height="25"/>]()
 [<img src="https://ko-fi.com/img/githubbutton_sm.svg" width="175" height="25"/>](https://ko-fi.com/vheos777)
 
+
+
+# Table of contents
+- ![What is UNSIGHTED++?]()
+- ![How to?]()
+- ![Highlights]()
+- ![Settings overview]()
+- ![FAQ]()
+- ![Contact]()
+- ![Changelog]()
+
+
+
 # What is UNSIGHTED++?
 My personal collection of mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/)! Those include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
 
@@ -8,13 +21,24 @@ My personal collection of mods for the amazing game [UNSIGHTED](https://store.st
 
 
 
-# How to
-- Download [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest/), [ConfigurationManager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases/latest) and [UNSIGHTED++](https://github.com/Vheos777/Mods.UNSIGHTED/releases/latest)
-- Extract all files to the game folder (the one with `UNSIGHTED.exe`)
-- Press `F1` in-game to open the `Configuration Manager` window
-- Choose a mod and click `Apply` to expand its settings
-- Click `Collapse` to hide the settings without deactivating the mod
-- Enjoy <3
+# How to?
+### • Download [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest/), [ConfigurationManager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases/latest) and [UNSIGHTED++](https://github.com/Vheos777/Mods.UNSIGHTED/releases/latest)
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/DownloadFiles.png)
+
+### • Extract all files to the game folder (the one with `UNSIGHTED.exe`)
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/ExtractFiles.png)
+
+### • Press `F1` in-game to open the `Configuration Manager` window
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/ConfigurationManager.png)
+
+### • Choose a mod and click `Apply` to expand its settings
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/SettingDescription.png)
+
+### Enjoy <3
 
 
 
@@ -40,7 +64,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 
 
 
-# Settings Overview *(as of [v1.0.0](https://github.com/Vheos777/Mods.UNSIGHTED/releases/tag/v1.0.0))*
+# Settings overview *(as of [v1.0.0](https://github.com/Vheos777/Mods.UNSIGHTED/releases/tag/v1.0.0))*
 <details>
     <summary>Time</summary>
 
@@ -160,7 +184,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 
 
 
-# Contact Options
+# Contact
 - [GitHub Issue](https://github.com/Vheos777/Mods.UNSIGHTED/issues)
 - [Reddit post](https://www.reddit.com/r/UNSIGHTED/soon)
 - [Steam discussion](https://steamcommunity.com/app/1062110/discussions/0/4739473745767880713/)
