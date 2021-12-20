@@ -1,5 +1,11 @@
 <p align="center">
     <a href="">
+        <img src="https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Logo.png"/>
+    </a>
+</p>    
+
+<p align="center">
+    <a href="">
         <img src="https://img.shields.io/github/v/release/Vheos777/Mods.UNSIGHTED?labelColor=808080&color=404040&label=Version" height=25/>
         <img src="https://img.shields.io/github/downloads/Vheos777/Mods.UNSIGHTED/total?labelColor=808080&color=404040&label=Downloads" height=25/>
     </a>
