@@ -121,7 +121,7 @@
             _controllerIcons.Format("Controller icons");
             _controllerIcons.Description =
                 "Allows you to override the icons used for controller prompts" +
-                "\nUseful when the game doesn't correctly identify your controller, such as when using third party software to map Sony input to Xbox output";
+                "\nUseful when the game doesn't correctly identify your controller, such as when using third party software to map PlayStation input to Xbox output";
         }
         override protected void LoadPreset(string presetName)
         {
