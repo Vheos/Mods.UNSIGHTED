@@ -4,13 +4,14 @@
 
 
 # Table of contents
-- ![What is UNSIGHTED++?]()
-- ![How to?]()
-- ![Highlights]()
-- ![Settings overview]()
-- ![FAQ]()
-- ![Contact]()
-- ![Changelog]()
+- ![What is UNSIGHTED++?](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/README.md#what-is-unsighted)
+- ![Highlights](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/README.md#highlights)
+- ![Settings overview](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/README.md#settings-overview-as-of-v100)
+- ![How to?](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/README.md#how-to)
+- ![FAQ](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/README.md#faq)
+- ![Contact](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/README.md#contact)
+- ![Changelog](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/README.md#changelog)
+<br/>
 
 
 
@@ -18,27 +19,7 @@
 My personal collection of mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/)! Those include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
 
 (actually some people might, I wouldn't know)
-
-
-
-# How to?
-### • Download [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest/), [ConfigurationManager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases/latest) and [UNSIGHTED++](https://github.com/Vheos777/Mods.UNSIGHTED/releases/latest)
-
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/DownloadFiles.png)
-
-### • Extract all files to the game folder (the one with `UNSIGHTED.exe`)
-
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/ExtractFiles.png)
-
-### • Press `F1` in-game to open the `Configuration Manager` window
-
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/ConfigurationManager.png)
-
-### • Choose a mod and click `Apply` to expand its settings
-
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/SettingDescription.png)
-
-### Enjoy <3
+<br/><br/><br/>
 
 
 
@@ -61,6 +42,7 @@ https://user-images.githubusercontent.com/9155825/146352205-7a16275b-ae4b-4003-9
 Notice how **Player 1** still has a decent line of sight around them, while **Player 2** is already in the gutter? If that wasn't hurtful enough, they will soon be hurled like a bag of potatoes towards **Player 1**'s location, because god forbid anything *even remotely slows down* the protagonist's adventuring. Now, in case of puzzle games (and metroidvania is partly that) this is somewhat justified, as stretching the screen too wide might spoil the solution. Still, this could be designed around. As a workaround, I implemented simple `co-op camera stretching` system, as well the options to disable `prioritizing player 1` and `teleporting player 2`:
 
 https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8f1f-528a6b5a206e.mp4
+<br/><br/><br/>
 
 
 
@@ -167,6 +149,27 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 
 ![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Various.png)
 </details>
+<br/>
+
+
+
+# How to?
+### • Download [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest/), [ConfigurationManager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases/latest) and [UNSIGHTED++](https://github.com/Vheos777/Mods.UNSIGHTED/releases/latest)
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/DownloadFiles.png)
+
+### • Extract all files to the game folder (the one with `UNSIGHTED.exe`)
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/ExtractFiles.png)
+
+### • Press `F1` in-game to open the `Configuration Manager` window
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/ConfigurationManager.png)
+
+### • Choose a mod and click `Apply` to expand its settings
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/SettingDescription.png)
+<br/><br/><br/>
 
 
 
@@ -181,6 +184,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
     - choose one of the contact options below, then describe what's wrong and [pastebin](https://pastebin.com/) output log at `C:\Users\Vheos\AppData\LocalLow\Studio Pixel Punk\UNSIGHTED\output_log.txt`
 - **Can I see the source code?**
     - yep, all [my mods](https://github.com/stars/Vheos777/lists/mods) are open source! Feel free to study, clone and/or edit the code as you please :)
+<br/><br/><br/>
 
 
 
@@ -189,6 +193,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 - [Reddit post](https://www.reddit.com/r/UNSIGHTED/soon)
 - [Steam discussion](https://steamcommunity.com/app/1062110/discussions/0/4739473745767880713/)
 - Discord DM: `Vheos#5865`
+<br/><br/><br/>
 
 
 
