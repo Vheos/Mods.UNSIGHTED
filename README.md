@@ -1,20 +1,47 @@
-[<img src="https://dcbadge.vercel.app/api/shield/211827301082464256" width="175" height="25"/>]()
-[<img src="https://ko-fi.com/img/githubbutton_sm.svg" width="175" height="25"/>](https://ko-fi.com/vheos777)
+<p align="center">
+    <a href="">
+        <img src="https://img.shields.io/github/v/release/Vheos777/Mods.UNSIGHTED?labelColor=808080&color=404040&label=Version" height=25/>
+        <img src="https://img.shields.io/github/downloads/Vheos777/Mods.UNSIGHTED/total?labelColor=808080&color=404040&label=Downloads" height=25/>
+    </a>
+    <a href="https://ko-fi.com/vheos777">
+        <img src="https://img.shields.io/static/v1?logo=kofi&color=ff5e5b&logoColor=white&label=%20&message=Ko-fi" height="25"/>
+    </a>
+</p>
+    
+<p align="center">
+    <a href="https://github.com/Vheos777/Mods.UNSIGHTED/issues">
+        <img src="https://img.shields.io/static/v1?logo=github&color=282828&logoColor=white&label=%20&message=GitHub" height=25/>
+    </a>
+    <a href="https://steamcommunity.com/app/1062110/discussions/0/4739473745767880713/">             
+        <img src="https://img.shields.io/static/v1?logo=steam&color=0c497e&logoColor=white&label=%20&message=Steam" height=25/>
+    </a>
+    <a href="https://www.reddit.com/r/UNSIGHTED/comments/rkhnrg/unsighted/">   
+        <img src="https://img.shields.io/static/v1?logo=reddit&color=ff4500&logoColor=white&label=%20&message=Reddit" height=25/>
+    </a>
+    <a href="">   
+        <img src="https://dcbadge.vercel.app/api/shield/211827301082464256?style=flat&theme=discord" height=25/>
+    </a>
+</p>
+
+
+
+# Table of contents
+- [What is UNSIGHTED++?](https://github.com/Vheos777/Mods.UNSIGHTED#what-is-unsighted)
+- [Highlights](https://github.com/Vheos777/Mods.UNSIGHTED#highlights)
+- [Settings overview](https://github.com/Vheos777/Mods.UNSIGHTED#settings-overview-as-of-v100)
+- [How to?](https://github.com/Vheos777/Mods.UNSIGHTED#how-to)
+- [FAQ](https://github.com/Vheos777/Mods.UNSIGHTED#faq)
+- [Contact](https://github.com/Vheos777/Mods.UNSIGHTED#contact)
+- [Changelog](https://github.com/Vheos777/Mods.UNSIGHTED#changelog)
+<br/>
+
+
 
 # What is UNSIGHTED++?
 My personal collection of mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/)! Those include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
 
 (actually some people might, I wouldn't know)
-
-
-
-# How to
-- Download [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest/), [ConfigurationManager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases/latest) and [UNSIGHTED++](https://github.com/Vheos777/Mods.UNSIGHTED/releases/latest)
-- Extract all files to the game folder (the one with `UNSIGHTED.exe`)
-- Press `F1` in-game to open the `Configuration Manager` window
-- Choose a mod and click `Apply` to expand its settings
-- Click `Collapse` to hide the settings without deactivating the mod
-- Enjoy <3
+<br/><br/><br/>
 
 
 
@@ -38,9 +65,11 @@ Notice how **Player 1** still has a decent line of sight around them, while **Pl
 
 https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8f1f-528a6b5a206e.mp4
 
+<br/>
 
 
-# Settings Overview *(as of [v1.0.0](https://github.com/Vheos777/Mods.UNSIGHTED/releases/tag/v1.0.0))*
+
+# Settings overview *(as of [v1.0.0](https://github.com/Vheos777/Mods.UNSIGHTED/releases/tag/v1.0.0))*
 <details>
     <summary>Time</summary>
 
@@ -143,6 +172,27 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 
 ![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Various.png)
 </details>
+<br/>
+
+
+
+# How to?
+### • Download [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest/), [ConfigurationManager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases/latest) and [UNSIGHTED++](https://github.com/Vheos777/Mods.UNSIGHTED/releases/latest)
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/DownloadFiles.png)
+
+### • Extract all files to the game folder (the one with `UNSIGHTED.exe`)
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/ExtractFiles.png)
+
+### • Press `F1` in-game to open the `Configuration Manager` window
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/ConfigurationManager.png)
+
+### • Choose a mod and click `Apply` to expand its settings
+
+![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/SettingDescription.png)
+<br/><br/><br/>
 
 
 
@@ -157,14 +207,16 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
     - choose one of the contact options below, then describe what's wrong and [pastebin](https://pastebin.com/) output log at `C:\Users\Vheos\AppData\LocalLow\Studio Pixel Punk\UNSIGHTED\output_log.txt`
 - **Can I see the source code?**
     - yep, all [my mods](https://github.com/stars/Vheos777/lists/mods) are open source! Feel free to study, clone and/or edit the code as you please :)
+<br/><br/><br/>
 
 
 
-# Contact Options
+# Contact
 - [GitHub Issue](https://github.com/Vheos777/Mods.UNSIGHTED/issues)
-- [Reddit post](https://www.reddit.com/r/UNSIGHTED/soon)
 - [Steam discussion](https://steamcommunity.com/app/1062110/discussions/0/4739473745767880713/)
+- [Reddit post](https://www.reddit.com/r/UNSIGHTED/comments/rkhnrg/unsighted/)
 - Discord DM: `Vheos#5865`
+<br/><br/><br/>
 
 
 
