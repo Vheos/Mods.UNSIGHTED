@@ -1,9 +1,8 @@
-[<img src="https://ko-fi.com/img/githubbutton_sm.svg" width="200" height="25"/>](https://ko-fi.com/vheos777)
-[<img src="https://dcbadge.vercel.app/api/shield/211827301082464256" width="200" height="25"/>]()
-
+[<img src="https://dcbadge.vercel.app/api/shield/211827301082464256" width="175" height="25"/>]()
+[<img src="https://ko-fi.com/img/githubbutton_sm.svg" width="175" height="25"/>](https://ko-fi.com/vheos777)
 
 # What is UNSIGHTED++?
-Collection of my personal mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/)! Those include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
+My personal collection of mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/)! Those include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
 
 (actually some people might, I wouldn't know)
 
@@ -18,17 +17,22 @@ Collection of my personal mods for the amazing game [UNSIGHTED](https://store.st
 
 
 # Highlights
+### Quickslottable Weapon Loadouts
+They're like an hour away from being ready for release, but sadly I won't have a spare hour until after the weekend! In the meantime, feast upon this teaser:
+
+https://user-images.githubusercontent.com/9155825/146574388-3daf9b3a-ec14-4690-a4e7-06cfd41fafa9.mp4
+
 ### Color Palette Editor
 One of my proudest features in this mod pack! It's a bit clunky, as the **Configuration Manager** doesn't provide either HSV sliders or numerical RGB input, ***BUT IT WORKS!*** I've even gone the extra mile and written a de/serializer for the color data, so you can copy-paste palettes and share them with others **<3** Take a look at this juicy juice:
 
 https://user-images.githubusercontent.com/9155825/146345939-7f04ae15-d06b-4dfc-9ab0-853e28c80fc1.mp4
 
 ### Equal Rights for Player 2
-**UNSIGHTED** is an well-designed game, with a lot of modern and concious decisions. But there's a tiny hair in this otherwise perfect meal - the archaic, redundant and deeply rooted in the gaming community (for at least as long as Luigi exists) **MARGINALIZATION OF THE SECOND PLAYER!** Take a look at this:
+**UNSIGHTED** treats **Player 2** with way more respect than most games. But there's a tiny hair in this otherwise perfect meal - the archaic and redundant **CAMERA PRIVILEGES!** Take a look at this:
 
 https://user-images.githubusercontent.com/9155825/146352205-7a16275b-ae4b-4003-9c39-272b40fbe07c.mp4
 
-Notice how **Player 1** still has a decent line of sight around them, while **Player 2** is already in the gutter? If that wasn't hurtful enough, they will soon be forcefully hurled like a bag of potatoes to **Player 1**'s location, because god forbid anything *even remotely slows down* the protagonist's adventuring. Obviously, both issues are addressed in the `Camera` section of the mod pack, and this is how the same scene plays out with `Prioritize player 1` disabled and `Co-op camera stretching` settings disabled:
+Notice how **Player 1** still has a decent line of sight around them, while **Player 2** is already in the gutter? If that wasn't hurtful enough, they will soon be hurled like a bag of potatoes towards **Player 1**'s location, because god forbid anything *even remotely slows down* the protagonist's adventuring. Obviously, both issues are addressed in the `Camera` section of the mod pack, and this is how the same scene plays out with `Prioritize player 1` disabled and `Co-op camera stretching` enabled:
 
 https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8f1f-528a6b5a206e.mp4
 
