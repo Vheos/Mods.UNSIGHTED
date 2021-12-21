@@ -211,7 +211,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 - **Will this mod break my save file?**
     - it shouldn't, but it's a good habit to backup your save files before trying out new stuff :)
 - **I found a bug! How to report?**
-    - choose one of the contact options below, then describe what's wrong and [pastebin](https://pastebin.com/) output log at `C:\Users\Vheos\AppData\LocalLow\Studio Pixel Punk\UNSIGHTED\output_log.txt`
+    - choose one of the contact options below, then describe what's wrong and [pastebin](https://pastebin.com/) output log at `C:\Users\YOUR_USERNAME\AppData\LocalLow\Studio Pixel Punk\UNSIGHTED\output_log.txt`
 - **Can I see the source code?**
     - yep, all [my mods](https://github.com/stars/Vheos777/lists/mods) are open source! Feel free to study, clone and/or edit the code as you please :)
 <br/><br/><br/>
