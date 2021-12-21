@@ -29,7 +29,6 @@
         // Settings
         static private ModSetting<bool> _runInBackground;
         static private ModSetting<bool> _skipIntroLogos;
-        static private ModSetting<int> _saveSlots;
         static private ModSetting<int> _staminaHealGain;
         static private ModSetting<int> _staminaHealDuration;
         static private ModSetting<bool> _staminaHealCancelling;
@@ -41,7 +40,6 @@
         {
             _runInBackground = CreateSetting(nameof(_runInBackground), false);
             _skipIntroLogos = CreateSetting(nameof(_skipIntroLogos), false);
-            _saveSlots = CreateSetting(nameof(_saveSlots), 3, IntRange(3, 10));
 
             _staminaHealGain = CreateSetting(nameof(_staminaHealGain), 100, IntRange(0, 100));
             _staminaHealDuration = CreateSetting(nameof(_staminaHealDuration), 100, IntRange(50, 200));
@@ -54,7 +52,6 @@
 
             // Events
             _runInBackground.AddEvent(() => Application.runInBackground = _runInBackground);
-            _saveSlots.AddEvent(() => CustomSaves.SetSaveSlotsCount(_saveSlots));
         }
         override protected void SetFormatting()
         {
@@ -66,10 +63,6 @@
             _skipIntroLogos.Description =
                 "Skips all the unskippable logo animations, as well as the input choice screen, and goes straight to the main menu" +
                 "\nYou'll save about 30 seconds of your precious life each time you start the game";
-            _saveSlots.Format("Save slots");
-            _saveSlots.Description =
-                "How many save slots you'd like" +
-                "\n(required game restart to take effect)";
 
             _staminaHealGain.Format("\"Stamina Heal\" gain");
             _staminaHealGain.Description =

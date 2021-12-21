@@ -6,6 +6,7 @@
     using BepInEx;
     using Tools.ModdingCore;
     using UnityEngine;
+    using Vheos.Tools.Extensions.General;
 
     static public class InternalExtensions
     {
@@ -36,16 +37,20 @@
         => t.gameObject.TryGetComponentInChildren(out a);
         static public T[,] ToArray2D<T>(this Vector2Int t)
         => new T[t.x, t.y];
-        static public IEnumerable<T> GetAllComponentsInHierarchy<T>(this Component t, int depth) where T : Component
+        static public IEnumerable<T> GetComponentsInHierarchy<T>(this Component t, int fromDepth, int toDepth) where T : Component
         {
-            foreach (var component in t.GetComponents<T>())
-                yield return component;
+            if (fromDepth <= 0 && toDepth >= 0)
+                foreach (var component in t.GetComponents<T>())
+                    yield return component;
 
-            if (depth > 0)
-                foreach (Transform child in t.transform)
-                    foreach (var component in child.GetAllComponentsInHierarchy<T>(depth - 1))
-                        yield return component;
+            foreach (Transform child in t.transform)
+                foreach (var component in child.GetComponentsInHierarchy<T>(fromDepth - 1, toDepth - 1))
+                    yield return component;
         }
+        static public RectTransform Rect(this GameObject t)
+        => t.GetComponent<RectTransform>();
+        static public RectTransform Rect(this Component t)
+        => t.gameObject.Rect();
 
         // IEnumerable
         static public bool TryFind<T>(this IEnumerable<T> t, Func<T, bool> test, out T r)

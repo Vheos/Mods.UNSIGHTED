@@ -76,27 +76,27 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ACustomPopup.cs" />
-    <Compile Include="CustomSaves.cs" />
-    <Compile Include="Sections.cs" />
-    <Compile Include="Getter.cs" />
-    <Compile Include="Mods\UI.cs" />
-    <Compile Include="Mods\Movement.cs" />
-    <Compile Include="Mods\ChipsCogs.cs" />
-    <Compile Include="Mods\Audiovisual.cs" />
-    <Compile Include="Mods\SFXPlayer.cs" />
-    <Compile Include="Mods\Controls.cs" />
-    <Compile Include="CustomControls.cs" />
-    <Compile Include="Enums.cs" />
-    <Compile Include="InternalExtensions.cs" />
-    <Compile Include="Mods\Guard.cs" />
-    <Compile Include="Mods\Combo.cs" />
-    <Compile Include="Mods\ParryChallenge.cs" />
-    <Compile Include="Mods\Various.cs" />
-    <Compile Include="Main.cs" />
+    <Compile Include="Code\CustomPopups\ACustomPopup.cs" />
+    <Compile Include="Code\CustomPopups\CustomSaves.cs" />
+    <Compile Include="Code\Core\Sections.cs" />
+    <Compile Include="Code\Core\Getter.cs" />
+    <Compile Include="Code\Mods\UI.cs" />
+    <Compile Include="Code\Mods\Movement.cs" />
+    <Compile Include="Code\Mods\ChipsCogs.cs" />
+    <Compile Include="Code\Mods\Audiovisual.cs" />
+    <Compile Include="Code\Mods\SFXPlayer.cs" />
+    <Compile Include="Code\Mods\Menus.cs" />
+    <Compile Include="Code\CustomPopups\CustomControls.cs" />
+    <Compile Include="Code\Core\Enums.cs" />
+    <Compile Include="Code\Core\InternalExtensions.cs" />
+    <Compile Include="Code\Mods\Guard.cs" />
+    <Compile Include="Code\Mods\Combo.cs" />
+    <Compile Include="Code\Mods\ParryChallenge.cs" />
+    <Compile Include="Code\Mods\Various.cs" />
+    <Compile Include="Code\Core\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Mods\TimeMods.cs" />
-    <Compile Include="Mods\Camera.cs" />
+    <Compile Include="Code\Mods\TimeMods.cs" />
+    <Compile Include="Code\Mods\Camera.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Tools\Extensions\Vheos.Tools.Extensions.csproj">

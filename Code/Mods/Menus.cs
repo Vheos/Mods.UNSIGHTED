@@ -13,23 +13,26 @@
     using Vheos.Tools.Extensions.Collections;
     using UnityEngine.UI;
 
-    public class Controls : AMod, IDelayedInit
+    public class Menus : AMod, IDelayedInit
     {
         // Section
         override protected string SectionOverride
         => Sections.QOL;
         override protected string Description =>
-            "Mods related to keyboard/gamepad controls" +
+            "Mods related to in-game menus" +
             "\n\nExamples:" +
             "\n• Set hotkeys for weapon sets" +
             "\n• Allow unbinding/duplicate controls";
 
         // Settings
+        static private ModSetting<int> _saveSlots;
         static private Dictionary<int, LoadoutSettings> _loadoutSettingsByPlayerID;
         static private ModSetting<string> _undbindButton;
         static private ModSetting<BindingConflictResolution> _bindigsConflictResolution;
         override protected void Initialize()
         {
+            _saveSlots = CreateSetting(nameof(_saveSlots), 3, IntRange(3, 10));       
+
             _loadoutSettingsByPlayerID = new Dictionary<int, LoadoutSettings>();
             for (int playerID = 0; playerID < 2; playerID++)
                 _loadoutSettingsByPlayerID[playerID] = new LoadoutSettings(this, playerID);  
@@ -38,12 +41,17 @@
             _bindigsConflictResolution = CreateSetting(nameof(_bindigsConflictResolution), BindingConflictResolution.Swap);
 
             // popup config
+            _saveSlots.AddEvent(() => CustomSaves.SetSaveSlotsCount(_saveSlots));
             CustomControls.UpdateButtonsTable();
             CustomControls.UnbindButton.Set(() => _undbindButton.ToKeyCode());
             CustomControls.BindingsConflictResolution.Set(() => _bindigsConflictResolution);
         }
         override protected void SetFormatting()
         {
+            _saveSlots.Format("Save slots");
+            _saveSlots.Description =
+                "How many save slots you'd like" +
+                "\n(required game restart to take effect)";
             CreateHeader("Loadouts").Description =
                 "Set hotkeys to quickly switch between user-defined sets of weapons" +
                 "\nHotkeys can be configured in the in-game \"Controls\" menu:" +
@@ -85,13 +93,13 @@
 
         // Defines
         #region LoadoutSettings
-        private class LoadoutSettings : PerPlayerSettings<Controls>
+        private class LoadoutSettings : PerPlayerSettings<Menus>
         {
             // Settings
             internal readonly ModSetting<int> _count;
             internal readonly ModSetting<string> _switch;
             internal readonly Loadout[] _loadouts;
-            internal LoadoutSettings(Controls mod, int playerID) : base(mod, playerID)
+            internal LoadoutSettings(Menus mod, int playerID) : base(mod, playerID)
             {
                 _count = _mod.CreateSetting(PlayerPrefix + "Count", 1, _mod.IntRange(1, 4));
                 _cachedCount = _count;

@@ -42,7 +42,7 @@
             typeof(ParryChallenge),
 
             // QoL
-            typeof(Controls),
+            typeof(Menus),
             typeof(Camera),
             typeof(UI),
             typeof(Audiovisual),

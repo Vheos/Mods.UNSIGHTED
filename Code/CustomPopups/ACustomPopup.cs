@@ -21,8 +21,13 @@
         // Privates
         static protected T _this;
         static protected GameObject _buttonPrefab;
-        abstract protected bool TryFindPrefabs();
-        abstract protected void Initialize();
+        abstract protected GameObject FindPrefabs();
+        virtual protected void Initialize()
+        { }
+        virtual protected void DelayedInitialize()
+        { }
+        virtual protected string ButtonPrefabName
+        => $"{typeof(T).Name}Button";
 
         // Initializers
         internal ACustomPopup()
@@ -39,14 +44,21 @@
         [HarmonyPatch(typeof(TitleScreenScene), nameof(TitleScreenScene.Start)), HarmonyPostfix]
         static private void TitleScreenScene_Start_Post(TitleScreenScene __instance)
         {
-            if (!_this.TryFindPrefabs())
+            _buttonPrefab = _this.FindPrefabs();
+            if (_buttonPrefab == null)
             {
                 Log.Debug($"Failed to fully initialize {typeof(T).Name}!");
                 return;
             }
 
             GameObject.DontDestroyOnLoad(_buttonPrefab.GetRootAncestor());
+
+            _buttonPrefab = GameObject.Instantiate(_buttonPrefab);
+            _buttonPrefab.name = _this.ButtonPrefabName;
+            GameObject.DontDestroyOnLoad(_buttonPrefab);     
+            
             IsFullyInitialized = true;
+            _this.DelayedInitialize();
         }
     }
 }

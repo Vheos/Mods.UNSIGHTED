@@ -29,10 +29,11 @@
 
                 // initialize button
                 var newButton = GameObject.Instantiate(_buttonPrefab).GetComponent<ChangeInputButton>();
-                newButton.BecomeSiblingOf(_buttonPrefab);
+                newButton.BecomeChildOf(_buttonsHolder);
                 newButton.inputName = buttonGUID;
                 newButton.currentKey = setting.ToKeyCode();
                 newButton.buttonName.originalText = setting.Value.ToUpper();
+                newButton.buttonName.linesParent.GetChildGameObjects().Destroy();
 
                 var actionName = newButton.GetComponentInChildren<FText>();
                 actionName.originalText = name;
@@ -46,7 +47,7 @@
         static internal void UpdateButtonsTable()
         {
             // table size and position
-            RectTransform tableRect = _buttonPrefab.transform.parent as RectTransform;
+            RectTransform tableRect = _buttonsHolder.GetComponent<RectTransform>();
             tableRect.sizeDelta = TABLE_SIZE;
             tableRect.anchoredPosition = new Vector2(0, -32);
 
@@ -90,7 +91,7 @@
                     }
 
             // controls manager
-            _controlsManager.inputButtons = _controlsManager.GetAllComponentsInHierarchy<ChangeInputButton>(3).GetGameObjects().ToArray();
+            _controlsManager.inputButtons = _controlsManager.GetComponentsInHierarchy<ChangeInputButton>(3, 3).GetGameObjects().ToArray();
         }
         static internal Getter<KeyCode> UnbindButton
         { get; } = new Getter<KeyCode>();
@@ -102,14 +103,13 @@
         {
             _settingsByButtonGUID = new Dictionary<string, ModSetting<string>[]>();
         }
-        override protected bool TryFindPrefabs()
-        {
-            if (Resources.FindObjectsOfTypeAll<PlayerInputWindowsManager>().TryGetAny(out _controlsManager)
-            && _controlsManager.inputButtons.TryGetAny(out _buttonPrefab))
-                return true;
-
-            return false;
-        }
+        override protected GameObject FindPrefabs()
+        => Resources.FindObjectsOfTypeAll<PlayerInputWindowsManager>().TryGetAny(out _controlsManager)
+        && _controlsManager.inputButtons.TryGetAny(out var buttonPrefab)
+        && buttonPrefab.GetParent().TryNonNull(out _buttonsHolder)
+         ? buttonPrefab
+         : null;
+        static private GameObject _buttonsHolder;
         static private PlayerInputWindowsManager _controlsManager;
         static private Dictionary<string, ModSetting<string>[]> _settingsByButtonGUID;
         static private Vector2Int GetTableCounts(int buttonsCount)
@@ -151,8 +151,6 @@
             ("down", "down"),
         };
         #endregion
-
-
 
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
