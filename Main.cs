@@ -23,7 +23,10 @@
         protected override void Initialize()
         {
             Log.Debug($"Initializing {typeof(CustomControls).Name}...");
-            CustomControls.Initialize();
+            new CustomControls();
+
+            Log.Debug($"Initializing {typeof(CustomSaves).Name}...");
+            new CustomSaves();
         }
         protected override bool DelayedInitializeCondition
         => CustomControls.IsFullyInitialized;

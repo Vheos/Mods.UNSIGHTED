@@ -32,13 +32,14 @@
         {
             _loadoutSettingsByPlayerID = new Dictionary<int, LoadoutSettings>();
             for (int playerID = 0; playerID < 2; playerID++)
-                _loadoutSettingsByPlayerID[playerID] = new LoadoutSettings(this, playerID);
-            CustomControls.UpdateButtonsTable();
+                _loadoutSettingsByPlayerID[playerID] = new LoadoutSettings(this, playerID);  
 
-            _undbindButton = CreateSetting(nameof(_undbindButton), "Delete");
-            CustomControls.UnbindButton.Set(() => _undbindButton.ToKeyCode());
-
+            _undbindButton = CreateSetting(nameof(_undbindButton), "Delete");    
             _bindigsConflictResolution = CreateSetting(nameof(_bindigsConflictResolution), BindingConflictResolution.Swap);
+
+            // popup config
+            CustomControls.UpdateButtonsTable();
+            CustomControls.UnbindButton.Set(() => _undbindButton.ToKeyCode());
             CustomControls.BindingsConflictResolution.Set(() => _bindigsConflictResolution);
         }
         override protected void SetFormatting()

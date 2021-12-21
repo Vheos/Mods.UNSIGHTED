@@ -1,27 +1,20 @@
 ﻿namespace Vheos.Mods.UNSIGHTED
 {
+    using System;
     using System.Linq;
     using System.Collections.Generic;
     using UnityEngine;
     using HarmonyLib;
+    using Tools.ModdingCore;
     using Tools.Extensions.General;
     using Tools.Extensions.UnityObjects;
-    using Tools.ModdingCore;
     using Tools.Extensions.Math;
-    using System;
-    using Vheos.Tools.Extensions.Reflection;
-    using Vheos.Tools.Extensions.Collections;
-    using UnityEngine.UI;
+    using Tools.Extensions.Reflection;
+    using Tools.Extensions.Collections;
 
-    static internal class CustomControls
+    internal class CustomControls : ACustomPopup<CustomControls>
     {
-
         // Publics
-        static internal void Initialize()
-        {
-            _settingsByButtonGUID = new Dictionary<string, ModSetting<string>[]>();
-            Harmony.CreateAndPatchAll(typeof(CustomControls));
-        }
         static internal ModSetting<string> AddControlsButton(int playerID, string name)
         {
             // setting
@@ -99,14 +92,38 @@
             // controls manager
             _controlsManager.inputButtons = _controlsManager.GetAllComponentsInHierarchy<ChangeInputButton>(3).GetGameObjects().ToArray();
         }
-        static internal bool IsFullyInitialized
-        { get; private set; }
         static internal Getter<KeyCode> UnbindButton
         { get; } = new Getter<KeyCode>();
         static internal Getter<BindingConflictResolution> BindingsConflictResolution
         { get; } = new Getter<BindingConflictResolution>();
 
         // Privates
+        override protected void Initialize()
+        {
+            _settingsByButtonGUID = new Dictionary<string, ModSetting<string>[]>();
+        }
+        override protected bool TryFindPrefabs()
+        {
+            if (Resources.FindObjectsOfTypeAll<PlayerInputWindowsManager>().TryGetAny(out _controlsManager)
+            && _controlsManager.inputButtons.TryGetAny(out _buttonPrefab))
+                return true;
+
+            return false;
+        }
+        static private PlayerInputWindowsManager _controlsManager;
+        static private Dictionary<string, ModSetting<string>[]> _settingsByButtonGUID;
+        static private Vector2Int GetTableCounts(int buttonsCount)
+        {
+            int sizeX = buttonsCount.Div(MIN_ROWS).RoundUp().ClampMax(MAX_COLUMNS);
+            int sizeY = buttonsCount.Div(MAX_COLUMNS).RoundUp().ClampMin(MIN_ROWS);
+            return new Vector2Int(sizeX, sizeY);
+        }
+        static private string GetSettingGUID(int playerID, string name)
+        => $"{typeof(CustomControls).Name}_Player{playerID + 1}_{name}";
+        static private string GetButtonGUID(string name)
+        => $"{typeof(CustomControls).Name}_{name}";
+
+        // Settings
         private const int MAX_COLUMNS = 3;
         private const int MIN_ROWS = 7;
         static private readonly Vector2 COMPACT_TEXT_SCALE = new Vector2(0.75f, 0.75f);
@@ -116,7 +133,7 @@
         static private readonly Vector2Int TABLE_SIZE = new Vector2Int(296, 126);
         #region VANILLA_BUTTON_NAMES
         static private readonly (string RefName, string InputName)[] VANILLA_BUTTON_NAMES = new[]
-{
+        {
             ("interact", "interact"),
             ("aimLock", "aimlock"),
             ("guard", "guard"),
@@ -134,43 +151,11 @@
             ("down", "down"),
         };
         #endregion
-        static private PlayerInputWindowsManager _controlsManager;
-        static private GameObject _buttonPrefab;
-        static private Dictionary<string, ModSetting<string>[]> _settingsByButtonGUID;
-        static private bool TryFindButtonPrefab()
-        {
-            if (Resources.FindObjectsOfTypeAll<PlayerInputWindowsManager>().TryGetAny(out _controlsManager)
-            && _controlsManager.inputButtons.TryGetAny(out _buttonPrefab))
-                return true;
 
-            return false;
-        }
-        static private Vector2Int GetTableCounts(int buttonsCount)
-        {
-            int sizeX = buttonsCount.Div(MIN_ROWS).RoundUp().ClampMax(MAX_COLUMNS);
-            int sizeY = buttonsCount.Div(MAX_COLUMNS).RoundUp().ClampMin(MIN_ROWS);
-            return new Vector2Int(sizeX, sizeY);
-        }
-        static private string GetSettingGUID(int playerID, string name)
-        => $"{typeof(CustomControls).Name}_Player{playerID + 1}_{name}";
-        static private string GetButtonGUID(string name)
-        => $"{typeof(CustomControls).Name}_{name}";
+
 
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
-
-        [HarmonyPatch(typeof(TitleScreenScene), nameof(TitleScreenScene.Start)), HarmonyPostfix]
-        static private void TitleScreenScene_Start_Post(TitleScreenScene __instance)
-        {
-            if (!TryFindButtonPrefab())
-            {
-                Log.Debug($"Failed to fully initialize {typeof(CustomControls).Name}!");
-                return;
-            }
-
-            GameObject.DontDestroyOnLoad(_buttonPrefab.GetRootAncestor());
-            IsFullyInitialized = true;
-        }
 
         [HarmonyPatch(typeof(ChangeInputButton), nameof(ChangeInputButton.GetCurrentKey)), HarmonyPostfix]
         static private void ChangeInputButton_GetCurrentKey_Pre(ChangeInputButton __instance, ref KeyCode __result)

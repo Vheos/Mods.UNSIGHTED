@@ -76,6 +76,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ACustomPopup.cs" />
+    <Compile Include="CustomSaves.cs" />
     <Compile Include="Sections.cs" />
     <Compile Include="Getter.cs" />
     <Compile Include="Mods\UI.cs" />
