@@ -6,26 +6,27 @@
 
 <p align="center">
     <a href="">
-        <img src="https://img.shields.io/github/v/release/Vheos777/Mods.UNSIGHTED?labelColor=808080&color=404040&label=Version" height=25/>
+        <img src="https://img.shields.io/github/v/release/Vheos777/Mods.UNSIGHTED?labelColor=808080&color=404040&label=Mod" height=25/>
+        <img src="https://img.shields.io/static/v1?labelColor=808080&color=404040&label=Game&message=v1.0.7.3" height=25/>
         <img src="https://img.shields.io/github/downloads/Vheos777/Mods.UNSIGHTED/total?labelColor=808080&color=404040&label=Downloads" height=25/>
-    </a>
-    <a href="https://ko-fi.com/vheos777">
-        <img src="https://img.shields.io/static/v1?logo=kofi&color=ff5e5b&logoColor=white&label=%20&message=Ko-fi" height="25"/>
     </a>
 </p>
     
 <p align="center">
-    <a href="https://github.com/Vheos777/Mods.UNSIGHTED/issues">
-        <img src="https://img.shields.io/static/v1?logo=github&color=282828&logoColor=white&label=%20&message=GitHub" height=25/>
-    </a>
     <a href="https://steamcommunity.com/app/1062110/discussions/0/4739473745767880713/">             
-        <img src="https://img.shields.io/static/v1?logo=steam&color=0c497e&logoColor=white&label=%20&message=Steam" height=25/>
+        <img src="https://img.shields.io/static/v1?logo=steam&color=0b2961&logoColor=white&label=%20&message=Steam" height=25/>
     </a>
     <a href="https://www.reddit.com/r/UNSIGHTED/comments/rkhnrg/unsighted/">   
         <img src="https://img.shields.io/static/v1?logo=reddit&color=ff4500&logoColor=white&label=%20&message=Reddit" height=25/>
     </a>
+    <a href="https://github.com/Vheos777/Mods.UNSIGHTED/issues">
+        <img src="https://img.shields.io/static/v1?logo=github&color=282828&logoColor=white&label=%20&message=GitHub" height=25/>
+    </a>
     <a href="">   
-        <img src="https://dcbadge.vercel.app/api/shield/211827301082464256?style=flat&theme=discord" height=25/>
+        <img src="https://img.shields.io/static/v1?logo=discord&color=657ac7&logoColor=white&label=%20&message=Vheos%235865" height=25/>
+    </a>
+    <a href="https://ko-fi.com/vheos777">
+        <img src="https://img.shields.io/static/v1?logo=kofi&color=ff5e5b&logoColor=white&label=%20&message=Ko-fi" height="25"/>
     </a>
 </p>
 
