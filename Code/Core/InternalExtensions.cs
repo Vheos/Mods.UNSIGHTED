@@ -6,6 +6,7 @@
     using BepInEx;
     using Tools.ModdingCore;
     using UnityEngine;
+    using UnityEngine.UI;
     using Vheos.Tools.Extensions.General;
 
     static public class InternalExtensions
@@ -51,6 +52,21 @@
         => t.GetComponent<RectTransform>();
         static public RectTransform Rect(this Component t)
         => t.gameObject.Rect();
+        static public TextAnchor FlipHorizontally(this TextAnchor t)
+        {
+            switch (t)
+            {
+                case TextAnchor.UpperLeft: return TextAnchor.UpperRight;
+                case TextAnchor.UpperRight: return TextAnchor.UpperLeft;
+                case TextAnchor.MiddleLeft: return TextAnchor.MiddleRight;
+                case TextAnchor.MiddleRight: return TextAnchor.MiddleLeft;
+                case TextAnchor.LowerLeft: return TextAnchor.LowerRight;
+                case TextAnchor.LowerRight: return TextAnchor.LowerLeft;
+                default: return t;
+            }
+        }
+        static public void FlipAlignmentHorizontally(this LayoutGroup t)
+        => t.childAlignment = t.childAlignment.FlipHorizontally();
 
         // IEnumerable
         static public bool TryFind<T>(this IEnumerable<T> t, Func<T, bool> test, out T r)

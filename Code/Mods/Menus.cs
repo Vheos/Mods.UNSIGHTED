@@ -21,36 +21,38 @@
         override protected string Description =>
             "Mods related to in-game menus" +
             "\n\nExamples:" +
+            "\n• Enable extra save slots" +
             "\n• Set hotkeys for weapon sets" +
             "\n• Allow unbinding/duplicate controls";
 
         // Settings
-        static private ModSetting<int> _saveSlots;
+        static private ModSetting<bool> _extraSaveSlots;
         static private Dictionary<int, LoadoutSettings> _loadoutSettingsByPlayerID;
         static private ModSetting<string> _undbindButton;
         static private ModSetting<BindingConflictResolution> _bindigsConflictResolution;
         override protected void Initialize()
         {
-            _saveSlots = CreateSetting(nameof(_saveSlots), 3, IntRange(3, 10));       
+            _extraSaveSlots = CreateSetting(nameof(_extraSaveSlots), false);
 
             _loadoutSettingsByPlayerID = new Dictionary<int, LoadoutSettings>();
             for (int playerID = 0; playerID < 2; playerID++)
-                _loadoutSettingsByPlayerID[playerID] = new LoadoutSettings(this, playerID);  
+                _loadoutSettingsByPlayerID[playerID] = new LoadoutSettings(this, playerID);
 
-            _undbindButton = CreateSetting(nameof(_undbindButton), "Delete");    
+            _undbindButton = CreateSetting(nameof(_undbindButton), "Delete");
             _bindigsConflictResolution = CreateSetting(nameof(_bindigsConflictResolution), BindingConflictResolution.Swap);
 
             // popup config
-            _saveSlots.AddEvent(() => CustomSaves.SetSaveSlotsCount(_saveSlots));
+            if (_extraSaveSlots)
+                CustomSaves.SetSaveSlotsCount(8);
             CustomControls.UpdateButtonsTable();
             CustomControls.UnbindButton.Set(() => _undbindButton.ToKeyCode());
             CustomControls.BindingsConflictResolution.Set(() => _bindigsConflictResolution);
         }
         override protected void SetFormatting()
         {
-            _saveSlots.Format("Save slots");
-            _saveSlots.Description =
-                "How many save slots you'd like" +
+            _extraSaveSlots.Format("Extra save slots");
+            _extraSaveSlots.Description =
+                "Increases the amount of save slots to 8" +
                 "\n(required game restart to take effect)";
             CreateHeader("Loadouts").Description =
                 "Set hotkeys to quickly switch between user-defined sets of weapons" +

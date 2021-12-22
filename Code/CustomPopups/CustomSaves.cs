@@ -12,17 +12,92 @@
     using Tools.Extensions.Reflection;
     using Tools.Extensions.Collections;
     using UnityEngine.UI;
+    using Vheos.Tools.UtilityN;
 
     internal class CustomSaves : ACustomPopup<CustomSaves>
     {
         // Publics
         static internal void SetSaveSlotsCount(int count)
         {
+            // remove old buttons
+            foreach (var oldSlotButton in _menuPrefab.saveSlotButtons)
+            {
+                oldSlotButton.gameObject.SetActive(false);
+                oldSlotButton.copyButton.SetActive(false);
+                oldSlotButton.myEraseButton.SetActive(false);
+            }
 
+            // create and assign new buttons
+            _menuPrefab.saveSlotButtons = new SaveSlotButton[count];
+            var rowsByColumn = new[] { new List<RectTransform>(), new List<RectTransform>() };
+            var globalGameData = PseudoSingleton<GlobalGameData>.instance;
+            for (int i = 0; i < _menuPrefab.saveSlotButtons.Length; i++)
+            {
+                var newButton = GameObject.Instantiate(_buttonPrefab).GetComponent<SaveSlotButton>();
+                newButton.BecomeChildOf(_menuPrefab);
+                _menuPrefab.saveSlotButtons[i] = newButton;
+                rowsByColumn[i % 2].Add(newButton.Rect());
 
+                // try initialize save slot
+                foreach (var gameType in Utility.GetEnumValues<GameType>())
+                {
+                    int slotID = GetSaveSlotID(gameType, i);
+                    if (globalGameData.currentData.playerDataSlots.TryGet(slotID, out var playerData)
+                    && playerData.dataStrings == null)
+                        globalGameData.CreateDefaultDataSlot(slotID);
+                }
+            }
+
+            // format buttons
+            int countX = rowsByColumn.Length;
+            for (int ix = 0; ix < rowsByColumn.Length; ix++)
+            {
+                float posX = ix.IsEven() ? SCREEN_RECT.xMin : SCREEN_RECT.xMax;
+                int countY = rowsByColumn[ix].Count;
+                var totalButtonSizeY = BUTTON_SIZE.y * BUTTON_SCALE.y;
+                float totalGapSizeY = SCREEN_RECT.height - countY * totalButtonSizeY;
+                float gapSizeY = totalGapSizeY.Div(countY - 1);
+
+                for (int iy = 0; iy < countY; iy++)
+                {
+                    var slotButton = rowsByColumn[ix][iy].GetComponent<SaveSlotButton>();
+                    float posY = SCREEN_RECT.yMax - iy * (totalButtonSizeY + gapSizeY);
+                    rowsByColumn[ix][iy].anchoredPosition = new Vector2(posX, posY);
+                    if (ix.IsOdd())
+                        rowsByColumn[ix][iy].localScale *= new Vector2(-1, +1);
+
+                    // update navigation
+                    var buttonNavigation = rowsByColumn[ix][iy].GetComponent<TButtonNavigation>();
+                    buttonNavigation.onUp = rowsByColumn[ix][iy.Add(-1).PosMod(countY)].gameObject;
+                    buttonNavigation.onDown = rowsByColumn[ix][iy.Add(+1).PosMod(countY)].gameObject;
+                    buttonNavigation.onLeft = rowsByColumn[ix.Add(-1).PosMod(countX)][iy].gameObject;
+                    buttonNavigation.onRight = rowsByColumn[ix.Add(+1).PosMod(countX)][iy].gameObject;
+
+                    // customize children                   
+                    foreach (var childGroup in new[] { slotButton.haveSaveStuff, slotButton.dontHaveSaveStuff })
+                        foreach (RectTransform child in childGroup.transform)
+                        {
+                            child.anchorMin = child.anchorMax = new Vector2(0, 0);
+                            child.pivot = 0.5f.ToVector2();
+
+                            if (slotButton.transform.localScale.x < 0)
+                                child.localScale *= new Vector2(-1, +1);
+
+                            if (child.TryGetComponent(out FText ftext))
+                            {
+                                ftext.minTextPosition = ftext.maxTextPosition = null;
+                                if (slotButton.transform.localScale.x < 0)
+                                {
+                                    ftext.lineModel.GetComponent<HorizontalLayoutGroup>().FlipAlignmentHorizontally();
+                                    ftext.linesParent.GetComponent<GridLayoutGroup>().FlipAlignmentHorizontally();
+                                }
+                            }
+                        }
+                }
+            }
         }
 
-        // Privates
+        // Privetes
         override protected GameObject FindPrefabs()
         => Resources.FindObjectsOfTypeAll<SaveSlotPopup>().TryGetAny(out _menuPrefab)
         && _menuPrefab.saveSlotButtons.TryGetAny(out var buttonPrefab)
@@ -30,17 +105,15 @@
          : null;
         override protected void DelayedInitialize()
         {
-            base.DelayedInitialize();
-
             // set scale
             var buttonNavigation = _buttonPrefab.GetComponent<TButtonNavigation>();
-            buttonNavigation.originalScale = buttonNavigation.transform.localScale = new Vector2(0.75f, 0.75f);
+            buttonNavigation.originalScale = buttonNavigation.transform.localScale = BUTTON_SCALE;
 
             // customize the button
             RectTransform buttonRect = _buttonPrefab.Rect();
             buttonRect.anchorMin = buttonRect.anchorMax = new Vector2(0, 0);
-            buttonRect.pivot = new Vector2(0, 0.5f);
-            buttonRect.sizeDelta = new Vector2(230, 40);
+            buttonRect.pivot = new Vector2(0, 0);
+            buttonRect.sizeDelta = BUTTON_SIZE;
 
             // initialize copy/erase buttons
             var slotButton = _buttonPrefab.GetComponent<SaveSlotButton>();
@@ -49,44 +122,40 @@
                 var newButton = GameObject.Instantiate(prefab);
                 newButton.BecomeChildOf(slotButton.haveSaveStuff);
                 newButton.name = name;
+
                 var ftext = newButton.GetComponentInChildren<FText>();
                 ftext.text = ftext.originalText = name;
-                ftext.ApplyText();
+                ftext.GetComponent<UITranslateText>().enabled = false;
+                ftext.Rect().anchoredPosition = new Vector2(5, 2);
+
+                var buttonNav = newButton.GetComponentInChildren<TButtonNavigation>();
+                buttonNav.normalColor = buttonNav.normalColor.NewA(1);
+                buttonNav.highlightColor = buttonNav.highlightColor.NewA(1);
+
+                var onClick = newButton.GetComponentInChildren<SendMessageOnClick>();
+                onClick.onClick = null;
+                onClick.target = slotButton.gameObject;
+                onClick.message = name == COPY_BUTTON_NAME ? nameof(SaveSlotButton.CopyClicked) : nameof(SaveSlotButton.EraseClicked);
 
                 return newButton;
             }
             slotButton.copyButton = InstantiateAndInitialize(slotButton.copyButton, COPY_BUTTON_NAME);
             slotButton.myEraseButton = InstantiateAndInitialize(slotButton.myEraseButton, ERASE_BUTTON_NAME);
-
-            // remove old buttons
-            foreach (var oldSlotButton in _menuPrefab.saveSlotButtons)
-            {
-                oldSlotButton.copyButton.Destroy();
-                oldSlotButton.myEraseButton.Destroy();
-            }
-            _menuPrefab.saveSlotButtons.DestroyObject();
-
-            // create new buttons
-            _menuPrefab.saveSlotButtons = new SaveSlotButton[8];
-            for (int i = 0; i < _menuPrefab.saveSlotButtons.Length; i++)
-            {
-                var newButton = GameObject.Instantiate(_buttonPrefab).GetComponent<SaveSlotButton>();
-                newButton.BecomeChildOf(_menuPrefab);
-                newButton.Rect().anchoredPosition = new Vector2(0, 177 - i.PosMod(4) * 42);
-                if (i >= 4)
-                {
-                    newButton.Rect().anchoredPosition += new Vector2(400, 0);
-                    newButton.transform.localScale *= new Vector2(-1, +1);
-                }
-                _menuPrefab.saveSlotButtons[i] = newButton;
-            }
-
         }
         static private SaveSlotPopup _menuPrefab;
-        static private int GetGlobalSaveSlotID(GameType gameType, int localSaveSlotID)
-        => localSaveSlotID < 3
-        ? localSaveSlotID + 3 * (int)gameType
-        : localSaveSlotID * 3 + (int)gameType;
+        static private int GetSaveSlotID(GameType gameType, int buttonID)
+        => buttonID < 3
+        ? buttonID + 3 * (int)gameType
+        : buttonID * 3 + (int)gameType;
+
+        // Settings
+        static private readonly Rect SCREEN_RECT = Rect.MinMaxRect(0, 2, 400, 162);
+        static private readonly Vector2 BUTTON_SIZE = new Vector2(230, 40);
+        static private readonly Vector2 BUTTON_SCALE = new Vector2(0.75f, 0.75f);
+        private const int ORIGINAL_BUTTONS_COUNT = 3;
+        private const string COPY_BUTTON_NAME = "cpy";
+        private const string ERASE_BUTTON_NAME = "del";
+        private const string ALMA_SPRITE_NAME = "Alma";
         #region RectTransformOverrides
         static private readonly Dictionary<string, (Vector2 Position, Vector2 Size)> RECT_OVERRIDES_BY_CHILD_NAME = new Dictionary<string, (Vector2, Vector2)>
         {
@@ -102,15 +171,12 @@
             ["Highway"] = (new Vector2(200f, 40f), new Vector2(float.NaN, float.NaN)),
             ["Factory"] = (new Vector2(215f, 40f), new Vector2(float.NaN, float.NaN)),
             ["FairySprite"] = (new Vector2(40f, 40f), new Vector2(float.NaN, float.NaN)),
-            ["FinishedGameIcon"] = (new Vector2(110f, 20f), new Vector2(15f, 15f)),
-            [COPY_BUTTON_NAME] = (new Vector2(77.5f, 42f), new Vector2(45f, 12.5f)),
-            [ERASE_BUTTON_NAME] = (new Vector2(122.5f, 42f), new Vector2(45f, 12.5f)),
+            ["FinishedGameIcon"] = (new Vector2(110f, 22.5f), new Vector2(15f, 15f)),
+            [COPY_BUTTON_NAME] = (new Vector2(100f, 40f), new Vector2(25, 12.5f)),
+            [ERASE_BUTTON_NAME] = (new Vector2(130f, 40f), new Vector2(25, 12.5f)),
             ["NewGame"] = (new Vector2(90f, 22.5f), new Vector2(0f, 0f)),
         };
         #endregion
-        private const string COPY_BUTTON_NAME = "cpy";
-        private const string ERASE_BUTTON_NAME = "del";
-        private const string ALMA_SPRITE_NAME = "Alma";
 
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
@@ -118,13 +184,16 @@
         [HarmonyPatch(typeof(SaveSlotPopup), nameof(SaveSlotPopup.ChangeGameType)), HarmonyPrefix]
         static private bool SaveSlotPopup_ChangeGameType_Pre(SaveSlotPopup __instance, int targetTypeId)
         {
+            if (__instance.saveSlotButtons.Length <= ORIGINAL_BUTTONS_COUNT)
+                return true;
+
             __instance.currentGameType = (GameType)targetTypeId;
             __instance.mainStoryButton.GetChildComponent<Image>().color = __instance.currentGameType == GameType.MainStory ? Color.white : Color.grey * 0.5f;
             __instance.dungeonButton.GetChildComponent<Image>().color = __instance.currentGameType == GameType.Dungeon ? Color.white : Color.grey * 0.5f;
             __instance.bossRushButton.GetChildComponent<Image>().color = __instance.currentGameType == GameType.BossRush ? Color.white : Color.grey * 0.5f;
             for (int i = 0; i < __instance.saveSlotButtons.Length; i++)
             {
-                __instance.saveSlotButtons[i].saveSlot = GetGlobalSaveSlotID(__instance.currentGameType, i);
+                __instance.saveSlotButtons[i].saveSlot = GetSaveSlotID(__instance.currentGameType, i);
                 __instance.saveSlotButtons[i].UpdateInfo();
             }
             return false;
@@ -133,14 +202,16 @@
         [HarmonyPatch(typeof(SaveSlotButton), nameof(SaveSlotButton.UpdateInfo)), HarmonyPostfix]
         static private void SaveSlotButton_UpdateInfo_Post(SaveSlotButton __instance)
         {
-            // customize each child
+            if (__instance.mySaveSlotPopup.saveSlotButtons.Length <= ORIGINAL_BUTTONS_COUNT)
+                return;
+
+            // remove life bar
+            __instance.lifeBar.gameObject.SetActive(false);
+
+            // update children
             foreach (var childGroup in new[] { __instance.haveSaveStuff, __instance.dontHaveSaveStuff })
                 foreach (RectTransform child in childGroup.transform)
                 {
-                    child.anchorMin = child.anchorMax = new Vector2(0, 0);
-                    child.pivot = 0.5f.ToVector2();
-                    if (__instance.transform.localScale.x < 0)
-                        child.localScale = new Vector2(-1, +1);
                     if (RECT_OVERRIDES_BY_CHILD_NAME.TryGetValue(child.name, out var overrides))
                     {
                         if (!overrides.Size.AnyNaN())
@@ -154,17 +225,11 @@
                         position.y += child.sizeDelta.y / 2f;
                         child.anchoredPosition = position;
                     }
-                    if (child.TryGetComponent(out FText ftext))
-                        ftext.minTextPosition = null;
                 }
-
-            // remove life bar
-            __instance.lifeBar.gameObject.SetActive(false);
         }
 
         [HarmonyPatch(typeof(SaveSlotButton), nameof(SaveSlotButton.AdjustSpritePivot)), HarmonyPrefix]
         static private bool SaveSlotButton_AdjustSpritePivot_Pre(SaveSlotButton __instance)
-        => false;
-
+        => __instance.mySaveSlotPopup.saveSlotButtons.Length <= ORIGINAL_BUTTONS_COUNT;
     }
 }

@@ -36,8 +36,7 @@
                 newButton.buttonName.linesParent.GetChildGameObjects().Destroy();
 
                 var actionName = newButton.GetComponentInChildren<FText>();
-                actionName.originalText = name;
-                actionName.text = name;
+                actionName.originalText = actionName.text = name;
                 actionName.GetComponent<UITranslateText>().enabled = false;
             }
 

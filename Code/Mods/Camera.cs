@@ -21,7 +21,6 @@
 
         // Settings
         static private ModSetting<int> _zoom;
-        static private ModSetting<bool> _controlZoomWithMouseScroll;
         static private ModSetting<int> _aimWeight;
         static private ModSetting<int> _shakeMultiplier;
         static private ModSetting<int> _maxCoopStretch;
@@ -31,7 +30,6 @@
         override protected void Initialize()
         {
             _zoom = CreateSetting(nameof(_zoom), 100, IntRange(50, 400));
-            _controlZoomWithMouseScroll = CreateSetting(nameof(_controlZoomWithMouseScroll), true);
             _aimWeight = CreateSetting(nameof(_aimWeight), 100, IntRange(0, 200));
             _shakeMultiplier = CreateSetting(nameof(_shakeMultiplier), 100, IntRange(0, 200));
 
@@ -47,8 +45,6 @@
                 "How close the camera is to the in-world sprites (doesn't affect UI)" +
                 "\nLower values will help you see more of the area, but might trigger some visual glitches, especially in smaller areas" +
                 "\n\nUnit: percent of original screen size";
-            using (Indent)
-                _controlZoomWithMouseScroll.Format("control with mouse scroll");
             _aimWeight.Format("Aim weight");
             _aimWeight.Description =
                 "How closely the camera follows your mouse (or right thumbstick)" +
@@ -90,7 +86,6 @@
                 case nameof(SettingsPreset.Vheos_UI):
                     ForceApply();
                     _zoom.Value = 100;
-                    _controlZoomWithMouseScroll.Value = false;
                     _aimWeight.Value = 50;
                     _shakeMultiplier.Value = 75;
 
@@ -115,10 +110,6 @@
         {
             if (PseudoSingleton<LevelController>.instance.inGameCutsceneScene)
                 return;
-
-            if (_controlZoomWithMouseScroll
-            && Input.mouseScrollDelta.y != 0)
-                _zoom.Value += (Input.mouseScrollDelta.y * 10 * _zoom / 100f).RoundTowardsZero();
 
             float totalZoom = _zoom / 100f;
             Vector2 cameraSize = 2 * ORIGINAL_ORTOGRAPHIC_SIZE / totalZoom * new Vector2(__instance.cameraView.aspect, 1);
@@ -181,3 +172,20 @@
         => _teleportPlayer2;
     }
 }
+
+
+
+/* Gamepass version uses UNITY 2019, which moved to Input class from Core to InputLegacyModule = TypeLoadException
+ * might look into it someday, but for now the quickest solution is to remove all (only this one) references to the "old" Input class
+
+static private ModSetting<bool> _controlZoomWithMouseScroll;
+
+_controlZoomWithMouseScroll = CreateSetting(nameof(_controlZoomWithMouseScroll), true);
+
+using (Indent)
+    _controlZoomWithMouseScroll.Format("control with mouse scroll");
+
+if (_controlZoomWithMouseScroll
+&& Input.mouseScrollDelta.y != 0)
+    _zoom.Value += (Input.mouseScrollDelta.y * 10 * _zoom / 100f).RoundTowardsZero();
+*/
