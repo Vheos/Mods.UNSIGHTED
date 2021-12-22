@@ -18,16 +18,18 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>bin\-\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\-\Vheos.Mods.UNSIGHTED.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RELEASE_UNITY_2018|AnyCPU' ">
-    <OutputPath>bin\Release_UNITY_2018\</OutputPath>
+    <OutputPath>bin\UNITY_2018\</OutputPath>
     <DefineConstants>TRACE;RELEASE, UNITY, UNITY2018</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
@@ -38,7 +40,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RELEASE_UNITY_2019|AnyCPU' ">
-    <OutputPath>bin\Release_UNITY_2019\</OutputPath>
+    <OutputPath>bin\UNITY_2019\</OutputPath>
     <DefineConstants>TRACE;RELEASE, UNITY, UNITY2019</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
@@ -49,7 +51,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DEBUG_UNITY_2018|AnyCPU' ">
-    <OutputPath>bin\Debug_UNITY_2018\</OutputPath>
+    <OutputPath>bin\UNITY_2018\</OutputPath>
     <DefineConstants>TRACE;DEBUG, UNITY, UNITY2018</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
