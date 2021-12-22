@@ -52,17 +52,16 @@ Cool name, huh? I wanted to name it **UNSIGHTED#**, but it doesn't look even hal
 
 
 
-# Highlights
-### Quickslottable Weapon Loadouts
-Now **THIS** is my proudest feature! No more opening menu every minute to switch between shuriken, hookshot, ice-maker and your actual combat weapons. Now you can have switch between your favourite loadouts with the press of one button! Comes with in-game **custom controls system** and **co-op support** :)
-
-https://user-images.githubusercontent.com/9155825/146574388-3daf9b3a-ec14-4690-a4e7-06cfd41fafa9.mp4
-
 ### Extra Save Slots
 Wow, 8 save slots for the price of 3! You can finally keep mementos of past playthroughs instead of being forced to delete your precious memories ;)
 
 https://user-images.githubusercontent.com/9155825/147118791-82ced823-0b6a-4f56-afe6-80f73d73c33b.mp4
 
+# Highlights
+### Quickslottable Weapon Loadouts
+Now **THIS** is my proudest feature! No more opening menu every minute to switch between shuriken, hookshot, ice-maker and your actual combat weapons. Now you can have switch between your favourite loadouts with the press of one button! Comes with in-game **custom controls system** and **co-op support** :)
+
+https://user-images.githubusercontent.com/9155825/146574388-3daf9b3a-ec14-4690-a4e7-06cfd41fafa9.mp4
 
 ### Color Palette Editor
 Let the fashion begin! It's a bit clunky, as the **Configuration Manager** doesn't provide either HSV sliders or numerical RGB input, ***BUT IT WORKS!*** I've even gone the extra mile and written a de/serializer for the color data, so you can copy-paste palettes and share them with others **<3** Take a look at this juice:
