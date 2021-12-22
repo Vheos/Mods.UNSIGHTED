@@ -52,7 +52,7 @@
 
             // buttons size and position
             Vector2Int tableCounts = GetTableCounts(tableRect.childCount);
-            var buttonsTable = tableCounts.ToArray2D<GameObject>();
+            var buttonsTable = tableCounts.ToArray2D<RectTransform>();
 
             Vector3 textScale = Vector3.one;
             if (tableCounts.x >= COMPACT_TEXT_SCALE_THRESHOLD.x)
@@ -65,7 +65,7 @@
                 var buttonRect = tableRect.GetChild(i) as RectTransform;
                 int ix = i / tableCounts.y;
                 int iy = i % tableCounts.y;
-                buttonsTable[ix, iy] = buttonRect.gameObject;
+                buttonsTable[ix][iy] = buttonRect;
 
                 buttonRect.pivot = new Vector2(0.5f, 0.5f);
                 buttonRect.anchorMin = buttonRect.anchorMax = new Vector2(0, 1);
@@ -78,16 +78,7 @@
             }
 
             // navigation
-            for (int ix = 0; ix < tableCounts.x; ix++)
-                for (int iy = 0; iy < tableCounts.y; iy++)
-                    if (buttonsTable[ix, iy].TryNonNull(out var button)
-                    && button.TryGetComponent(out TButtonNavigation buttonNavigation))
-                    {
-                        buttonNavigation.onUp = buttonsTable[ix, iy.Add(-1).PosMod(tableCounts.y)];
-                        buttonNavigation.onDown = buttonsTable[ix, iy.Add(+1).PosMod(tableCounts.y)];
-                        buttonNavigation.onLeft = buttonsTable[ix.Add(-1).PosMod(tableCounts.x), iy];
-                        buttonNavigation.onRight = buttonsTable[ix.Add(+1).PosMod(tableCounts.x), iy];
-                    }
+            InternalExtensions.CreateMutualLinks(buttonsTable);
 
             // controls manager
             _controlsManager.inputButtons = _controlsManager.GetComponentsInHierarchy<ChangeInputButton>(3, 3).GetGameObjects().ToArray();
@@ -98,16 +89,21 @@
         { get; } = new Getter<BindingConflictResolution>();
 
         // Privates
-        override protected void Initialize()
-        {
-            _settingsByButtonGUID = new Dictionary<string, ModSetting<string>[]>();
-        }
         override protected GameObject FindPrefabs()
         => Resources.FindObjectsOfTypeAll<PlayerInputWindowsManager>().TryGetAny(out _controlsManager)
         && _controlsManager.inputButtons.TryGetAny(out var buttonPrefab)
         && buttonPrefab.GetParent().TryNonNull(out _buttonsHolder)
          ? buttonPrefab
          : null;
+        override protected void Initialize()
+        {
+            _settingsByButtonGUID = new Dictionary<string, ModSetting<string>[]>();
+
+            var buttonNav = _buttonPrefab.GetComponent<TButtonNavigation>();
+            buttonNav.normalColor = buttonNav.targetImage.color = CUSTOM_BUTTON_COLOR;
+            buttonNav.useDefaultNormalColor = false;
+            buttonNav.reafirmNeighboors = false;
+        }
         static private GameObject _buttonsHolder;
         static private PlayerInputWindowsManager _controlsManager;
         static private Dictionary<string, ModSetting<string>[]> _settingsByButtonGUID;
@@ -123,11 +119,12 @@
         => $"{typeof(CustomControls).Name}_{name}";
 
         // Settings
+        private const int ORIGINAL_BUTTONS_COUNT = 14;
         private const int MAX_COLUMNS = 3;
         private const int MIN_ROWS = 7;
         static private readonly Vector2 COMPACT_TEXT_SCALE = new Vector2(0.75f, 0.75f);
         static private readonly Vector2Int COMPACT_TEXT_SCALE_THRESHOLD = new Vector2Int(3, 10);
-        static private readonly Color CUSTOM_BUTTON_COLOR = new Color(1 / 3f, 1 / 10f, 1 / 20f, 1 / 2f);
+        static private readonly Color CUSTOM_BUTTON_COLOR = new Color(1 / 2f, 1 / 5f, 1 / 10, 1 / 3f);
         static private readonly Vector2 BUTTON_PADDING = new Vector2(2, 1);
         static private readonly Vector2Int TABLE_SIZE = new Vector2Int(296, 126);
         #region VANILLA_BUTTON_NAMES
@@ -157,9 +154,12 @@
         [HarmonyPatch(typeof(ChangeInputButton), nameof(ChangeInputButton.GetCurrentKey)), HarmonyPostfix]
         static private void ChangeInputButton_GetCurrentKey_Pre(ChangeInputButton __instance, ref KeyCode __result)
         {
-            if (_settingsByButtonGUID.TryGetValue(__instance.inputName, out var settings)
-            && settings.TryGetNonNull(__instance.playerNum, out var playerSetting))
-                __result = playerSetting.ToKeyCode();
+            if (_settingsByButtonGUID.IsNullOrEmpty()
+            || !_settingsByButtonGUID.TryGetValue(__instance.inputName, out var settings)
+            || !settings.TryGetNonNull(__instance.playerNum, out var playerSetting))
+                return;
+
+            __result = playerSetting.ToKeyCode();
         }
 
         [HarmonyPatch(typeof(ChangeInputButton), nameof(ChangeInputButton.InputDetected)), HarmonyPrefix]
@@ -225,20 +225,12 @@
             return false;
         }
 
-        [HarmonyPatch(typeof(TButtonNavigation), nameof(TButtonNavigation.Awake)), HarmonyPostfix]
-        static private void TButtonNavigation_Awake_Post(TButtonNavigation __instance)
-        {
-            if (__instance.TryGetComponent(out ChangeInputButton changeInputButton)
-            && _settingsByButtonGUID.ContainsKey(changeInputButton.inputName))
-            {
-                __instance.normalColor = __instance.targetImage.color = CUSTOM_BUTTON_COLOR;
-                __instance.reafirmNeighboors = false;
-            }
-        }
-
         [HarmonyPatch(typeof(TranslationSystem), nameof(TranslationSystem.FindTerm)), HarmonyPostfix]
         static private void TranslationSystem_FindTerm_Post(TranslationSystem __instance, ref string __result, string element)
         {
+            if (_settingsByButtonGUID.IsNullOrEmpty())
+                return;
+
             string typePrefix = typeof(CustomControls).Name + "_";
             if (element.Contains(typePrefix))
                 __result = element.Replace(typePrefix, null);
@@ -248,11 +240,15 @@
             new[] { typeof(int), typeof(string), typeof(string), typeof(Sprite) },
             new[] { ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Ref }),
             HarmonyPrefix]
+
         static private void GlobalInputManager_GetKeyCodeName_Pre(GlobalInputManager __instance, int playerNum, string inputName, ref string buttonName, ref Sprite buttonIcon)
         {
-            if (_settingsByButtonGUID.TryGetValue(inputName, out var settings)
-            && settings.TryGetNonNull(playerNum, out var playerSetting))
-                buttonName = playerSetting;
+            if (_settingsByButtonGUID.IsNullOrEmpty()
+            || !_settingsByButtonGUID.TryGetValue(inputName, out var settings)
+            || !settings.TryGetNonNull(playerNum, out var playerSetting))
+                return;
+
+            buttonName = playerSetting;
         }
 
         [HarmonyPatch(typeof(DetectDeviceWindow), nameof(DetectDeviceWindow.PressedKey)), HarmonyPrefix]
@@ -265,8 +261,32 @@
         [HarmonyPatch(typeof(ChangeInputButton), nameof(ChangeInputButton.OnEnable)), HarmonyPostfix]
         static private void ChangeInputButton_OnEnable_Post(ChangeInputButton __instance)
         {
-            if (_settingsByButtonGUID.TryGetValue(__instance.inputName, out var settings))
-                __instance.gameObject.SetActive(settings[__instance.playerNum] != null);
+            if (_settingsByButtonGUID.IsNullOrEmpty()
+            || !_settingsByButtonGUID.TryGetValue(__instance.inputName, out var settings))
+                return;
+
+            __instance.gameObject.SetActive(settings[__instance.playerNum] != null);
+        }
+
+        [HarmonyPatch(typeof(PlayerInputWindowsManager), nameof(PlayerInputWindowsManager.AdjustToDevice)), HarmonyPrefix]
+        static private bool PlayerInputWindowsManager_AdjustToDevice_Post(PlayerInputWindowsManager __instance, int playerNum)
+        {
+            if (_settingsByButtonGUID.IsNullOrEmpty())
+                return true;
+
+            var inputData = PseudoSingleton<GlobalInputManager>.instance.inputData;
+            bool isUsingGamepad = inputData.GetInputProfile(playerNum).myInputType != InputType.Keyboard;
+
+            _buttonsHolder.GetChildComponent<AutoAimButton>().UpdateLabel();
+            _buttonsHolder.GetChildComponent<AnalogMovementButton>().UpdateLabel();
+            _buttonsHolder.GetChildComponent<RunToggleButton>().UpdateLabel();
+
+            __instance.inputButtons[10].gameObject.SetActive(isUsingGamepad);
+            __instance.autoAimButton.gameObject.SetActive(isUsingGamepad);
+            __instance.analogMovementButton.gameObject.SetActive(isUsingGamepad);
+
+            __instance.deviceButton.GetComponent<TButtonNavigation>().onRight = inputData.numberOfPlayers == 2 ? __instance.player1Button.gameObject : null;
+            return false;
         }
     }
 }

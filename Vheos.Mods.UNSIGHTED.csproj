@@ -14,7 +14,7 @@
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == '-|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,11 +24,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release_UNITY_2018|AnyCPU'">
-    <OutputPath>D:\Multiplayer\UNSIGHTED\BepInEx\plugins\Vheos\</OutputPath>
-    <DefineConstants>TRACE;UNITY, UNITY2018</DefineConstants>
+    <OutputPath>bin\Release_UNITY_2018\</OutputPath>
+    <DefineConstants>TRACE;RELEASE, UNITY, UNITY2018</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -38,8 +38,19 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release_UNITY_2019|AnyCPU'">
-    <OutputPath>D:\Multiplayer\UNSIGHTED\BepInEx\plugins\Vheos\</OutputPath>
-    <DefineConstants>TRACE;UNITY, UNITY2019</DefineConstants>
+    <OutputPath>bin\Release_UNITY_2019\</OutputPath>
+    <DefineConstants>TRACE;RELEASE, UNITY, UNITY2019</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_UNITY_2018|AnyCPU'">
+    <OutputPath>bin\Debug_UNITY_2018\</OutputPath>
+    <DefineConstants>TRACE;UNITY, UNITY2018</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -49,33 +60,44 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>..\..\Libraries\BepInEx (v5.4.11)\0Harmony.dll</HintPath>
+    <Reference Include="Assembly-CSharp_publicized" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2018'))">
+      <HintPath>Private\Libraries\2018.4.32_Assembly-CSharp_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    <Reference Include="Assembly-CSharp-firstpass" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2018'))">
+      <HintPath>Private\Libraries\2018.4.32_Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp_publicized">
-      <HintPath>[] DATA\Assembly-CSharp_publicized.dll</HintPath>
+    <Reference Include="UnityEngine" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2018'))">
+      <HintPath>Private\Libraries\2018.4.32_UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="BepInEx">
-      <HintPath>..\..\Libraries\BepInEx (v5.4.11)\BepInEx.dll</HintPath>
+    <Reference Include="UnityEngine.CoreModule" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2018'))">
+      <HintPath>Private\Libraries\2018.4.32_UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="ConfigurationManager">
-      <HintPath>..\..\Libraries\ConfigurationManager (v16.3)\ConfigurationManager.dll</HintPath>
+    <Reference Include="Assembly-CSharp_publicized" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2019'))">
+      <HintPath>Private\Libraries\2019.4.28_Assembly-CSharp_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="UnityEngine">
-      <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\UnityEngine.dll</HintPath>
+    <Reference Include="Assembly-CSharp-firstpass" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2019'))">
+      <HintPath>Private\Libraries\2019.4.28_Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+    <Reference Include="UnityEngine" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2019'))">
+      <HintPath>Private\Libraries\2019.4.28_UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2019'))">
+      <HintPath>Private\Libraries\2019.4.28_UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2019'))">
+      <HintPath>Private\Libraries\2019.4.28_UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="FMODUnity" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2019'))">
+      <HintPath>Private\Libraries\2019.4.28_FMODUnity.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.Physics2DModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -89,6 +111,19 @@
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="BepInEx">
+      <HintPath>..\..\Libraries\BepInEx (v5.4.11)\BepInEx.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\Libraries\BepInEx (v5.4.11)\0Harmony.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ConfigurationManager">
+      <HintPath>..\..\Libraries\ConfigurationManager (v16.3)\ConfigurationManager.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -134,6 +169,44 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>start "" "D:\Multiplayer\UNSIGHTED\UNSIGHTED.exe"</PostBuildEvent>
+    <PostBuildEvent>set Release=E:\Creativity\Programs\C#\Mods\UNSIGHTED\Private\Release\
+set Debug=D:\Multiplayer\UNSIGHTED\
+set Plugin=BepInEx\plugins\Vheos\
+set SteamGOGFull=%25Release%25\SteamGOG\%25Plugin%25
+set GamePassFull=%25Release%25\GamePass\%25Plugin%25
+set FileMain=$(TargetDir)$(TargetName).dll
+set FileModdingCore=$(TargetDir)Vheos.Tools.ModdingCore.dll
+set FileExtensions=$(TargetDir)Vheos.Tools.Extensions.dll
+set FileUtility=$(TargetDir)Vheos.Tools.Utility.dll
+set ZipName=UNSIGHTED++_vX.Y.Z
+
+if $(DefineConstants.Contains('UNITY2018'))==True (
+    if $(DefineConstants.Contains('RELEASE'))==True (
+        if not exist %25SteamGOGFull%25 mkdir %25SteamGOGFull%25
+        copy %25FileMain%25 %25SteamGOGFull%25
+        copy %25FileModdingCore%25 %25SteamGOGFull%25
+        copy %25FileExtensions%25 %25SteamGOGFull%25
+        copy %25FileUtility%25 %25SteamGOGFull%25
+        powershell Compress-Archive -Path %25Release%25\SteamGOG\BepInEx -DestinationPath %25Release%25\Zips\%25ZipName%25_SteamGOG.zip -Force
+    ) else (
+        if not exist %25Debug%25%25Plugin%25 mkdir %25Debug%25%25Plugin%25
+        copy %25FileMain%25 %25Debug%25%25Plugin%25
+        copy %25FileModdingCore%25 %25Debug%25%25Plugin%25
+        copy %25FileExtensions%25 %25Debug%25%25Plugin%25
+        copy %25FileUtility%25 %25Debug%25%25Plugin%25
+        start "" "D:\Multiplayer\UNSIGHTED\UNSIGHTED.exe"
+    )
+)
+
+if $(DefineConstants.Contains('UNITY2019'))==True (
+    if $(DefineConstants.Contains('RELEASE'))==True (
+        if not exist %25GamePassFull%25 mkdir %25GamePassFull%25
+        copy %25FileMain%25 %25GamePassFull%25
+        copy %25FileModdingCore%25 %25GamePassFull%25
+        copy %25FileExtensions%25 %25GamePassFull%25
+        copy %25FileUtility%25 %25GamePassFull%25
+        powershell Compress-Archive -Path %25Release%25\GamePass\BepInEx -DestinationPath %25Release%25\Zips\%25ZipName%25_GamePass.zip -Force
+    ) 
+)</PostBuildEvent>
   </PropertyGroup>
 </Project>

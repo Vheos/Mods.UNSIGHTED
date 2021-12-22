@@ -14,8 +14,8 @@
         #region SETTINGS
         public const string GUID = "Vheos.Mods.UNSIGHTED";
         public const string NAME = "UNSIGHTED++";
-        public const string VERSION = "1.2.0";
-        #endregion
+        public const string VERSION = "1.3.0";
+#endregion
 
         // User logic
         override protected Assembly CurrentAssembly

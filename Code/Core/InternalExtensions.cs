@@ -8,6 +8,8 @@
     using UnityEngine;
     using UnityEngine.UI;
     using Vheos.Tools.Extensions.General;
+    using Vheos.Tools.Extensions.Math;
+    using Vheos.Tools.Extensions.UnityObjects;
 
     static public class InternalExtensions
     {
@@ -36,8 +38,14 @@
         }
         static public bool TryGetComponentInChildren<T>(this Component t, out T a) where T : Component
         => t.gameObject.TryGetComponentInChildren(out a);
-        static public T[,] ToArray2D<T>(this Vector2Int t)
-        => new T[t.x, t.y];
+        static public T[][] ToArray2D<T>(this Vector2Int t)
+        {
+            var r = new T[t.x][];
+            for (int i = 0; i < t.x; i++)
+                r[i] = new T[t.y];
+            return r;
+        }
+
         static public IEnumerable<T> GetComponentsInHierarchy<T>(this Component t, int fromDepth, int toDepth) where T : Component
         {
             if (fromDepth <= 0 && toDepth >= 0)
@@ -67,6 +75,70 @@
         }
         static public void FlipAlignmentHorizontally(this LayoutGroup t)
         => t.childAlignment = t.childAlignment.FlipHorizontally();
+        static public void CreateMutualLinkWith(this TButtonNavigation t, TButtonNavigation a, AxisDirections direction)
+        {
+            switch (direction)
+            {
+                case AxisDirections.UP:
+                    t.onUp = a.gameObject;
+                    a.onDown = t.gameObject;
+                    break;
+                case AxisDirections.RIGHT:
+                    t.onRight = a.gameObject;
+                    a.onLeft = t.gameObject;
+                    break;
+                case AxisDirections.LEFT:
+                    t.onLeft = a.gameObject;
+                    a.onRight = t.gameObject;
+                    break;
+                case AxisDirections.DOWN:
+                    t.onDown = a.gameObject;
+                    a.onUp = t.gameObject;
+                    break;
+            }
+        }
+        static public void CreateMutualLinkWith(this GameObject t, GameObject a, AxisDirections direction)
+        {
+            if (t.TryGetComponent(out TButtonNavigation tButtonNav)
+            && a.TryGetComponent(out TButtonNavigation aButtonNav))
+                tButtonNav.CreateMutualLinkWith(aButtonNav, direction);
+        }
+        static public void CreateMutualLinkWith(this Component t, Component a, AxisDirections direction)
+        => t.gameObject.CreateMutualLinkWith(a.gameObject, direction);
+
+        static public void CreateMutualLinks<T>(this IList<IList<T>> t, bool isLooping = false) where T : Component
+        {
+            // get button navs
+            var gameObjects = new GameObject[t.Count][];
+            for (int ix = 0; ix < t.Count; ix++)
+            {
+                gameObjects[ix] = new GameObject[t[ix].Count];
+                for (int iy = 0; iy < t[ix].Count; iy++)
+                    if (t[ix][iy].TryNonNull(out var component)
+                    && component.TryGetComponent(out TButtonNavigation buttonNav))
+                        gameObjects[ix][iy] = buttonNav.gameObject;
+            }
+
+            for (int ix = 0; ix < gameObjects.Length; ix++)
+                for (int iy = 0; iy < gameObjects[ix].Length; iy++)
+                    if (gameObjects[ix][iy] != null)
+                    {
+                        var buttonNav = gameObjects[ix][iy].GetComponent<TButtonNavigation>();
+                        buttonNav.reafirmNeighboors = false;
+                        buttonNav.onLeft = isLooping || ix > 0
+                                         ? gameObjects[ix.Add(-1).PosMod(gameObjects.Length)][iy]
+                                         : null;
+                        buttonNav.onRight = isLooping || ix < gameObjects.Length - 1
+                                          ? gameObjects[ix.Add(+1).PosMod(gameObjects.Length)][iy]
+                                          : null;
+                        buttonNav.onUp = isLooping || iy > 0
+                                       ? gameObjects[ix][iy.Add(-1).PosMod(gameObjects[ix].Length)]
+                                       : null;
+                        buttonNav.onDown = isLooping || iy < gameObjects[ix].Length - 1
+                                         ? gameObjects[ix][iy.Add(+1).PosMod(gameObjects[ix].Length)]
+                                         : null;
+                    }
+        }
 
         // IEnumerable
         static public bool TryFind<T>(this IEnumerable<T> t, Func<T, bool> test, out T r)

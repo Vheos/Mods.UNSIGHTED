@@ -24,8 +24,6 @@
         abstract protected GameObject FindPrefabs();
         virtual protected void Initialize()
         { }
-        virtual protected void DelayedInitialize()
-        { }
         virtual protected string ButtonPrefabName
         => $"{typeof(T).Name}Button";
 
@@ -35,7 +33,6 @@
             Harmony.CreateAndPatchAll(typeof(ACustomPopup<T>));
             Harmony.CreateAndPatchAll(typeof(T));
             _this = this as T;
-            _this.Initialize();
         }
 
         // Hooks
@@ -55,10 +52,10 @@
 
             _buttonPrefab = GameObject.Instantiate(_buttonPrefab);
             _buttonPrefab.name = _this.ButtonPrefabName;
-            GameObject.DontDestroyOnLoad(_buttonPrefab);     
-            
+            GameObject.DontDestroyOnLoad(_buttonPrefab);
+
             IsFullyInitialized = true;
-            _this.DelayedInitialize();
+            _this.Initialize();
         }
     }
 }

@@ -4,15 +4,13 @@
     using System.Linq;
     using System.Collections.Generic;
     using UnityEngine;
+    using UnityEngine.UI;
     using HarmonyLib;
     using Tools.ModdingCore;
-    using Tools.Extensions.General;
     using Tools.Extensions.UnityObjects;
     using Tools.Extensions.Math;
-    using Tools.Extensions.Reflection;
     using Tools.Extensions.Collections;
-    using UnityEngine.UI;
-    using Vheos.Tools.UtilityN;
+    using Tools.UtilityN;
 
     internal class CustomSaves : ACustomPopup<CustomSaves>
     {
@@ -29,19 +27,20 @@
 
             // create and assign new buttons
             _menuPrefab.saveSlotButtons = new SaveSlotButton[count];
-            var rowsByColumn = new[] { new List<RectTransform>(), new List<RectTransform>() };
+            var buttonsTable = new[] { new List<RectTransform>(), new List<RectTransform>() };
             var globalGameData = PseudoSingleton<GlobalGameData>.instance;
             for (int i = 0; i < _menuPrefab.saveSlotButtons.Length; i++)
             {
                 var newButton = GameObject.Instantiate(_buttonPrefab).GetComponent<SaveSlotButton>();
                 newButton.BecomeChildOf(_menuPrefab);
                 _menuPrefab.saveSlotButtons[i] = newButton;
-                rowsByColumn[i % 2].Add(newButton.Rect());
+                buttonsTable[i % 2].Add(newButton.Rect());
 
                 // try initialize save slot
                 foreach (var gameType in Utility.GetEnumValues<GameType>())
                 {
                     int slotID = GetSaveSlotID(gameType, i);
+
                     if (globalGameData.currentData.playerDataSlots.TryGet(slotID, out var playerData)
                     && playerData.dataStrings == null)
                         globalGameData.CreateDefaultDataSlot(slotID);
@@ -49,29 +48,21 @@
             }
 
             // format buttons
-            int countX = rowsByColumn.Length;
-            for (int ix = 0; ix < rowsByColumn.Length; ix++)
+            for (int ix = 0; ix < buttonsTable.Length; ix++)
             {
                 float posX = ix.IsEven() ? SCREEN_RECT.xMin : SCREEN_RECT.xMax;
-                int countY = rowsByColumn[ix].Count;
+                int countY = buttonsTable[ix].Count;
                 var totalButtonSizeY = BUTTON_SIZE.y * BUTTON_SCALE.y;
                 float totalGapSizeY = SCREEN_RECT.height - countY * totalButtonSizeY;
                 float gapSizeY = totalGapSizeY.Div(countY - 1);
 
                 for (int iy = 0; iy < countY; iy++)
                 {
-                    var slotButton = rowsByColumn[ix][iy].GetComponent<SaveSlotButton>();
+                    var slotButton = buttonsTable[ix][iy].GetComponent<SaveSlotButton>();
                     float posY = SCREEN_RECT.yMax - iy * (totalButtonSizeY + gapSizeY);
-                    rowsByColumn[ix][iy].anchoredPosition = new Vector2(posX, posY);
+                    buttonsTable[ix][iy].anchoredPosition = new Vector2(posX, posY);
                     if (ix.IsOdd())
-                        rowsByColumn[ix][iy].localScale *= new Vector2(-1, +1);
-
-                    // update navigation
-                    var buttonNavigation = rowsByColumn[ix][iy].GetComponent<TButtonNavigation>();
-                    buttonNavigation.onUp = rowsByColumn[ix][iy.Add(-1).PosMod(countY)].gameObject;
-                    buttonNavigation.onDown = rowsByColumn[ix][iy.Add(+1).PosMod(countY)].gameObject;
-                    buttonNavigation.onLeft = rowsByColumn[ix.Add(-1).PosMod(countX)][iy].gameObject;
-                    buttonNavigation.onRight = rowsByColumn[ix.Add(+1).PosMod(countX)][iy].gameObject;
+                        buttonsTable[ix][iy].localScale *= new Vector2(-1, +1);
 
                     // customize children                   
                     foreach (var childGroup in new[] { slotButton.haveSaveStuff, slotButton.dontHaveSaveStuff })
@@ -95,6 +86,17 @@
                         }
                 }
             }
+
+            // update navigation
+            var returnButton = _menuPrefab.GetComponentInChildren<ClosePopupButton>().gameObject;
+            buttonsTable[0].Insert(0, returnButton.Rect());
+            buttonsTable[1].Insert(0, null);
+            InternalExtensions.CreateMutualLinks(buttonsTable);
+
+            // game mode buttons
+            _menuPrefab.mainStoryButton.CreateMutualLinkWith(buttonsTable.First().Last().gameObject, AxisDirections.UP);
+            _menuPrefab.dungeonButton.GetComponent<TButtonNavigation>().onUp = buttonsTable.First().Last().gameObject;
+            _menuPrefab.bossRushButton.CreateMutualLinkWith(buttonsTable.Last().Last().gameObject, AxisDirections.UP);
         }
 
         // Privetes
@@ -103,7 +105,7 @@
         && _menuPrefab.saveSlotButtons.TryGetAny(out var buttonPrefab)
          ? buttonPrefab.gameObject
          : null;
-        override protected void DelayedInitialize()
+        override protected void Initialize()
         {
             // set scale
             var buttonNavigation = _buttonPrefab.GetComponent<TButtonNavigation>();
@@ -115,7 +117,7 @@
             buttonRect.pivot = new Vector2(0, 0);
             buttonRect.sizeDelta = BUTTON_SIZE;
 
-            // initialize copy/erase buttons
+            // initialize copy/erase buttons  
             var slotButton = _buttonPrefab.GetComponent<SaveSlotButton>();
             GameObject InstantiateAndInitialize(GameObject prefab, string name)
             {
@@ -123,19 +125,22 @@
                 newButton.BecomeChildOf(slotButton.haveSaveStuff);
                 newButton.name = name;
 
-                var ftext = newButton.GetComponentInChildren<FText>();
+                var ftext = newButton.GetChildComponent<FText>();
                 ftext.text = ftext.originalText = name;
                 ftext.GetComponent<UITranslateText>().enabled = false;
                 ftext.Rect().anchoredPosition = new Vector2(5, 2);
 
-                var buttonNav = newButton.GetComponentInChildren<TButtonNavigation>();
+                var buttonNav = newButton.GetComponent<TButtonNavigation>();
                 buttonNav.normalColor = buttonNav.normalColor.NewA(1);
                 buttonNav.highlightColor = buttonNav.highlightColor.NewA(1);
 
-                var onClick = newButton.GetComponentInChildren<SendMessageOnClick>();
+                var onClick = newButton.GetComponent<SendMessageOnClick>();
                 onClick.onClick = null;
-                onClick.target = slotButton.gameObject;
+                onClick.target = _buttonPrefab.gameObject;
                 onClick.message = name == COPY_BUTTON_NAME ? nameof(SaveSlotButton.CopyClicked) : nameof(SaveSlotButton.EraseClicked);
+
+                var onSelect = newButton.GetComponent<SendMessageOnSelect>();
+                onSelect.onSelectEvent = null;
 
                 return newButton;
             }
@@ -196,7 +201,23 @@
                 __instance.saveSlotButtons[i].saveSlot = GetSaveSlotID(__instance.currentGameType, i);
                 __instance.saveSlotButtons[i].UpdateInfo();
             }
+
             return false;
+        }
+
+        [HarmonyPatch(typeof(SaveSlotPopup), nameof(SaveSlotPopup.Start)), HarmonyPostfix]
+        static private void SaveSlotPopup_Start_Post(SaveSlotPopup __instance)
+        {
+            if (__instance.saveSlotButtons.Length <= ORIGINAL_BUTTONS_COUNT)
+                return;
+
+            for (int i = 0; i < __instance.saveSlotButtons.Length; i++)
+            {
+                var onSelect = __instance.saveSlotButtons[i].GetComponent<SendMessageOnSelect>();
+                int localSlotID = i;
+                onSelect.onSelectEvent.RemoveAllListeners();
+                onSelect.onSelectEvent.AddListener(() => __instance.ShowDescription(localSlotID));
+            }
         }
 
         [HarmonyPatch(typeof(SaveSlotButton), nameof(SaveSlotButton.UpdateInfo)), HarmonyPostfix]

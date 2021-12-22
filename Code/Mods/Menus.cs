@@ -50,10 +50,17 @@
         }
         override protected void SetFormatting()
         {
-            _extraSaveSlots.Format("Extra save slots");
-            _extraSaveSlots.Description =
-                "Increases the amount of save slots to 8" +
-                "\n(required game restart to take effect)";
+            CreateHeader("Extra save slots (read me)").Description =
+                "Increases the amount of save slots from 3 to 8" +
+                "\nThis feature hasn't been thoroughly tested yet, so backup your saves first! " +
+                "Then enable \"Advanced settings\" and the toggle will appear. Thank you for testing <3" +
+                "\n(requires game restart to take effect)";
+            using(Indent)
+            {
+                _extraSaveSlots.IsAdvanced = true;
+                _extraSaveSlots.Format("I accept the risk");
+            }
+
             CreateHeader("Loadouts").Description =
                 "Set hotkeys to quickly switch between user-defined sets of weapons" +
                 "\nHotkeys can be configured in the in-game \"Controls\" menu:" +
@@ -81,6 +88,7 @@
             {
                 case nameof(SettingsPreset.Vheos_HardMode):
                     ForceApply();
+                    _extraSaveSlots.Value = true;
                     _loadoutSettingsByPlayerID[0]._count.Value = 2;
                     _loadoutSettingsByPlayerID[1]._count.Value = 2;
                     _undbindButton.Value = KeyCode.Delete.ToString();
