@@ -143,6 +143,13 @@
                 yield break;
             }
 
+#if UNITY2019
+            __instance.xboxSignedInAndLoaded = false;
+            __instance.StartCoroutine("XboxSignIn");
+            while (!__instance.xboxSignedInAndLoaded)
+                yield return __instance.WaitForSeconds(0.1);
+#endif
+
             Time.timeScale = 1f;
             __instance.CheckBestResolution();
             __instance.sceneLoadingObject = SceneManager.LoadSceneAsync("TitleScreen");

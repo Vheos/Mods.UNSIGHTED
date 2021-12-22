@@ -26,7 +26,7 @@
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release_UNITY_2018|AnyCPU'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RELEASE_UNITY_2018|AnyCPU' ">
     <OutputPath>bin\Release_UNITY_2018\</OutputPath>
     <DefineConstants>TRACE;RELEASE, UNITY, UNITY2018</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -37,7 +37,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release_UNITY_2019|AnyCPU'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RELEASE_UNITY_2019|AnyCPU' ">
     <OutputPath>bin\Release_UNITY_2019\</OutputPath>
     <DefineConstants>TRACE;RELEASE, UNITY, UNITY2019</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -48,9 +48,9 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_UNITY_2018|AnyCPU'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DEBUG_UNITY_2018|AnyCPU' ">
     <OutputPath>bin\Debug_UNITY_2018\</OutputPath>
-    <DefineConstants>TRACE;UNITY, UNITY2018</DefineConstants>
+    <DefineConstants>TRACE;DEBUG, UNITY, UNITY2018</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -205,7 +205,7 @@ if $(DefineConstants.Contains('UNITY2019'))==True (
         copy %25FileModdingCore%25 %25GamePassFull%25
         copy %25FileExtensions%25 %25GamePassFull%25
         copy %25FileUtility%25 %25GamePassFull%25
-        powershell Compress-Archive -Path %25Release%25\GamePass\BepInEx -DestinationPath %25Release%25\Zips\%25ZipName%25_GamePass.zip -Force
+        powershell Compress-Archive -Path %25Release%25\GamePass\BepInEx -DestinationPath %25Release%25\Zips\%25ZipName%25_GamePass_Experimental.zip -Force
     ) 
 )</PostBuildEvent>
   </PropertyGroup>
