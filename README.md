@@ -33,7 +33,7 @@
 
 
 # Table of contents
-- [What is UNSIGHTED++?](https://github.com/Vheos777/Mods.UNSIGHTED#what-is-unsighted)
+- [UNSIGHTED++?](https://github.com/Vheos777/Mods.UNSIGHTED#unsighted)
 - [Highlights](https://github.com/Vheos777/Mods.UNSIGHTED#highlights)
 - [Settings overview](https://github.com/Vheos777/Mods.UNSIGHTED#settings-overview-as-of-v100)
 - [How to?](https://github.com/Vheos777/Mods.UNSIGHTED#how-to)
@@ -44,8 +44,8 @@
 
 
 
-# What is UNSIGHTED++?
-My personal collection of mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/)! Those include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
+# UNSIGHTED++?
+Cool name, huh? I wanted to name it **UNSIGHTED#**, but it doesn't look even half as pleasing... Oh right - it's my personal collection of mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/)! Those include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
 
 (actually some people might, I wouldn't know)
 <br/><br/><br/>
@@ -57,6 +57,12 @@ My personal collection of mods for the amazing game [UNSIGHTED](https://store.st
 Now **THIS** is my proudest feature! No more opening menu every minute to switch between shuriken, hookshot, ice-maker and your actual combat weapons. Now you can have switch between your favourite loadouts with the press of one button! Comes with in-game **custom controls system** and **co-op support** :)
 
 https://user-images.githubusercontent.com/9155825/146574388-3daf9b3a-ec14-4690-a4e7-06cfd41fafa9.mp4
+
+### Extra Save Slots
+Wow, 8 save slots for the price of 3! You can finally keep mementos of past playthroughs instead of being forced to delete your precious memories ;)
+
+https://user-images.githubusercontent.com/9155825/147118791-82ced823-0b6a-4f56-afe6-80f73d73c33b.mp4
+
 
 ### Color Palette Editor
 Let the fashion begin! It's a bit clunky, as the **Configuration Manager** doesn't provide either HSV sliders or numerical RGB input, ***BUT IT WORKS!*** I've even gone the extra mile and written a de/serializer for the color data, so you can copy-paste palettes and share them with others **<3** Take a look at this juice:
@@ -219,15 +225,20 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 
 
 # Contact
-- [GitHub Issue](https://github.com/Vheos777/Mods.UNSIGHTED/issues)
 - [Steam discussion](https://steamcommunity.com/app/1062110/discussions/0/4739473745767880713/)
 - [Reddit post](https://www.reddit.com/r/UNSIGHTED/comments/rkhnrg/unsighted/)
+- [GitHub Issue](https://github.com/Vheos777/Mods.UNSIGHTED/issues)
 - Discord DM: `Vheos#5865`
 <br/><br/><br/>
 
 
 
 # Changelog
+- **1.3.0**
+    - abstracted extensions for in-game menus
+    - renamed mod `Controls` to `Menus`
+    - `Menus`: added setting to increase save slots count (experimental)
+    - added support for `GamePass` version of the game (experimental)
 - **1.2.0**
     - implemented in-game controls extension system
     - added new mod `Controls` - set hotkeys for weapon sets, unlock controls binding
