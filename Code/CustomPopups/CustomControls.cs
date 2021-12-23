@@ -11,6 +11,7 @@
     using Tools.Extensions.Math;
     using Tools.Extensions.Reflection;
     using Tools.Extensions.Collections;
+    using Vheos.Tools.Extensions.DumpN;
 
     internal class CustomControls : ACustomPopup<CustomControls>
     {
@@ -97,6 +98,12 @@
          : null;
         override protected void Initialize()
         {
+            Log.Debug( typeof(NPCObject).Dump());
+            foreach (NPCObject npc in PseudoSingleton<Lists>.instance.npcDatabase.npcList)
+            {                
+                Log.Debug(npc.Dump());
+            }
+
             _settingsByButtonGUID = new Dictionary<string, ModSetting<string>[]>();
 
             var buttonNav = _buttonPrefab.GetComponent<TButtonNavigation>();

@@ -129,7 +129,7 @@
             {
                 case nameof(SettingsPreset.Vheos_CoopRebalance):
                     ForceApply();
-                    _initialWaitTime.Value = new Vector2(1, 2);
+                    _initialWaitTime.Value = new Vector2(2, 4);
                     _minigameMaxDuration.Value = new Vector2(4, 8);
                     _bobInterval.Value = new Vector2(2 / 3f, 4 / 3f);
                     _linearIntervalMultiplier.Value = 200;
@@ -139,8 +139,8 @@
                     _catchCues.Value = CatchCues.Visual | CatchCues.Audio | CatchCues.Random;
                     _spotDespawnChance.Value = 100;
                     _spotRespawnTime.Value = 60;
-                    _thresholdsMagneticRod.Value = new Vector2(0.6f, 0.3f);
-                    _thresholdsNeodymiumRod.Value = new Vector2(0.8f, 0.4f);
+                    _thresholdsMagneticRod.Value = new Vector2(0.45f, 0.3f);
+                    _thresholdsNeodymiumRod.Value = new Vector2(0.6f, 0.4f);
                     break;
             }
         }
@@ -229,6 +229,8 @@
             float elapsed = 0f;
             while (elapsed < maxDuration)
             {
+                float interval = _bobInterval.Value.RandomRange();
+                elapsed += interval;
                 float speedMultiplier = 1.Lerp(_linearIntervalMultiplier / 100f, elapsed / maxDuration);
                 if (chancePerBob.Roll())
                 {
@@ -242,9 +244,7 @@
                 }
 
                 BobAnimation();
-                float interval = _bobInterval.Value.RandomRange();
-                yield return gameTime.WaitForSeconds(interval * speedMultiplier);
-                elapsed += interval;
+                yield return gameTime.WaitForSeconds(interval * speedMultiplier);               
             }
         }
 
@@ -292,7 +292,7 @@
 
             __instance.fishLevel = elapsed <= thresholds.y ? 2
                                  : elapsed <= thresholds.x ? 1
-                                 : elapsed <= thresholds.x + thresholds.y ? -1
+                                 : elapsed <= 2 * thresholds.x - thresholds.y ? -1
                                  : 0;
 
             Log.Debug($"{Time.time:F2} - {__instance.fishTime:F2} = {elapsed:F2} -> {__instance.fishLevel}");
