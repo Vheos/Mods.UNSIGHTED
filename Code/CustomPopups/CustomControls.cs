@@ -98,12 +98,6 @@
          : null;
         override protected void Initialize()
         {
-            Log.Debug( typeof(NPCObject).Dump());
-            foreach (NPCObject npc in PseudoSingleton<Lists>.instance.npcDatabase.npcList)
-            {                
-                Log.Debug(npc.Dump());
-            }
-
             _settingsByButtonGUID = new Dictionary<string, ModSetting<string>[]>();
 
             var buttonNav = _buttonPrefab.GetComponent<TButtonNavigation>();
