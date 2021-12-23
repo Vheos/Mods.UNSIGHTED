@@ -1,20 +1,16 @@
 ﻿namespace Vheos.Mods.UNSIGHTED
 {
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using UnityEngine;
-    using UnityEngine.PostProcessing;
+    using UnityEngine.UI;
     using HarmonyLib;
     using Tools.ModdingCore;
     using Tools.Extensions.Math;
     using Tools.Extensions.General;
     using Tools.Extensions.UnityObjects;
-    using System.Linq;
-    using Vheos.Tools.UtilityN;
-    using System.Collections;
-    using System.Text;
-    using UnityEngine.UI;
-    using Vheos.Tools.Extensions.Collections;
+    using Tools.Extensions.Collections;
 
     public class UI : AMod
     {

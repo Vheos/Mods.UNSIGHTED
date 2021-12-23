@@ -1,6 +1,7 @@
 ﻿namespace Vheos.Mods.UNSIGHTED
 {
     using System;
+    using System.Text;
     using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.PostProcessing;
@@ -8,11 +9,7 @@
     using Tools.ModdingCore;
     using Tools.Extensions.Math;
     using Tools.Extensions.General;
-    using Tools.Extensions.UnityObjects;
-    using System.Linq;
-    using Vheos.Tools.UtilityN;
-    using System.Collections;
-    using System.Text;
+    using Tools.UtilityN;
 
     public class Audiovisual : AMod
     {

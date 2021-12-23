@@ -1,17 +1,12 @@
 ﻿namespace Vheos.Mods.UNSIGHTED
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
-    using UnityEngine.SceneManagement;
     using HarmonyLib;
     using Tools.ModdingCore;
-    using Tools.Extensions.UnityObjects;
     using Tools.Extensions.Math;
-    using Vheos.Tools.Extensions.General;
-    using Vheos.Tools.Extensions.Collections;
-    using UnityEngine.UI;
+    using Tools.Extensions.Collections;
 
     public class Menus : AMod, IDelayedInit
     {
@@ -86,7 +81,7 @@
         {
             switch (presetName)
             {
-                case nameof(SettingsPreset.Vheos_HardMode):
+                case nameof(SettingsPreset.Vheos_UI):
                     ForceApply();
                     _extraSaveSlots.Value = true;
                     _loadoutSettingsByPlayerID[0]._count.Value = 2;

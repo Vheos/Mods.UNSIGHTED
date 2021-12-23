@@ -5,7 +5,7 @@
     using UnityEngine;
     using HarmonyLib;
     using Tools.ModdingCore;
-    using Vheos.Tools.Extensions.Math;
+    using Tools.Extensions.Math;
 
     public class Guard : AMod
     {
@@ -96,7 +96,7 @@
         {
             switch (presetName)
             {
-                case nameof(SettingsPreset.Vheos_HardMode):
+                case nameof(SettingsPreset.Vheos_CoopRebalance):
                     ForceApply();
                     _parryDuration.Value = 160;
                     _deflectDuration.Value = 240;

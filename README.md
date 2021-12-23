@@ -234,6 +234,11 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 
 
 # Changelog
+- **1.4.0**
+    - added new mod `Fishing` - customize the fishing minigame to your liking!
+    - added new mod `Enemies` - customize the stagger system!
+    - `Various`: added setting to disable Iris's tutorials and combat help
+    - moved some mods `Various` to `Enemies`
 - **1.3.0**
     - abstracted extensions for in-game menus
     - renamed mod `Controls` to `Menus`
@@ -241,7 +246,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
     - added support for `GamePass` version of the game (experimental)
 - **1.2.0**
     - implemented in-game controls extension system
-    - added new mod `Controls` - set hotkeys for weapon sets, unlock controls binding
+    - added new mod `Controls` - set hotkeys for weapon sets!
     - added hidden mod `SFX Player` - test in-game sound effects
     - split mods into 3 sections: `BALANCE`, `QUALITY OF LIFE` and `VARIOUS`
     - `UI`: added setting to override controller icons (PS4 and Xbox)

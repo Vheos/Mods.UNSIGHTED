@@ -11,6 +11,7 @@
     using Tools.Extensions.Math;
     using Tools.Extensions.Reflection;
     using Tools.Extensions.Collections;
+    using Vheos.Tools.Extensions.DumpN;
 
     internal class CustomControls : ACustomPopup<CustomControls>
     {
@@ -78,7 +79,7 @@
             }
 
             // navigation
-            InternalExtensions.CreateMutualLinks(buttonsTable);
+            InternalUtility.CreateMutualLinks(buttonsTable);
 
             // controls manager
             _controlsManager.inputButtons = _controlsManager.GetComponentsInHierarchy<ChangeInputButton>(3, 3).GetGameObjects().ToArray();

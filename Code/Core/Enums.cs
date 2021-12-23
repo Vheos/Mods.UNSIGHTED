@@ -2,7 +2,7 @@
 {
     internal enum SettingsPreset
     {
-        Vheos_HardMode,
+        Vheos_CoopRebalance,
         Vheos_UI,
     }
 

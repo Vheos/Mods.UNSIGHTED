@@ -14,7 +14,7 @@
         #region SETTINGS
         public const string GUID = "Vheos.Mods.UNSIGHTED";
         public const string NAME = "UNSIGHTED++";
-        public const string VERSION = "1.3.0";
+        public const string VERSION = "1.4.0";
 #endregion
 
         // User logic
@@ -38,7 +38,9 @@
             typeof(Movement),
             typeof(Guard),
             typeof(Combo),
+            typeof(Enemies),
             typeof(ChipsCogs),
+            typeof(Fishing),
             typeof(ParryChallenge),
 
             // QoL

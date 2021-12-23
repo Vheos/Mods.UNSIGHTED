@@ -2,12 +2,10 @@
 {
     using System;
     using System.Collections;
-    using HarmonyLib;
     using UnityEngine;
+    using HarmonyLib;
     using Tools.ModdingCore;
     using Tools.Extensions.Math;
-    using Vheos.Tools.Extensions.General;
-    using Vheos.Tools.Extensions.UnityObjects;
 
     public class Combo : AMod
     {
@@ -109,7 +107,7 @@
         {
             switch (presetName)
             {
-                case nameof(SettingsPreset.Vheos_HardMode):
+                case nameof(SettingsPreset.Vheos_CoopRebalance):
                     ForceApply();
                     _duration.Value = 2f;
                     _decreaseRate.Value = 50;
