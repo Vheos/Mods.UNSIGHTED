@@ -193,14 +193,14 @@ set FileExtensions=$(TargetDir)Vheos.Tools.Extensions.dll
 set FileUtility=$(TargetDir)Vheos.Tools.Utility.dll
 set ZipName=UNSIGHTED++_vX.Y.Z
 
-if $(DefineConstants.Contains('UNITY2018'))==True (
+if $(DefineConstants.Contains('GAMEPASS'))==False (
     if $(DefineConstants.Contains('RELEASE'))==True (
         if not exist %25SteamGOGFull%25 mkdir %25SteamGOGFull%25
         copy %25FileMain%25 %25SteamGOGFull%25
         copy %25FileModdingCore%25 %25SteamGOGFull%25
         copy %25FileExtensions%25 %25SteamGOGFull%25
         copy %25FileUtility%25 %25SteamGOGFull%25
-        powershell Compress-Archive -Path %25Release%25\SteamGOG\BepInEx -DestinationPath %25Release%25\Zips\%25ZipName%25_SteamGOG.zip -Force
+        powershell Compress-Archive -Path %25Release%25\SteamGOG\BepInEx -DestinationPath %25Release%25\%25ZipName%25_SteamGOG.zip -Force
     ) else (
         if not exist %25Debug%25%25Plugin%25 mkdir %25Debug%25%25Plugin%25
         copy %25FileMain%25 %25Debug%25%25Plugin%25
@@ -211,14 +211,14 @@ if $(DefineConstants.Contains('UNITY2018'))==True (
     )
 )
 
-if $(DefineConstants.Contains('UNITY2019'))==True (
+if $(DefineConstants.Contains('GAMEPASS'))==True (
     if $(DefineConstants.Contains('RELEASE'))==True (
         if not exist %25GamePassFull%25 mkdir %25GamePassFull%25
         copy %25FileMain%25 %25GamePassFull%25
         copy %25FileModdingCore%25 %25GamePassFull%25
         copy %25FileExtensions%25 %25GamePassFull%25
         copy %25FileUtility%25 %25GamePassFull%25
-        powershell Compress-Archive -Path %25Release%25\GamePass\BepInEx -DestinationPath %25Release%25\Zips\%25ZipName%25_GamePass_Experimental.zip -Force
+        powershell Compress-Archive -Path %25Release%25\GamePass\BepInEx -DestinationPath %25Release%25\%25ZipName%25_GamePass_Experimental.zip -Force
     ) 
 )</PostBuildEvent>
   </PropertyGroup>
