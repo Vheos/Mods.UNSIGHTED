@@ -1,17 +1,13 @@
 ﻿namespace Vheos.Mods.UNSIGHTED
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
-    using UnityEngine.SceneManagement;
     using HarmonyLib;
     using Tools.ModdingCore;
-    using Tools.Extensions.UnityObjects;
-    using Tools.Extensions.Math;
     using Tools.UtilityN;
     using Tools.Extensions.Reflection;
-    using Vheos.Tools.Extensions.General;
+    using Tools.Extensions.General;
 
     public class SFXPlayer : AMod
     {

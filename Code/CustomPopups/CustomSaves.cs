@@ -91,7 +91,7 @@
             var returnButton = _menuPrefab.GetComponentInChildren<ClosePopupButton>().gameObject;
             buttonsTable[0].Insert(0, returnButton.Rect());
             buttonsTable[1].Insert(0, null);
-            InternalExtensions.CreateMutualLinks(buttonsTable);
+            InternalUtility.CreateMutualLinks(buttonsTable);
 
             // game mode buttons
             _menuPrefab.mainStoryButton.CreateMutualLinkWith(buttonsTable.First().Last().gameObject, AxisDirections.UP);

@@ -3,15 +3,15 @@
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using BepInEx;
-    using Tools.ModdingCore;
     using UnityEngine;
     using UnityEngine.UI;
-    using Vheos.Tools.Extensions.General;
-    using Vheos.Tools.Extensions.Math;
-    using Vheos.Tools.Extensions.UnityObjects;
+    using Tools.ModdingCore;
+    using Tools.Extensions.General;
+    using Tools.Extensions.Math;
+    using Tools.Extensions.UnityObjects;
+    using Random = UnityEngine.Random;
 
-    static public class InternalExtensions
+    static public class InternalUtility
     {
         static public object MoveNextThenGetCurrent(this IEnumerator t)
         {
@@ -45,6 +45,18 @@
                 r[i] = new T[t.y];
             return r;
         }
+        static public int RandomRange(this Vector2Int t)
+        => Random.Range(t.x, t.y + 1);
+        static public float RandomRangeFloat(this Vector2Int t)
+        => Random.Range((float)t.x, (float)t.y);
+        static public float RandomRange(this Vector2 t)
+        => Random.Range(t.x, t.y);
+        static public float RandomRangeInt(this Vector2 t)
+        => Random.Range(t.x.Round(), t.y.Round() + 1);
+        static public bool RandomFlip()
+        => Random.value < 0.5f;
+        static public T RandomElement<T>(this IList<T> t)
+        => t[Random.Range(0, t.Count)];
 
         static public IEnumerable<T> GetComponentsInHierarchy<T>(this Component t, int fromDepth, int toDepth) where T : Component
         {

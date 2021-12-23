@@ -39,9 +39,9 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RELEASE_UNITY_2019|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RELEASE_UNITY_2019_GAMEPASS|AnyCPU' ">
     <OutputPath>bin\UNITY_2019\</OutputPath>
-    <DefineConstants>TRACE;RELEASE, UNITY, UNITY2019</DefineConstants>
+    <DefineConstants>TRACE;RELEASE, UNITY, UNITY2019, GAMEPASS</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -69,6 +69,12 @@
     <Reference Include="Assembly-CSharp-firstpass" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2018'))">
       <HintPath>Private\Libraries\2018.4.32_Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="DOTween">
+      <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\DOTween.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTween43">
+      <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\DOTween43.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2018'))">
       <HintPath>Private\Libraries\2018.4.32_UnityEngine.dll</HintPath>
@@ -107,6 +113,9 @@
       <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
@@ -142,10 +151,12 @@
     <Compile Include="Code\Mods\Menus.cs" />
     <Compile Include="Code\CustomPopups\CustomControls.cs" />
     <Compile Include="Code\Core\Enums.cs" />
-    <Compile Include="Code\Core\InternalExtensions.cs" />
+    <Compile Include="Code\Core\InternalUtility.cs" />
     <Compile Include="Code\Mods\Guard.cs" />
     <Compile Include="Code\Mods\Combo.cs" />
     <Compile Include="Code\Mods\ParryChallenge.cs" />
+    <Compile Include="Code\Mods\Fishing.cs" />
+    <Compile Include="Code\Mods\Enemies.cs" />
     <Compile Include="Code\Mods\Various.cs" />
     <Compile Include="Code\Core\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

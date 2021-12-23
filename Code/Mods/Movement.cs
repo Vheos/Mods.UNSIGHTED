@@ -71,7 +71,7 @@
         {
             switch (presetName)
             {
-                case nameof(SettingsPreset.Vheos_HardMode):
+                case nameof(SettingsPreset.Vheos_CoopRebalance):
                     ForceApply();
                     _moveSpeedMultiplier.Value = 100;
                     _runSpeedMultiplier.Value = 167;

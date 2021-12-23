@@ -63,7 +63,7 @@
         {
             switch (presetName)
             {
-                case nameof(SettingsPreset.Vheos_HardMode):
+                case nameof(SettingsPreset.Vheos_CoopRebalance):
                     ForceApply();
                     _startingChipSlots.Value = 0;
                     _linearChipSlotCosts.Value = 750;

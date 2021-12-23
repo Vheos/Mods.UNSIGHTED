@@ -118,7 +118,7 @@
         {
             switch (presetName)
             {
-                case nameof(SettingsPreset.Vheos_HardMode):
+                case nameof(SettingsPreset.Vheos_CoopRebalance):
                     ForceApply();
                     _allowAttacking.Value = true;
                     _spawnInterval.Value = 1;
