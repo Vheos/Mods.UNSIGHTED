@@ -18,7 +18,7 @@
         override protected string Description =>
             "Mods related to enemies" +
             "\n\nExamples:" +
-            "\n• Customize stagger behaviours" +
+            "\n• Customize stagger system" +
             "\n• Scale enemies' and bosses' HP" +
             "\n• Make enemies in groups attack more often";
 

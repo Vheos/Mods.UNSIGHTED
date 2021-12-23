@@ -19,9 +19,10 @@
         override protected string Description =>
             "Mods related to the fishing minigame" +
             "\n\nExamples:" +
-            "\n• Change the durations fishing stages" +
-            "\n• Set a chance to catch anything at all" +
-            "\n• Change the timings for normal/perfect catch";
+            "\n• Customize cues" +
+            "\n• Change durations of each minigame stage" +
+            "\n• Change required reaction times" +
+            "\n• Customize fishing spot de/respawning ";
 
         // Settings
         static private ModSetting<Vector2> _initialWaitTime;
@@ -111,7 +112,7 @@
                 "How long you have to wait after exhausting a fishing spot before you can use it again" +
                 "\n\nUnit: engine minutes";
 
-            CreateHeader("Reward thresholds").Description =
+            CreateHeader("Reaction times").Description =
                 "How quickly you must reel in after a catch cue to get certain reward:" +
                 "\n• X - normal reward" +
                 "\n• Y - rare reward" +
@@ -244,7 +245,7 @@
                 }
 
                 BobAnimation();
-                yield return gameTime.WaitForSeconds(interval * speedMultiplier);               
+                yield return gameTime.WaitForSeconds(interval * speedMultiplier);
             }
         }
 
