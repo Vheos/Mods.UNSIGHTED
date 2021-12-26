@@ -49,8 +49,7 @@
 
 
 # UNSIGHTED++?
-Cool name, huh? Should be called **UNSIGHTED#** ( as both the game and this plugin is written in **C#**), but come on - **++** is way more self-explanatory.  
-So, **UNSIGHTED++** is my personal collection of mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/), which include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
+Cool name, huh? Should be called **UNSIGHTED#** ( as both the game and this plugin is written in **C#**), but come on - **++** is way more self-explanatory. So, **UNSIGHTED++** is my personal collection of mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/), which include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
 
 (actually some people might, I wouldn't know)
 <br/><br/><br/>
@@ -200,7 +199,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 ![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/DownloadFiles.png)
 
 ### • For `GamePass` version of the game, follow [this guide](https://www.reddit.com/r/NoMansSkyTheGame/comments/h9z1bd/how_to_mod_xbox_game_pass_nms)
-### • For `Steam` and `GOG` versions, extract all files to the game folder (the one with `UNSIGHTED.exe`)
+### • For `Steam` and `GOG` versions, extract all files to the game folder
 
 ![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/ExtractFiles.png)
 
