@@ -7,6 +7,9 @@
     using XInputDotNetPure;
     using HarmonyLib;
     using Tools.ModdingCore;
+    using Tools.Extensions.UnityObjects;
+    using Tools.Extensions.General;
+    using Tools.Extensions.Math;
 
     public class Various : AMod
     {
@@ -23,6 +26,8 @@
         static private ModSetting<bool> _runInBackground;
         static private ModSetting<bool> _introLogos;
         static private ModSetting<bool> _gamepadVibrations;
+        static private ModSetting<GunCrateBreakMode> _breakCratesWithGuns;
+        static private ModSetting<int> _breakCratesWithGunsChance;
         static private ModSetting<bool> _irisTutorials;
         static private ModSetting<IrisCombatHelp> _irisCombatHelp;
         static private ModSetting<int> _staminaHealGain;
@@ -34,6 +39,9 @@
             _runInBackground = CreateSetting(nameof(_runInBackground), false);
             _introLogos = CreateSetting(nameof(_introLogos), true);
             _gamepadVibrations = CreateSetting(nameof(_gamepadVibrations), true);
+
+            _breakCratesWithGuns = CreateSetting(nameof(_breakCratesWithGuns), GunCrateBreakMode.Disabled);
+            _breakCratesWithGunsChance = CreateSetting(nameof(_breakCratesWithGunsChance), 0, IntRange(0, 100));
 
             _irisTutorials = CreateSetting(nameof(_irisTutorials), true);
             _irisCombatHelp = CreateSetting(nameof(_irisCombatHelp), IrisCombatHelp.AtMaxAffinity);
@@ -60,6 +68,17 @@
             _gamepadVibrations.Description =
                 "Makes your gamepad vibrate when doing almost anything in the game" +
                 "\nDisable if you care for battery life, or your wrists, or both";
+
+            _breakCratesWithGuns.Format("Break crates with guns");
+            _breakCratesWithGuns.Description =
+                "Allows you to break crates even if you don't have any melee weapon equipped" +
+                $"\n• {GunCrateBreakMode.Disabled} - original in-game behaviour" +
+                $"\n• {GunCrateBreakMode.ChancePerBullet} - every bullet has x% chance to break the crate" +
+                $"\n• {GunCrateBreakMode.ChancePerDamage} - every 1 damage has x% chance to break the crate";
+            using (Indent)
+            {
+                _breakCratesWithGunsChance.Format("chance", _breakCratesWithGuns, GunCrateBreakMode.Disabled, false);
+            }
 
             _irisTutorials.Format("Iris tutorials");
             _irisTutorials.Description =
@@ -117,8 +136,17 @@
                     return true;
             return false;
         }
+        static private bool IsCommonDestructible(EnemyHitBox enemyHitBox)
+        => enemyHitBox.ParentHasComponent<HoldableCrate>()
+        || enemyHitBox.ParentHasComponent<DestructablePillar>();
 
         // Defines
+        private enum GunCrateBreakMode
+        {
+            Disabled,
+            ChancePerBullet,
+            ChancePerDamage,
+        }
         private enum IrisCombatHelp
         {
             AtMaxAffinity,
@@ -163,10 +191,66 @@
             BetaTitleScreen.logoShown = true;
         }
 
+        // Break crates with guns
+        [HarmonyPatch(typeof(EnemyHitBox), nameof(EnemyHitBox.OnEnable)), HarmonyPostfix]
+        static private void EnemyHitBox_OnEnable_Post(EnemyHitBox __instance)
+        {
+            if (_breakCratesWithGuns.Value == GunCrateBreakMode.Disabled
+            || !IsCommonDestructible(__instance))
+                return;
+
+            __instance.amPlantCollider = 1;
+            __instance.myAtributes.myType = HitObjectType.SmallEnemy;
+            __instance.gameObject.layer = 14;
+        }
+
+        [HarmonyPatch(typeof(EnemyHitBox), nameof(EnemyHitBox.Damage)), HarmonyPrefix]
+        static private bool EnemyHitBox_Damage_Pre(EnemyHitBox __instance, Atributes hitObject)
+        {
+            if (_breakCratesWithGuns.Value == GunCrateBreakMode.Disabled
+            || !IsCommonDestructible(__instance))
+                return true;
+
+            ObjectPoolManager.instance.ActivatePoolObject("HitParticleSmaller", 0.25f.ToVector3(), true)
+              .transform.position = hitObject.transform.position;
+            AudioController.Play(PseudoSingleton<GlobalGameManager>.instance.gameSounds.defendedBulletSound, 0.5f, 1f);
+            if (hitObject.gameObject.TryGetComponent(out CollisionTrigger collisionTrigger))
+                collisionTrigger.collisionEnterEvent?.Invoke();
+
+            float percentChance = _breakCratesWithGunsChance;
+            if (_breakCratesWithGuns == GunCrateBreakMode.ChancePerDamage)
+                percentChance *= hitObject.damage;
+
+            return percentChance.RollPercent();
+        }
+
+        [HarmonyPatch(typeof(DestructablePillar), nameof(DestructablePillar.GotHitBy), new[] { typeof(Atributes), typeof(PlayerInfo) }), HarmonyPrefix]
+        static private void DestructablePillar_GotHitBy_Pre(DestructablePillar __instance, ref HitObjectType __state, Atributes hitObject)
+        {
+            if (_breakCratesWithGuns.Value == GunCrateBreakMode.Disabled)
+            {
+                __state = 0;
+                return;
+            }
+
+            __state = hitObject.myType;
+            hitObject.myType = HitObjectType.PlayerMelee;
+        }
+
+        [HarmonyPatch(typeof(DestructablePillar), nameof(DestructablePillar.GotHitBy), new[] { typeof(Atributes), typeof(PlayerInfo) }), HarmonyPostfix]
+        static private void DestructablePillar_GotHitBy_Post(DestructablePillar __instance, ref HitObjectType __state, Atributes hitObject)
+        {
+            if (_breakCratesWithGuns.Value == GunCrateBreakMode.Disabled
+            || __state == 0)
+                return;
+
+            hitObject.myType = __state;
+        }
+
         // Vibrations
         [HarmonyPatch(typeof(GamePad), nameof(GamePad.SetVibration)), HarmonyPrefix]
         static private bool GamePad_SetVibration_Pre(GlobalInputManager __instance)
-        => _gamepadVibrations;
+            => _gamepadVibrations;
 
         // Iris tutorials
         [HarmonyPatch(typeof(MonoBehaviour), nameof(MonoBehaviour.StartCoroutine), new[] { typeof(string) }), HarmonyPrefix]
