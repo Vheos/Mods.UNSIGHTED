@@ -23,17 +23,19 @@
         // Settings
         static private ModSetting<bool> _runInBackground;
         static private ModSetting<bool> _introLogos;
+        static private ModSetting<bool> _gamepadVibrations;
         static private ModSetting<bool> _irisTutorials;
         static private ModSetting<IrisCombatHelp> _irisCombatHelp;
         static private ModSetting<int> _staminaHealGain;
         static private ModSetting<int> _staminaHealDuration;
         static private ModSetting<bool> _staminaHealCancelling;
         static private ModSetting<bool> _pauseStaminaRecoveryOnGain;
-
         override protected void Initialize()
         {
             _runInBackground = CreateSetting(nameof(_runInBackground), false);
             _introLogos = CreateSetting(nameof(_introLogos), true);
+            _gamepadVibrations = CreateSetting(nameof(_gamepadVibrations), true);
+
             _irisTutorials = CreateSetting(nameof(_irisTutorials), true);
             _irisCombatHelp = CreateSetting(nameof(_irisCombatHelp), IrisCombatHelp.AtMaxAffinity);
 
@@ -55,6 +57,11 @@
             _introLogos.Description =
                 "Allows you to disable all the unskippable logo animations, as well as the input choice screen, and go straight to the main menu" +
                 "\nYou'll save about 30 seconds of your precious life each time you start the game";
+            _gamepadVibrations.Format("Gamepad vibrations");
+            _gamepadVibrations.Description =
+                "Makes your gamepad vibrate when doing almost anything in the game" +
+                "\nDisable if you care for battery life, or your wrists, or both";
+
             _irisTutorials.Format("Iris tutorials");
             _irisTutorials.Description =
                 "Allows you to disable most Iris tutorials" +
@@ -87,6 +94,8 @@
                 case nameof(SettingsPreset.Vheos_CoopRebalance):
                     ForceApply();
                     _introLogos.Value = false;
+                    _gamepadVibrations.Value = false;
+
                     _irisTutorials.Value = false;
                     _irisCombatHelp.Value = IrisCombatHelp.AtMaxAffinity;
 
@@ -154,6 +163,11 @@
             PressAnyKeyScreen.inputPopupAlreadyAppeared = true;
             BetaTitleScreen.logoShown = true;
         }
+
+        // Vibrations
+        [HarmonyPatch(typeof(GlobalInputManager), nameof(GlobalInputManager.VibrateXInput)), HarmonyPrefix]
+        static private bool GlobalInputManager_VibrateXInput_Pre(GlobalInputManager __instance)
+        => _gamepadVibrations;
 
         // Iris tutorials
         [HarmonyPatch(typeof(MonoBehaviour), nameof(MonoBehaviour.StartCoroutine), new[] { typeof(string) }), HarmonyPrefix]
