@@ -4,10 +4,9 @@
     using System.Collections;
     using UnityEngine;
     using UnityEngine.SceneManagement;
+    using XInputDotNetPure;
     using HarmonyLib;
     using Tools.ModdingCore;
-    using Tools.Extensions.UnityObjects;
-    using Tools.Extensions.Math;
 
     public class Various : AMod
     {
@@ -165,8 +164,8 @@
         }
 
         // Vibrations
-        [HarmonyPatch(typeof(GlobalInputManager), nameof(GlobalInputManager.VibrateXInput)), HarmonyPrefix]
-        static private bool GlobalInputManager_VibrateXInput_Pre(GlobalInputManager __instance)
+        [HarmonyPatch(typeof(GamePad), nameof(GamePad.SetVibration)), HarmonyPrefix]
+        static private bool GamePad_SetVibration_Pre(GlobalInputManager __instance)
         => _gamepadVibrations;
 
         // Iris tutorials
