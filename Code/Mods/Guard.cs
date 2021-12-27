@@ -6,6 +6,8 @@
     using HarmonyLib;
     using Tools.ModdingCore;
     using Tools.Extensions.Math;
+    using Vheos.Tools.Extensions.General;
+    using System.Collections.Generic;
 
     public class Guard : AMod
     {
@@ -31,6 +33,7 @@
         static private ModSetting<float> _parryHitboxGrowth;
         static private ModSetting<bool> _guardWithoutMeleeWeapon;
         static private ModSetting<bool> _parryWithoutMeleeWeapon;
+        static private Dictionary<StunDamageType, ModSetting<int>> _stunDamageMultiplierByType;
         static private ModSetting<int> _guardStaminaCost;
         static private ModSetting<bool> _guardStaminaCostIsPercent;
         static private ModSetting<int> _parryStaminaGain;
@@ -43,6 +46,10 @@
             _optionalDeflectDuration = CreateSetting(nameof(_optionalDeflectDuration), 50, IntRange(0, 1000));
             _guardWithoutMeleeWeapon = CreateSetting(nameof(_guardWithoutMeleeWeapon), false);
             _parryWithoutMeleeWeapon = CreateSetting(nameof(_parryWithoutMeleeWeapon), true);
+            _stunDamageMultiplierByType = new Dictionary<StunDamageType, ModSetting<int>>();
+            _stunDamageMultiplierByType[StunDamageType.Axe] = CreateSetting(nameof(_stunDamageMultiplierByType) + StunDamageType.Axe, 300, IntRange(100, 500));
+            _stunDamageMultiplierByType[StunDamageType.SwordAndShuriken] = CreateSetting(nameof(_stunDamageMultiplierByType) + StunDamageType.SwordAndShuriken, 500, IntRange(100, 500));
+            _stunDamageMultiplierByType[StunDamageType.ParryMasterChip] = CreateSetting(nameof(_stunDamageMultiplierByType) + StunDamageType.ParryMasterChip, 150, IntRange(100, 500));
             _guardStaminaCost = CreateSetting(nameof(_guardStaminaCost), ORIGINAL_GUARD_STAMINA_COST, IntRange(0, 100));
             _guardStaminaCostIsPercent = CreateSetting(nameof(_guardStaminaCostIsPercent), false);
             _parryStaminaGain = CreateSetting(nameof(_parryStaminaGain), 100, IntRange(0, 100));
@@ -68,6 +75,7 @@
             _parryHitboxGrowth.Description =
                 "How much bigger your hitbox gets during the parry window" +
                 "\n\nUnit: Unity-defined units";
+
             _guardWithoutMeleeWeapon.Format("Guard without melee weapon");
             _guardWithoutMeleeWeapon.Description =
                 "Allows you to guard even if you don't have any melee weapon equipped";
@@ -77,13 +85,25 @@
                 _parryWithoutMeleeWeapon.Description =
                      "Allows you to not only deflect, but also parry without a melee weapon";
             }
+
+            CreateHeader("Stun damage multiplier").Description =
+                "How much more damage you deal when hitting a stunned enemy (after parry)" +
+                "\n\nUnit: percent of original damage";
+            using (Indent)
+            {
+                _stunDamageMultiplierByType[StunDamageType.Axe].Format("axe");
+                _stunDamageMultiplierByType[StunDamageType.SwordAndShuriken].Format("sword & shuriken");
+                _stunDamageMultiplierByType[StunDamageType.ParryMasterChip].Format("\"Parry Master\" chip");
+                _stunDamageMultiplierByType[StunDamageType.ParryMasterChip].Description =
+                    "Stacks multiplicatively with sword/axe multiplier";
+            }
+
             _guardStaminaCost.Format("Guard stamina cost");
             _guardStaminaCost.Description =
                 "How much stamina you lose when you start guarding" +
                 "\n\nUnit: stamina points, or percent of max stamina";
             using (Indent)
                 _guardStaminaCostIsPercent.Format("percent of max stamina", _guardStaminaCost, t => t > 0);
-
             _parryStaminaGain.Format("Parry stamina gain");
             _parryStaminaGain.Description =
                 "How much stamina you regain after a parry" +
@@ -104,6 +124,9 @@
                     _parryHitboxGrowth.Value = 1f;
                     _guardWithoutMeleeWeapon.Value = true;
                     _parryWithoutMeleeWeapon.Value = false;
+                    _stunDamageMultiplierByType[StunDamageType.Axe].Value = 200;
+                    _stunDamageMultiplierByType[StunDamageType.SwordAndShuriken].Value = 300;
+                    _stunDamageMultiplierByType[StunDamageType.ParryMasterChip].Value = 150;
                     _guardStaminaCost.Value = 6;
                     _guardStaminaCostIsPercent.Value = false;
                     _parryStaminaGain.Value = 0;
@@ -123,6 +146,20 @@
             return false;
         }
         private const int ORIGINAL_GUARD_STAMINA_COST = 6;
+        static private readonly Dictionary<StunDamageType, float> ORIGINAL_STUN_DAMAGE_MULTIPLIERS_BY_TYPE = new Dictionary<StunDamageType, float>
+        {
+            [StunDamageType.Axe] = 3,
+            [StunDamageType.SwordAndShuriken] = 5,
+            [StunDamageType.ParryMasterChip] = 1.5f,
+        };
+
+        // Defines
+        private enum StunDamageType
+        {
+            Axe,
+            SwordAndShuriken,
+            ParryMasterChip,
+        }
 
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
@@ -190,6 +227,30 @@
             value = _parryStaminaGain;
             if (_parryStaminaGainIsPercent)
                 value *= __instance.myInfo.totalStamina / 100f;
+        }
+
+        [HarmonyPatch(typeof(EnemyHitBox), nameof(EnemyHitBox.ApplyCombo)), HarmonyPostfix]
+        static private void EnemyHitBox_ApplyCombo_Post(EnemyHitBox __instance, ref int __result)
+        {
+            if (!__instance.stunned
+            || !__instance.hitCharacterController.TryNonNull(out var hitCharacterController))
+                return;
+
+            MeleeWeaponClass weaponType = PseudoSingleton<Helpers>.instance.GetWeaponObject(hitCharacterController.myInfo.GetCurrentEquippedWeapon()).meleeWeaponClass;
+            bool hasParryMasterChipEquipped = PseudoSingleton<Helpers>.instance.NumberOfChipsEquipped("ParryMasterChip", hitCharacterController.myInfo.playerNum) > 0;
+            float originalMultiplier = weaponType == MeleeWeaponClass.Axe
+                                     ? ORIGINAL_STUN_DAMAGE_MULTIPLIERS_BY_TYPE[StunDamageType.Axe]
+                                     : ORIGINAL_STUN_DAMAGE_MULTIPLIERS_BY_TYPE[StunDamageType.SwordAndShuriken];
+            float customMultiplier = weaponType == MeleeWeaponClass.Axe
+                                   ? _stunDamageMultiplierByType[StunDamageType.Axe] / 100f
+                                   : _stunDamageMultiplierByType[StunDamageType.SwordAndShuriken] / 100f;
+            if (hasParryMasterChipEquipped)
+            {
+                originalMultiplier *= ORIGINAL_STUN_DAMAGE_MULTIPLIERS_BY_TYPE[StunDamageType.ParryMasterChip];
+                customMultiplier *= _stunDamageMultiplierByType[StunDamageType.ParryMasterChip] / 100f;
+            }
+
+            __result = __result.Mul(customMultiplier).Div(originalMultiplier).Round();
         }
     }
 }
