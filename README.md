@@ -49,7 +49,7 @@
 
 
 # UNSIGHTED++?
-Cool name, huh? Should be called **UNSIGHTED#** ( as both the game and this plugin is written in **C#**), but come on - **++** is way more self-explanatory. So, **UNSIGHTED++** is my personal collection of mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/), which include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
+Cool name, huh? Should be called **UNSIGHTED#** (as both the game and this plugin is written in **C#**), but come on - **++** is way more self-explanatory. So, it's my personal collection of mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/), which include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
 
 (actually some people might, I wouldn't know)
 <br/><br/><br/>
