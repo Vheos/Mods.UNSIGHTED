@@ -239,6 +239,9 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 
 
 # Changelog
+- **1.4.1**
+    - `UI`: added setting to reduce the hit / low health effect intensity
+    - `Various`: added setting to disable gamepad vibrations
 - **1.4.0**
     - added new mod `Fishing` - customize the fishing minigame
     - added new mod `Enemies` - customize the stagger system
