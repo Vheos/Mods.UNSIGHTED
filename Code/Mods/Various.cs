@@ -28,6 +28,8 @@
         static private ModSetting<bool> _runInBackground;
         static private ModSetting<bool> _introLogos;
         static private ModSetting<bool> _gamepadVibrations;
+        static private ModSetting<int> _bolts;
+        static private ModSetting<int> _meteorDusts;
         static private ModSetting<GunCrateBreakMode> _breakCratesWithGuns;
         static private ModSetting<int> _breakCratesWithGunsChance;
         static private ModSetting<bool> _irisTutorials;
@@ -42,6 +44,9 @@
             _introLogos = CreateSetting(nameof(_introLogos), true);
             _gamepadVibrations = CreateSetting(nameof(_gamepadVibrations), true);
 
+            _bolts = CreateSetting(nameof(_bolts), 0, IntRange(0, 100000));
+            _meteorDusts = CreateSetting(nameof(_meteorDusts), 0, IntRange(0, 100));
+
             _breakCratesWithGuns = CreateSetting(nameof(_breakCratesWithGuns), GunCrateBreakMode.Disabled);
             _breakCratesWithGunsChance = CreateSetting(nameof(_breakCratesWithGunsChance), 100, IntRange(0, 100));
 
@@ -55,6 +60,9 @@
 
             // Events
             _runInBackground.AddEvent(() => Application.runInBackground = _runInBackground);
+            AddEventOnConfigOpened(TryReadBoltsAndMeteorDusts);
+            _bolts.AddEventSilently(TrySetBolts);
+            _meteorDusts.AddEventSilently(TrySetMeteorDusts);
         }
         override protected void SetFormatting()
         {
@@ -70,6 +78,14 @@
             _gamepadVibrations.Description =
                 "Makes your gamepad vibrate when doing almost anything in the game" +
                 "\nDisable if you care for battery life, or your wrists, or both";
+
+            CreateHeader("Override currency").Description =
+                "Allows you to override your current amount of bolts and meteor dusts";
+            using (Indent)
+            {
+                _bolts.Format("bolts");
+                _meteorDusts.Format("meteor dusts");
+            }
 
             _breakCratesWithGuns.Format("Break crates with guns");
             _breakCratesWithGuns.Description =
@@ -131,6 +147,7 @@
 
         // Privates
         private const float ORIGINAL_STAMINA_CHARGE_DURATION = 0.66f;
+        private const string METEOR_DUST_NAME = "MeteorDust";
         static private bool PlayerHaveMeleeWeapon_Original(PlayerInfo player)
         {
             foreach (string text in PseudoSingleton<GlobalGameData>.instance.currentData.playerDataSlots[PseudoSingleton<GlobalGameData>.instance.loadedSlot].playersEquipData[player.playerNum].weapons)
@@ -143,6 +160,32 @@
         static private bool IsCommonDestructible(EnemyHitBox enemyHitBox)
         => enemyHitBox.ParentHasComponent<HoldableCrate>()
         || enemyHitBox.ParentHasComponent<DestructablePillar>();
+        static private void TryReadBoltsAndMeteorDusts()
+        {
+            if (PseudoSingleton<PlayersManager>.instance.TryNonNull(out var playerManager))
+                _bolts.SetSilently(playerManager.players[0].currentPlayerStats.playerMoney);
+
+            if (PseudoSingleton<Helpers>.instance.TryNonNull(out var helpers))
+                _meteorDusts.SetSilently(helpers.PlayerHaveItem(METEOR_DUST_NAME));
+        }
+        static private void TrySetBolts()
+        {
+            if (!PseudoSingleton<PlayersManager>.instance.TryNonNull(out var playerManager))
+                return;
+
+            playerManager.players[0].currentPlayerStats.playerMoney = _bolts;
+            PseudoSingleton<BoltHUDController>.instance?.UpdateBar();
+        }
+        static private void TrySetMeteorDusts()
+        {
+            if (!PseudoSingleton<Helpers>.instance.TryNonNull(out var helpers))
+                return;
+
+            if (helpers.GetPlayerData().playerItems.TryFind(t => t.itemName == METEOR_DUST_NAME, out var meteorDust))
+                meteorDust.quanty = _meteorDusts;
+            else
+                helpers.AddPlayerItem(METEOR_DUST_NAME, _meteorDusts);
+        }
 
         // Defines
         private enum GunCrateBreakMode
@@ -219,7 +262,7 @@
 
             float percentChance = _breakCratesWithGunsChance;
             if (_breakCratesWithGuns == GunCrateBreakMode.ChancePerDamage)
-                percentChance *= hitObject.damage;            
+                percentChance *= hitObject.damage;
             if (percentChance.RollPercent())
                 return true;
 
