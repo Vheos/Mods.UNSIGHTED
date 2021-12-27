@@ -91,7 +91,7 @@
             _stopAfterMiss.Format("Stop after miss");
             _stopAfterMiss.Description =
                 "Stops the minigame after missing your first catch opportunity" +
-                $"\nUseful when playing with limited \"{_catchCues}\"";
+                $"\nUseful when playing with limited \"{_catchCues.Name}\"";
             _startCue.Format("Start cue");
             _startCue.Description =
                 "Displays a green question mark to signal when the minigame starts, and waits for one maximum interval before the first bob";
@@ -130,16 +130,16 @@
             {
                 case nameof(SettingsPreset.Vheos_CoopRebalance):
                     ForceApply();
-                    _initialWaitTime.Value = new Vector2(2, 4);
-                    _minigameMaxDuration.Value = new Vector2(4, 8);
+                    _initialWaitTime.Value = new Vector2(1.5f, 3);
+                    _minigameMaxDuration.Value = new Vector2(3, 6);
                     _bobInterval.Value = new Vector2(2 / 3f, 4 / 3f);
                     _linearIntervalMultiplier.Value = 200;
-                    _chancePerFishingSpot.Value = 100;
+                    _chancePerFishingSpot.Value = 150;
                     _stopAfterMiss.Value = false;
                     _startCue.Value = false;
                     _catchCues.Value = CatchCues.Visual | CatchCues.Audio | CatchCues.Random;
                     _spotDespawnChance.Value = 100;
-                    _spotRespawnTime.Value = 60;
+                    _spotRespawnTime.Value = 30;
                     _thresholdsMagneticRod.Value = new Vector2(0.45f, 0.3f);
                     _thresholdsNeodymiumRod.Value = new Vector2(0.6f, 0.4f);
                     break;

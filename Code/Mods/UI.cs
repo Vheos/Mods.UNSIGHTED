@@ -34,6 +34,7 @@
         static private ModSetting<bool> _comboCounterAsPercentIncrease;
         static private ModSetting<bool> _comboProgressBar;
         static private ModSetting<bool> _clockTime;
+        static private ModSetting<int> _hitEffectIntensity;
         static private ModSetting<bool> _clockDay;
         static private ModSetting<Color> _crosshairBigDiamondColor;
         static private ModSetting<Color> _crosshairSmallDiamondColor;
@@ -57,11 +58,13 @@
             _clockTime = CreateSetting(nameof(_clockTime), true);
             _clockDay = CreateSetting(nameof(_clockDay), true);
 
+            _hitEffectIntensity = CreateSetting(nameof(_hitEffectIntensity), 100, IntRange(0, 100));
             _controllerIcons = CreateSetting(nameof(_controllerIcons), ControllerType.AsDetected);
 
             // Events
-            _clockTime.AddEvent(() => UpdateClockVisibility(PseudoSingleton<InGameClock>.instance));
-            _clockDay.AddEvent(() => UpdateClockVisibility(PseudoSingleton<InGameClock>.instance));
+            _clockTime.AddEvent(() => TryUpdateClockVisibility(PseudoSingleton<InGameClock>.instance));
+            _clockDay.AddEvent(() => TryUpdateClockVisibility(PseudoSingleton<InGameClock>.instance));
+            _hitEffectIntensity.AddEvent(() => TrySetHitEffectColors(PseudoSingleton<LowHealthEffect>.instance));
         }
         override protected void SetFormatting()
         {
@@ -114,6 +117,9 @@
             _clockDay.Description =
                 "Displays the day counter";
 
+            _hitEffectIntensity.Format("Hit effect intensity");
+            _hitEffectIntensity.Description =
+                "How visible is the overlay (circuits and vignette) when taking damage, getting frozen or being at low health";
             _controllerIcons.Format("Controller icons");
             _controllerIcons.Description =
                 "Allows you to override the icons used for controller prompts" +
@@ -141,13 +147,24 @@
                     _clockTime.Value = true;
                     _clockDay.Value = false;
 
+                    _hitEffectIntensity.Value = 50;
                     _controllerIcons.Value = ControllerType.DualShock4;
                     break;
             }
         }
 
         // Privates
-        static private void UpdateClockVisibility(InGameClock inGameClock)
+        #region HitEffectColors
+        static private readonly Color HIT_OVERLAY_COLOR = new Color(1f, 0f, 0.1862f, 0.853f);
+        static private readonly Color LOW_HEALTH_OVERLAY_COLOR_1 = new Color(1f, 0f, 0.7655f, 0.666f);
+        static private readonly Color LOW_HEALTH_OVERLAY_COLOR_2 = new Color(1f, 0f, 0.1862f, 0.691f);
+        static private readonly Color FROZEN_OVERLAY_COLOR = new Color(1f, 1f, 1f, 0.384f);
+        static private readonly Color HIT_VIGNETTE_COLOR = new Color(0f, 0f, 0f, 0.291f);
+        static private readonly Color LOW_HEALTH_VIGNETTE_COLOR_1 = new Color(0f, 0f, 0f, 0.366f);
+        static private readonly Color LOW_HEALTH_VIGNETTE_COLOR_2 = new Color(0f, 0f, 0f, 0.122f);
+        static private readonly Color FROZEN_VIGNETTE_COLOR = new Color(0.8186f, 0.7941f, 1f, 0.153f);
+        #endregion
+        static private void TryUpdateClockVisibility(InGameClock inGameClock)
         {
             if (inGameClock == null)
                 return;
@@ -166,6 +183,21 @@
             [ControllerType.DualShock4] = new[] { 1, 0, 3, 2, 4, 5, 6, 7, 10, 11, 8, 9, 13 },
             [ControllerType.XboxOne] = new[] { 0, 2, 3, 1, 4, 5, 19, 18, 8, 9, 6, 7, -1 },
         };
+        static private void TrySetHitEffectColors(LowHealthEffect lowHealthEffect)
+        {
+            if (lowHealthEffect == null)
+                return;
+
+            var multiplier = new Color(1, 1, 1, _hitEffectIntensity / 100f);
+            lowHealthEffect.cablesHitColor = HIT_OVERLAY_COLOR * multiplier;
+            lowHealthEffect.cablesLowHealthColor1 = LOW_HEALTH_OVERLAY_COLOR_1 * multiplier;
+            lowHealthEffect.cablesLowHealthColor2 = LOW_HEALTH_OVERLAY_COLOR_2 * multiplier;
+            lowHealthEffect.cablesFrozen = FROZEN_OVERLAY_COLOR * multiplier;
+            lowHealthEffect.vignetteHitColor = HIT_VIGNETTE_COLOR * multiplier;
+            lowHealthEffect.vignetteLowHealthColor1 = LOW_HEALTH_VIGNETTE_COLOR_1 * multiplier;
+            lowHealthEffect.vignetteLowHealthColor2 = LOW_HEALTH_VIGNETTE_COLOR_2 * multiplier;
+            lowHealthEffect.vignetteFrozen = FROZEN_VIGNETTE_COLOR * multiplier;
+        }
 
         // Defines
         private enum ControllerType
@@ -196,7 +228,7 @@
         // Hide clock
         [HarmonyPatch(typeof(InGameClock), nameof(InGameClock.UpdateClock)), HarmonyPostfix]
         static private void InGameClock_Start_Post(InGameClock __instance)
-        => UpdateClockVisibility(__instance);
+        => TryUpdateClockVisibility(__instance);
 
         [HarmonyPatch(typeof(ComboBar), nameof(ComboBar.SetComboText)), HarmonyPrefix]
         static private bool ComboBar_SetComboText_Pre(ComboBar __instance)
@@ -241,6 +273,11 @@
             foreach (var image in __instance.directionCursor.GetComponentsInChildren<Image>(true))
                 image.color = _crosshairSmallDiamondColor;
         }
+
+        // Hit effect colors
+        [HarmonyPatch(typeof(LowHealthEffect), nameof(LowHealthEffect.OnEnable)), HarmonyPrefix]
+        static private void LowHealthEffect_OnEnable_Pre(LowHealthEffect __instance)
+        => TrySetHitEffectColors(__instance);
 
         // Input device icons
         [HarmonyPatch(typeof(DeviceIconDatabase), nameof(DeviceIconDatabase.GetDeviceIcon)), HarmonyPrefix]

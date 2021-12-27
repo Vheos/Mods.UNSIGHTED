@@ -35,6 +35,10 @@
 # Table of contents
 - [UNSIGHTED++?](https://github.com/Vheos777/Mods.UNSIGHTED#unsighted)
 - [Highlights](https://github.com/Vheos777/Mods.UNSIGHTED#highlights)
+  - [Extra Save Slots](https://github.com/Vheos777/Mods.UNSIGHTED#extra-save-slots)
+  - [Weapon Loadouts](https://github.com/Vheos777/Mods.UNSIGHTED#weapon-loadouts)
+  - [Skin Editor ](https://github.com/Vheos777/Mods.UNSIGHTED#skin-editor)
+  - [Player 2 Equality](https://github.com/Vheos777/Mods.UNSIGHTED#player-2-equality)
 - [Settings overview](https://github.com/Vheos777/Mods.UNSIGHTED#settings-overview-as-of-v100)
 - [How to?](https://github.com/Vheos777/Mods.UNSIGHTED#how-to)
 - [FAQ](https://github.com/Vheos777/Mods.UNSIGHTED#faq)
@@ -45,7 +49,7 @@
 
 
 # UNSIGHTED++?
-Cool name, huh? I wanted to name it **UNSIGHTED#**, but it doesn't look even half as pleasing... Oh right - it's my personal collection of mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/)! Those include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
+Cool name, huh? Should be called **UNSIGHTED#** (as both the game and this plugin is written in **C#**), but come on - **++** is way more self-explanatory. So, it's my personal collection of mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/), which include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
 
 (actually some people might, I wouldn't know)
 <br/><br/><br/>
@@ -59,22 +63,22 @@ Wow, 8 save slots for the price of 3! You can finally keep mementos of past play
 
 https://user-images.githubusercontent.com/9155825/147118791-82ced823-0b6a-4f56-afe6-80f73d73c33b.mp4
 
-### Quickslottable Weapon Loadouts
-Now **THIS** is my proudest feature! No more opening menu every minute to switch between shuriken, hookshot, ice-maker and your actual combat weapons. Now you can have switch between your favourite loadouts with the press of one button! Comes with in-game **custom controls system** and **co-op support** :)
+### Weapon Loadouts
+No more opening menu every minute to switch between shuriken, hookshot, ice-maker and your actual combat weapons. Now you can switch between your favourite loadouts with the press of one button! Comes with in-game **custom controls menu** and **co-op support** :)
 
 https://user-images.githubusercontent.com/9155825/146574388-3daf9b3a-ec14-4690-a4e7-06cfd41fafa9.mp4
 
-### Color Palette Editor
+### Skin Editor
 Let the fashion begin! It's a bit clunky, as the **Configuration Manager** doesn't provide either HSV sliders or numerical RGB input, ***BUT IT WORKS!*** I've even gone the extra mile and written a de/serializer for the color data, so you can copy-paste palettes and share them with others **<3** Take a look at this juice:
 
 https://user-images.githubusercontent.com/9155825/146345939-7f04ae15-d06b-4dfc-9ab0-853e28c80fc1.mp4
 
-### Equal Rights for Player 2
-Actually, **UNSIGHTED** treats **Player 2** with way more respect than most games - but that's not saying much as the bar's set pretty low by the gaming industry. Anyway, **UNSIGHTED** also suffers from *some* **Player 2** marginalization - namely the archaic and redundant **CAMERA PRIVILEGES!** Take a look at this:
+### Player 2 Equality
+**UNSIGHTED** treats **Player 2** with way more respect than most games (which is  not saying much, as the bar's set pretty low by the gaming industry), but it still suffers from *some* **Player 2** marginalization - namely the archaic and redundant **CAMERA PRIVILEGES!** Take a look at this:
 
 https://user-images.githubusercontent.com/9155825/146352205-7a16275b-ae4b-4003-9c39-272b40fbe07c.mp4
 
-Notice how **Player 1** still has a decent line of sight around them, while **Player 2** is already in the gutter? If that wasn't hurtful enough, they will soon be hurled like a bag of potatoes towards **Player 1**'s location, because god forbid anything *even remotely slows down* the protagonist's adventuring. Now, in case of puzzle games (and metroidvania is partly that) this is somewhat justified, as stretching the screen too wide might spoil the solution. Still, this could be designed around. As a workaround, I implemented simple `co-op camera stretching` system, as well the options to disable `prioritizing player 1` and `teleporting player 2`:
+Notice how **Player 1** still has a decent line of sight around them, while **Player 2** is already in the gutter? If that wasn't hurtful enough, they will soon be hurled like a bag of potatoes towards **Player 1**'s location, because god forbid anything *even remotely slows down* the protagonist's adventuring. Now, in case of puzzle games (and metroidvania is partly that) this is somewhat justified, as stretching the screen too wide might spoil the solution. Still, this could be designed around, so as a quick workaround, I implemented `co-op camera stretching`, as well the options to disable `prioritizing player 1` and `teleporting player 2`:
 
 https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8f1f-528a6b5a206e.mp4
 
@@ -194,7 +198,8 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 
 ![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/DownloadFiles.png)
 
-### • Extract all files to the game folder (the one with `UNSIGHTED.exe`)
+### • For `GamePass` version of the game, follow [this guide](https://www.reddit.com/r/NoMansSkyTheGame/comments/h9z1bd/how_to_mod_xbox_game_pass_nms)
+### • For `Steam` and `GOG` versions, extract all files to the game folder
 
 ![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/ExtractFiles.png)
 
@@ -234,11 +239,14 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 
 
 # Changelog
+- **1.4.1**
+    - `UI`: added setting to reduce the hit / low health effect intensity
+    - `Various`: added setting to disable gamepad vibrations
 - **1.4.0**
     - added new mod `Fishing` - customize the fishing minigame
     - added new mod `Enemies` - customize the stagger system
     - `Various`: added setting to disable Iris's tutorials and combat help
-    - moved some mods `Various` to `Enemies`
+    - moved some settings from mod `Various` to `Enemies`
 - **1.3.0**
     - abstracted extensions for in-game menus
     - renamed mod `Controls` to `Menus`

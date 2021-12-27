@@ -137,6 +137,9 @@
       <HintPath>..\..\Libraries\ConfigurationManager (v16.3)\ConfigurationManager.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="XInputDotNetPure">
+      <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\XInputDotNetPure.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Code\CustomPopups\ACustomPopup.cs" />
