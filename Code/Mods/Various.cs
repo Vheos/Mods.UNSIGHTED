@@ -19,6 +19,8 @@
         override protected string Description =>
             "Mods that haven't found their home yet!" +
             "\n\nExamples:" +
+            "\n• Disable Iris's tutorials and combat help" +
+            "\n• Break crates with guns" +
             "\n• Skip 30sec of intro logos" +
             "\n• Customize the \"Stamina Heal\" move";
 
@@ -41,7 +43,7 @@
             _gamepadVibrations = CreateSetting(nameof(_gamepadVibrations), true);
 
             _breakCratesWithGuns = CreateSetting(nameof(_breakCratesWithGuns), GunCrateBreakMode.Disabled);
-            _breakCratesWithGunsChance = CreateSetting(nameof(_breakCratesWithGunsChance), 0, IntRange(0, 100));
+            _breakCratesWithGunsChance = CreateSetting(nameof(_breakCratesWithGunsChance), 100, IntRange(0, 100));
 
             _irisTutorials = CreateSetting(nameof(_irisTutorials), true);
             _irisCombatHelp = CreateSetting(nameof(_irisCombatHelp), IrisCombatHelp.AtMaxAffinity);
@@ -74,11 +76,10 @@
                 "Allows you to break crates even if you don't have any melee weapon equipped" +
                 $"\n• {GunCrateBreakMode.Disabled} - original in-game behaviour" +
                 $"\n• {GunCrateBreakMode.ChancePerBullet} - every bullet has x% chance to break the crate" +
-                $"\n• {GunCrateBreakMode.ChancePerDamage} - every 1 damage has x% chance to break the crate";
+                $"\n• {GunCrateBreakMode.ChancePerDamage} - every 1 damage has x% chance to break the crate" +
+                $"\n(requires area change to take effect)";
             using (Indent)
-            {
                 _breakCratesWithGunsChance.Format("chance", _breakCratesWithGuns, GunCrateBreakMode.Disabled, false);
-            }
 
             _irisTutorials.Format("Iris tutorials");
             _irisTutorials.Description =
@@ -113,6 +114,9 @@
                     ForceApply();
                     _introLogos.Value = false;
                     _gamepadVibrations.Value = false;
+
+                    _breakCratesWithGuns.Value = GunCrateBreakMode.ChancePerBullet;
+                    _breakCratesWithGunsChance.Value = 50;
 
                     _irisTutorials.Value = false;
                     _irisCombatHelp.Value = IrisCombatHelp.AtMaxAffinity;
@@ -211,17 +215,20 @@
             || !IsCommonDestructible(__instance))
                 return true;
 
-            ObjectPoolManager.instance.ActivatePoolObject("HitParticleSmaller", 0.25f.ToVector3(), true)
-              .transform.position = hitObject.transform.position;
             AudioController.Play(PseudoSingleton<GlobalGameManager>.instance.gameSounds.defendedBulletSound, 0.5f, 1f);
-            if (hitObject.gameObject.TryGetComponent(out CollisionTrigger collisionTrigger))
-                collisionTrigger.collisionEnterEvent?.Invoke();
 
             float percentChance = _breakCratesWithGunsChance;
             if (_breakCratesWithGuns == GunCrateBreakMode.ChancePerDamage)
-                percentChance *= hitObject.damage;
+                percentChance *= hitObject.damage;            
+            if (percentChance.RollPercent())
+                return true;
 
-            return percentChance.RollPercent();
+            ObjectPoolManager.instance.ActivatePoolObject("HitParticleSmaller", 0.25f.ToVector3(), true)
+                .transform.position = hitObject.transform.position;
+            if (hitObject.gameObject.TryGetComponent(out CollisionTrigger collisionTrigger))
+                collisionTrigger.collisionEnterEvent?.Invoke();
+            return false;
+
         }
 
         [HarmonyPatch(typeof(DestructablePillar), nameof(DestructablePillar.GotHitBy), new[] { typeof(Atributes), typeof(PlayerInfo) }), HarmonyPrefix]
