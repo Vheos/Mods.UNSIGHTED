@@ -19,6 +19,7 @@
         override protected string Description =>
             "Mods that haven't found their home yet!" +
             "\n\nExamples:" +
+            "\n• Set your current bolts and meteor dusts" +
             "\n• Disable Iris's tutorials and combat help" +
             "\n• Break crates with guns" +
             "\n• Skip 30sec of intro logos" +

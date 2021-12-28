@@ -20,6 +20,7 @@
             "\n• Change \"perfect\" and \"normal\" parry windows" +
             "\n• Guard longer by holding the button" +
             "\n• Guard without melee weapons" +
+            "\n• Change stun damage multipliers" +
             "\n\nDictionary:" +
             "\n• Parry - \"perfect parry\", triggers when you guard early enough" +
             "\n• Deflect - \"normal parry\", triggers when you guard too late for parry" +

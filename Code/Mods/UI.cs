@@ -23,7 +23,9 @@
             "\n• Hide combat popups" +
             "\n• Hide current day / time" +
             "\n• Customize crosshair" +
-            "\n• Customize combo display";
+            "\n• Customize combo display" +
+            "\n• Reduce the intensity of hit effects" +
+            "\n• Override controller icons";
 
         // Settings
         static private ModSetting<bool> _damagePopups;
@@ -153,6 +155,7 @@
                     _clockTime.Value = true;
                     _clockDay.Value = false;
 
+                    _displayTotalCogUses.Value = false;
                     _hitEffectIntensity.Value = 50;
                     _controllerIcons.Value = ControllerType.DualShock4;
                     break;
