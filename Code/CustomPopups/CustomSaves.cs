@@ -152,6 +152,10 @@
         => buttonID < 3
         ? buttonID + 3 * (int)gameType
         : buttonID * 3 + (int)gameType;
+        static private int GetButtonID(int saveSlotID)
+        => saveSlotID < 9
+        ? saveSlotID % 3
+        : saveSlotID / 3;
 
         // Settings
         static private readonly Rect SCREEN_RECT = Rect.MinMaxRect(0, 2, 400, 162);
@@ -252,5 +256,15 @@
         [HarmonyPatch(typeof(SaveSlotButton), nameof(SaveSlotButton.AdjustSpritePivot)), HarmonyPrefix]
         static private bool SaveSlotButton_AdjustSpritePivot_Pre(SaveSlotButton __instance)
         => __instance.mySaveSlotPopup.saveSlotButtons.Length <= ORIGINAL_BUTTONS_COUNT;
+
+        [HarmonyPatch(typeof(TryNewGamePlusPopup), nameof(TryNewGamePlusPopup.LoadGame)), HarmonyPrefix]
+        static private bool TryNewGamePlusPopup_LoadGame_Pre(TryNewGamePlusPopup __instance)
+        {
+            var saveSlotPopup = __instance.GetSiblingComponent<SaveSlotPopup>();
+            saveSlotPopup.gameObject.SetActive(true);
+            saveSlotPopup.saveSlotButtons[GetButtonID(PseudoSingleton<GlobalGameData>.instance.loadedSlot)].StartCoroutine("LoadGameCoroutine");
+            __instance.gameObject.SetActive(false);
+            return false;
+        }
     }
 }

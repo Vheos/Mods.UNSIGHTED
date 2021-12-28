@@ -112,8 +112,11 @@
                 "Allows you to change current day, hour and minute without affecting death timers";
             using (Indent)
             {
+                _day.DisplayResetButton = false;
                 _day.Format("day");
+                _hour.DisplayResetButton = false;
                 _hour.Format("hour");
+                _minute.DisplayResetButton = false;
                 _minute.Format("minute");
             }
         }
@@ -194,7 +197,7 @@
                 float timeFlow = _gameToEngineTimeRatio.Value / 100f;
                 if (IsAnyPlayerFishing())
                     timeFlow *= _fishingTimerSpeed.Value / 100f;
-                if (ParryChallenge.IsParryChallengeActive())
+                if (ParryChallenge.IsAnyGymMinigameActive())
                     timeFlow *= _parryChallengeTimeMultiplier.Value / 100f;
 
                 if (timeFlow > 0 && __instance.CanAddInGameSeconds())

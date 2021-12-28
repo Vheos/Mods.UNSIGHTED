@@ -57,6 +57,10 @@
         => Random.value < 0.5f;
         static public T RandomElement<T>(this IList<T> t)
         => t[Random.Range(0, t.Count)];
+        static public void SetClampMax(this ref int t, int a)
+        => t = t.ClampMax(a);
+        static public void SetClampMin(this ref int t, int a)
+        => t = t.ClampMin(a);
 
         static public IEnumerable<T> GetComponentsInHierarchy<T>(this Component t, int fromDepth, int toDepth) where T : Component
         {

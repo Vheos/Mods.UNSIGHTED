@@ -217,8 +217,12 @@
             if (_preset != SpawnPreset.Vanilla)
                 _rewardThresholds.Value = new Vector3(_spawnTable[2].Value.x, _spawnTable[4].Value.x, _spawnTable[6].Value.x);
         }
+        static internal bool IsAnyGymMinigameActive()
+        => PseudoSingleton<GymMinigame>.instance.TryNonNull(out var gymMinigame)
+        && gymMinigame.duringMinigame;
         static internal bool IsParryChallengeActive()
-        => PseudoSingleton<GymMinigame>.instance.TryNonNull(out var gymMinigame) && gymMinigame.duringMinigame;
+        => IsAnyGymMinigameActive()
+        && PseudoSingleton<GymMinigame>.instance.currentMinigameType == GymMinigameType.Endurance;
 
         // Defines
         private enum SpawnPreset
@@ -358,18 +362,13 @@
                 i++;
                 isValid = true;
                 foreach (var player in PseudoSingleton<PlayersManager>.instance.players)
-                {
-                    Log.Debug($"{__result} ---> {player.myCharacter.myPosition}  =  {__result.DistanceTo(player.myCharacter.myPosition)}  >  {minDistance}");
                     if (__result.DistanceTo(player.myCharacter.myPosition) <= minDistance)
                     {
 
                         isValid = false;
                         break;
                     }
-                }
             }
-
-            Log.Debug($"Spawn took {i} tries");
             return false;
         }
     }

@@ -7,6 +7,7 @@
     using Tools.ModdingCore;
     using Tools.Extensions.Math;
     using Tools.Extensions.Collections;
+    using System.Collections;
 
     public class Menus : AMod, IDelayedInit
     {
@@ -50,7 +51,7 @@
                 "\nThis feature hasn't been thoroughly tested yet, so backup your saves first! " +
                 "Then enable \"Advanced settings\" and the toggle will appear. Thank you for testing <3" +
                 "\n(requires game restart to take effect)";
-            using(Indent)
+            using (Indent)
             {
                 _extraSaveSlots.IsAdvanced = true;
                 _extraSaveSlots.Format("I accept the risk");
@@ -154,6 +155,11 @@
 
                 _currentLoadout.Slots[slotID].Value = weapon;
             }
+            internal void RemoveFromAllLoadouts(string weapon)
+            {
+                foreach (var loadout in _loadouts)
+                    loadout.RemoveFromAllSlots(weapon);
+            }
             internal bool IsEnabled
             => _cachedCount > 1;
 
@@ -231,6 +237,12 @@
                             return false;
                     return true;
                 }
+                public void RemoveFromAllSlots(string weapon)
+                {
+                    for (int i = 0; i < 2; i++)
+                        if (Slots[i] == weapon)
+                            Slots[i].Value = NOTHING_WEAPON_NAME;
+                }
 
                 // Initializers
                 public Loadout(int id)
@@ -257,5 +269,28 @@
         [HarmonyPatch(typeof(Helpers), nameof(Helpers.EquipWeapon)), HarmonyPrefix]
         static private void Helpers_EquipWeapon_Pre(Helpers __instance, string weaponName, int playerNum, int weaponSlot)
         => _loadoutSettingsByPlayerID[playerNum].UpdateCurrentSlot(weaponSlot, weaponName);
+
+        [HarmonyPatch(typeof(CorruptedPedestal), nameof(CorruptedPedestal.PedestalInteraction)), HarmonyPostfix]
+        static private IEnumerator CorruptedPedestal_PedestalInteraction_Post(IEnumerator original, CorruptedPedestal __instance)
+        {
+            yield return original.MoveNextThenGetCurrent();
+            var helpers = PseudoSingleton<Helpers>.instance;
+            bool meteorWeaponIsOnPedestal = helpers.GetPlayerData().dataStrings.Contains("MeteorWeaponAtPedestal");
+            bool hasAnyMeteorWeapon = helpers.PlayerHaveItem("MeteorBlade") > 0 || helpers.PlayerHaveItem("MeteorAxe") > 0;
+            if (!meteorWeaponIsOnPedestal && hasAnyMeteorWeapon)
+            {
+                yield return original.MoveNextThenGetCurrent();
+                yield return original.MoveNextThenGetCurrent();
+                yield return original.MoveNextThenGetCurrent();
+                foreach (var settings in _loadoutSettingsByPlayerID)
+                {
+                    settings.Value.RemoveFromAllLoadouts("MeteorBlade");
+                    settings.Value.RemoveFromAllLoadouts("MeteorAxe");
+                }
+            }
+
+            while (original.MoveNext())
+                yield return original;
+        }
     }
 }

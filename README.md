@@ -239,6 +239,16 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 
 
 # Changelog
+- **1.5.0**
+    - `Various`: added setting to break crates with guns
+    - `Various`: added settings to override current bolts and meteor dusts
+    - `Chips & Cogs`: added settings to customize damage taken formula
+    - `Chips & Cogs`: added cogs editor (effect, duration, price and color)
+    - `Guard`: added settings to customize stun damage multipliers
+    - `UI`: added setting to hide total cog uses
+    - bugfix: extra saveslots wouldn't work with NG+ popup
+    - bugfix: disabling the `Time` mod would reset in-game timer
+    - bugfix: placing a meteor weapon on the corrupted pedestal wouldn't remove it from other loadouts, making it possible to have it both placed and equipped
 - **1.4.1**
     - `UI`: added setting to reduce the hit / low health effect intensity
     - `Various`: added setting to disable gamepad vibrations
