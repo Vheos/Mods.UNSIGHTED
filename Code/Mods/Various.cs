@@ -83,7 +83,9 @@
                 "Allows you to override your current amount of bolts and meteor dusts";
             using (Indent)
             {
+                _bolts.DisplayResetButton = false;
                 _bolts.Format("bolts");
+                _meteorDusts.DisplayResetButton = false;
                 _meteorDusts.Format("meteor dusts");
             }
 
@@ -92,7 +94,7 @@
                 "Allows you to break crates even if you don't have any melee weapon equipped" +
                 $"\n• {GunCrateBreakMode.Disabled} - original in-game behaviour" +
                 $"\n• {GunCrateBreakMode.ChancePerBullet} - every bullet has x% chance to break the crate" +
-                $"\n• {GunCrateBreakMode.ChancePerDamage} - every 1 damage has x% chance to break the crate" +
+                $"\n• {GunCrateBreakMode.ChancePerDamage} - every point of damage has x% chance to break the crate" +
                 $"\n(requires area change to take effect)";
             using (Indent)
                 _breakCratesWithGunsChance.Format("chance", _breakCratesWithGuns, GunCrateBreakMode.Disabled, false);
