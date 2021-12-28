@@ -34,11 +34,12 @@
         static private ModSetting<bool> _comboCounterAsPercentIncrease;
         static private ModSetting<bool> _comboProgressBar;
         static private ModSetting<bool> _clockTime;
-        static private ModSetting<int> _hitEffectIntensity;
         static private ModSetting<bool> _clockDay;
         static private ModSetting<Color> _crosshairBigDiamondColor;
         static private ModSetting<Color> _crosshairSmallDiamondColor;
         static private ModSetting<Color> _crosshairDotColor;
+        static private ModSetting<bool> _displayTotalCogUses;
+        static private ModSetting<int> _hitEffectIntensity;
         static private ModSetting<ControllerType> _controllerIcons;
         override protected void Initialize()
         {
@@ -58,6 +59,7 @@
             _clockTime = CreateSetting(nameof(_clockTime), true);
             _clockDay = CreateSetting(nameof(_clockDay), true);
 
+            _displayTotalCogUses = CreateSetting(nameof(_displayTotalCogUses), true);
             _hitEffectIntensity = CreateSetting(nameof(_hitEffectIntensity), 100, IntRange(0, 100));
             _controllerIcons = CreateSetting(nameof(_controllerIcons), ControllerType.AsDetected);
 
@@ -117,6 +119,10 @@
             _clockDay.Description =
                 "Displays the day counter";
 
+            _displayTotalCogUses.Format("Display total cog uses");
+            _displayTotalCogUses.Description =
+                "Displays the original amount of cog uses next to the remaining cog uses (eg. 11/20)" +
+                "\nDisable to display only the remaining uses (eg. 11)";
             _hitEffectIntensity.Format("Hit effect intensity");
             _hitEffectIntensity.Description =
                 "How visible is the overlay (circuits and vignette) when taking damage, getting frozen or being at low health";
@@ -210,6 +216,7 @@
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
 
+        // Text
         [HarmonyPatch(typeof(InGameTextController), nameof(InGameTextController.ShowText)), HarmonyPrefix]
         static private bool InGameTextController_ShowText_Pre(InGameTextController __instance, ref string text)
         {
@@ -272,6 +279,31 @@
 
             foreach (var image in __instance.directionCursor.GetComponentsInChildren<Image>(true))
                 image.color = _crosshairSmallDiamondColor;
+        }
+
+        // Don't display total uses
+        [HarmonyPatch(typeof(BuffIconController), nameof(BuffIconController.ShowBuff)), HarmonyPostfix]
+        static private void BuffIconController_ShowBuff_Post(BuffIconController __instance, PlayerBuffs currentBuff, int playerNum)
+        {
+            if (_displayTotalCogUses
+            || currentBuff.usesSeconds)
+                return;
+
+            var ftext = __instance.buffText;
+            ftext.text = __instance.GetAllRemainingUsesFrom(currentBuff.buffType, playerNum).ToString();
+            ftext.ApplyText(true, true, "", true);
+        }
+
+        [HarmonyPatch(typeof(CogButton), nameof(CogButton.ShowCog)), HarmonyPostfix]
+        static private void BuffIconController_ShowBuff_Post(CogButton __instance, PlayerBuffs buff)
+        {
+            if (_displayTotalCogUses
+            || buff.usesSeconds)
+                return;
+
+            var ftext = __instance.cogDuration;
+            ftext.text = buff.remainingUses.ToString();
+            ftext.ApplyText(true, true, "", true);
         }
 
         // Hit effect colors
