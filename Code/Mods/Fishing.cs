@@ -295,8 +295,6 @@
                                  : elapsed <= thresholds.x ? 1
                                  : elapsed <= 2 * thresholds.x - thresholds.y ? -1
                                  : 0;
-
-            Log.Debug($"{Time.time:F2} - {__instance.fishTime:F2} = {elapsed:F2} -> {__instance.fishLevel}");
             return false;
         }
     }
