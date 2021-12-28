@@ -12,6 +12,7 @@
     using Tools.Extensions.General;
     using Tools.Extensions.Collections;
     using Vheos.Tools.UtilityN;
+    using BepInEx.Configuration;
 
     public class ChipsCogs : AMod
     {
@@ -25,7 +26,9 @@
             "\n\nExamples:" +
             "\n• Change starting chip slots and unlock costs" +
             "\n• Change number of cog slots" +
-            "\n• Limit number of active cog types";
+            "\n• Limit number of active cog types" +
+            "\n• Customize damage taken formula" +
+            "\n• Edit each cog type's effect, duration, price and color";
 
         // Settings
         static private ModSetting<int> _startingChipSlots;
@@ -34,7 +37,6 @@
         static private ModSetting<int> _maxActiveCogTypes;
         static private ModSetting<Vector3> _contextualOperations;
         static private ModSetting<Vector3> _otherOperations;
-        static private ModSetting<int> _defenseCogReduction;
         static private Dictionary<CogType, CogSettings> _settingsByCogType;
         override protected void Initialize()
         {
@@ -43,18 +45,25 @@
             _cogSlots = CreateSetting(nameof(_cogSlots), 4, IntRange(0, 6));
             _maxActiveCogTypes = CreateSetting(nameof(_maxActiveCogTypes), 4, IntRange(1, 6));
 
-            _contextualOperations = CreateSetting(nameof(_contextualOperations), new Vector3(1, 3, 4));
-            _otherOperations = CreateSetting(nameof(_otherOperations), new Vector3(5, 6, 2));
-            _defenseCogReduction = CreateSetting(nameof(_defenseCogReduction), 20, IntRange(1, 20));
+            _contextualOperations = CreateSetting(nameof(_contextualOperations), new Vector3(3, 1, 4));
+            _otherOperations = CreateSetting(nameof(_otherOperations), new Vector3(6, 5, 2));
 
             _settingsByCogType = new Dictionary<CogType, CogSettings>();
             foreach (var cogType in Utility.GetEnumValues<CogType>())
+            {
                 _settingsByCogType[cogType] = new CogSettings(this, cogType);
+                switch (cogType)
+                {
+                    case CogType.Defense: _settingsByCogType[cogType].CreateEffectSetting(20, IntRange(1, 20)); break;
+                    case CogType.Syringe: _settingsByCogType[cogType].CreateEffectSetting(200, IntRange(0, 200)); break;
+                    case CogType.Revive: _settingsByCogType[cogType].CreateEffectSetting(25, IntRange(1, 25)); break;
+                }
+            }
 
             // Events
             _linearChipSlotCosts.AddEvent(() => TrySetLinearChipSlotCosts(PseudoSingleton<LevelDatabase>.instance));
             _contextualOperations.AddEvent(SortAndCacheDamageTakenOperations);
-            _otherOperations.AddEvent(SortAndCacheDamageTakenOperations);
+            _otherOperations.AddEventSilently(SortAndCacheDamageTakenOperations);
         }
         override protected void SetFormatting()
         {
@@ -89,25 +98,29 @@
             {
                 _contextualOperations.Format("chips/cogs operations");
                 _contextualOperations.Description =
-                    "X - Defense Chips' damage reduction" +
-                    "\nY - Aggressive/Glitch Chips' extra damage taken" +
-                    "\nZ - Defense Cog's damage reduction";
+                    "X - Aggressive/Glitch Chips' extra damage taken" +
+                    "\nY - Defense Chips' damage taken reduction" +
+                    "\nZ - Defense Cog's damage taken reduction";
                 _otherOperations.Format("other operations");
                 _otherOperations.Description =
-                    "X - Combat Assist damage taken reduction" +
-                    "Y - Robot Apocalypse extra damage taken" +
+                    "X - Robot Apocalypse extra damage taken" +
+                    "\nY - Combat Assist damage taken reduction" +
                     "\nZ - clamp damage taken to a minimum of 1";
             }
-            _defenseCogReduction.Format("Defense Cog damage reduction");
-            _defenseCogReduction.Description =
-                "How much damage is negated when you have the Defense Cog equipped" +
-                "\n\nUnit: points of damage";
 
             CreateHeader("Cogs editor").Description =
-                "Allows you to change the duration, price and color of each cog type";
+                "Allows you to change the duration, price and color (if \"Advanced settings\" are enabled) of each cog type";
             using (Indent)
                 foreach (var settings in _settingsByCogType)
-                    settings.Value.Format();
+                {
+                    switch (settings.Key)
+                    {
+                        case CogType.Defense: settings.Value.Format("Damage reduction"); break;
+                        case CogType.Syringe: settings.Value.Format("Percent per second"); break;
+                        case CogType.Revive: settings.Value.Format("Regained health"); break;
+                        default: settings.Value.Format(null); break;
+                    }
+                }
         }
         override protected void LoadPreset(string presetName)
         {
@@ -119,6 +132,22 @@
                     _linearChipSlotCosts.Value = 750;
                     _cogSlots.Value = 6;
                     _maxActiveCogTypes.Value = 1;
+
+                    _contextualOperations.Value = new Vector3(2, 3, 4);
+                    _otherOperations.Value = new Vector3(1, 6, 5);
+
+                    foreach (var settings in _settingsByCogType)
+                    {
+                        settings.Value.Toggle.Value = true;
+                        settings.Value.Price.Value = 500;
+                    }
+                    _settingsByCogType[CogType.Attack].Duration.Value = 16;
+                    _settingsByCogType[CogType.Stamina].Duration.Value = 120;
+                    _settingsByCogType[CogType.Reload].Duration.Value = 4;
+                    _settingsByCogType[CogType.Speed].Duration.Value = 180;
+                    _settingsByCogType[CogType.Defense].Duration.Value = 8;
+                    _settingsByCogType[CogType.Syringe].Duration.Value = 60;
+                    _settingsByCogType[CogType.Revive].Duration.Value = 4;
                     break;
             }
         }
@@ -133,6 +162,7 @@
                 [CogType.Reload] = (3, 1, 10, 450, new Color(0.9269f, 1f, 0.2426f, 1f)),
                 [CogType.Speed] = (120, 1, 600, 350, new Color(0.6838f, 0.2816f, 0.5729f, 1f)),
                 [CogType.Defense] = (3, 1, 10, 400, new Color(0.2426f, 0.4046f, 1f, 1f)),
+                [CogType.Syringe] = (5, 1, 60, 600, new Color(0.2187f, 0.4632f, 0.1328f, 1f)),
                 [CogType.Revive] = (1, 1, 10, 1750, new Color(1f, 1f, 1f, 1f)),
             };
         #endregion
@@ -169,7 +199,7 @@
                 if (!PseudoSingleton<Helpers>.instance.PlayerHaveBuff(PlayerBuffTypes.Defense, playerID))
                     return;
 
-                damageTaken -= _defenseCogReduction;
+                damageTaken -= _settingsByCogType[CogType.Defense].CurrentEffectValue;
                 damageTaken.SetClampMin(0);
                 PseudoSingleton<BuffsInterfaceController>.instance.ReduceBuff(playerID, PlayerBuffTypes.Defense, 1);
             }
@@ -194,20 +224,24 @@
             // sort
             List<(DamageTakenOperation Operation, float Order)> operationOrderPairs = new List<(DamageTakenOperation, float)>
             {
-                (ApplyDefenseChip, _contextualOperations.Value.x),
-                (ApplyNegativeChips, _contextualOperations.Value.y),
+                (ApplyNegativeChips, _contextualOperations.Value.x),
+                (ApplyDefenseChip, _contextualOperations.Value.y),
                 (ApplyDefenseCog, _contextualOperations.Value.z),
-                (ApplyCombatAssist, _otherOperations.Value.x),
-                (ApplyRobotApocalypse, _otherOperations.Value.y),
+                (ApplyRobotApocalypse, _otherOperations.Value.x),
+                (ApplyCombatAssist, _otherOperations.Value.y),
                 (ClampToOne, _otherOperations.Value.z),
             };
             operationOrderPairs.Sort((a, b) => a.Order.CompareTo(b.Order));
 
             // cache
             _cachedSortedOperations = null;
+            Log.Debug($"Damage taken formula, order of operations:");
             foreach (var (Operation, Order) in operationOrderPairs)
                 if (Order >= 0)
+                {
                     _cachedSortedOperations += Operation;
+                    Log.Debug($"\t- {Operation.GetInvocationList().First().Method.Name}");
+                }
         }
 
         // Defines
@@ -218,28 +252,28 @@
             Reload,
             Speed,
             Defense,
+            Syringe,
             Revive,
         }
-
         #region CogSettings
         private class CogSettings
         {
             // Settings
-            private readonly ModSetting<bool> Toggle;
-            private readonly ModSetting<int> Duration;
-            private readonly ModSetting<int> Price;
-            private readonly ModSetting<Color> Color;
+            internal readonly ModSetting<bool> Toggle;
+            internal readonly ModSetting<int> Duration;
+            internal readonly ModSetting<int> Price;
+            internal readonly ModSetting<Color> Color;
+            internal ModSetting<int> Effect;
             internal CogSettings(ChipsCogs mod, CogType cogType)
             {
                 _mod = mod;
                 _cogType = cogType;
 
-                string keyPrefix = $"{_cogType}_";
-                Toggle = _mod.CreateSetting(keyPrefix + nameof(Toggle), false);
-                Duration = _mod.CreateSetting(keyPrefix + nameof(Duration), DEFAULTS_BY_COG_TYPE[_cogType].Duration,
+                Toggle = _mod.CreateSetting(KeyPrefix + nameof(Toggle), false);
+                Duration = _mod.CreateSetting(KeyPrefix + nameof(Duration), DEFAULTS_BY_COG_TYPE[_cogType].Duration,
                     _mod.IntRange(DEFAULTS_BY_COG_TYPE[_cogType].MinDuration, DEFAULTS_BY_COG_TYPE[_cogType].MaxDuration));
-                Price = _mod.CreateSetting(keyPrefix + nameof(Price), DEFAULTS_BY_COG_TYPE[_cogType].Price, _mod.IntRange(0, 10000));
-                Color = _mod.CreateSetting(keyPrefix + nameof(Color), DEFAULTS_BY_COG_TYPE[_cogType].Color);
+                Price = _mod.CreateSetting(KeyPrefix + nameof(Price), DEFAULTS_BY_COG_TYPE[_cogType].Price, _mod.IntRange(0, 5000));
+                Color = _mod.CreateSetting(KeyPrefix + nameof(Color), DEFAULTS_BY_COG_TYPE[_cogType].Color);
 
                 // Events
                 Toggle.AddEventSilently(TryApplyAll);
@@ -247,13 +281,16 @@
                 Price.AddEventSilently(ApplyPrice);
                 Color.AddEventSilently(ApplyColor);
             }
-            internal void Format()
+            internal void Format(string effectName)
             {
                 Toggle.Format(_cogType.ToString());
                 using (Indent)
                 {
+                    if (effectName != null && Effect != null)
+                        Effect.Format(effectName, Toggle);
                     Duration.Format("Duration", Toggle);
                     Price.Format("Price", Toggle);
+                    Color.IsAdvanced = true;
                     Color.Format("Color", Toggle);
                 }
             }
@@ -262,6 +299,10 @@
                 get => Toggle.Description;
                 set => Toggle.Description = value;
             }
+            internal void CreateEffectSetting(int defaultValue, AcceptableValueRange<int> range)
+            => Effect = _mod.CreateSetting(KeyPrefix + nameof(Effect), defaultValue, range);
+            internal int CurrentEffectValue
+            => Toggle ? Effect.Value : Effect.DefaultValue;
 
             // Publics
             internal void FindCogPrefab()
@@ -281,6 +322,8 @@
             private readonly ChipsCogs _mod;
             private readonly CogType _cogType;
             private CogObject _cogPrefab;
+            private string KeyPrefix
+            => $"{_cogType}_";
             private PlayerBuffTypes GetInternalCogType(CogType cogType)
             {
                 switch (cogType)
@@ -290,6 +333,7 @@
                     case CogType.Reload: return PlayerBuffTypes.Reload;
                     case CogType.Speed: return PlayerBuffTypes.Speed;
                     case CogType.Defense: return PlayerBuffTypes.Defense;
+                    case CogType.Syringe: return PlayerBuffTypes.Syringe;
                     case CogType.Revive: return PlayerBuffTypes.Revive;
                     default: return PlayerBuffTypes.None;
                 }
@@ -311,7 +355,6 @@
             => _cogPrefab.cogColor = Color;
         }
         #endregion
-
 
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
@@ -431,6 +474,17 @@
             return false;
         }
 
+        // Find cog prefab
+        [HarmonyPatch(typeof(Lists), nameof(Lists.Start)), HarmonyPostfix]
+        static private void Lists_Start_Post(Lists __instance)
+        {
+            foreach (var cogType in Utility.GetEnumValues<CogType>())
+            {
+                _settingsByCogType[cogType].FindCogPrefab();
+                _settingsByCogType[cogType].TryApplyAll();
+            }
+        }
+
         // Damage taken formula
         [HarmonyPatch(typeof(BasicCharacterCollider), nameof(BasicCharacterCollider.TouchedObject)), HarmonyPrefix]
         static private void BasicCharacterCollider_TouchedObject_Pre(BasicCharacterCollider __instance, ref (bool CombatAssist, Difficulty Difficulty) __state)
@@ -473,15 +527,33 @@
             return false;
         }
 
-        // Find cog prefab
-        [HarmonyPatch(typeof(Lists), nameof(Lists.Start)), HarmonyPostfix]
-        static private void Lists_Start_Post(Lists __instance)
+        // Syringe refill rate
+        [HarmonyPatch(typeof(BasicCharacterController), nameof(BasicCharacterController.ChangeStatus)), HarmonyPrefix]
+        static private void BasicCharacterController_ChangeStatus_Pre(BasicCharacterController __instance, ref float __state)
         {
-            foreach (var cogType in Utility.GetEnumValues<CogType>())
-            {
-                _settingsByCogType[cogType].FindCogPrefab();
-                _settingsByCogType[cogType].TryApplyAll();
-            }
+            if (!PseudoSingleton<Helpers>.instance.PlayerHaveBuff(PlayerBuffTypes.Syringe, __instance.myInfo.playerNum))
+                return;
+
+            __state = __instance.myInfo.currentSyringe;
+        }
+
+        [HarmonyPatch(typeof(BasicCharacterController), nameof(BasicCharacterController.ChangeStatus)), HarmonyPostfix]
+        static private void BasicCharacterController_ChangeStatus_Post(BasicCharacterController __instance, ref float __state)
+        {
+            if (!PseudoSingleton<Helpers>.instance.PlayerHaveBuff(PlayerBuffTypes.Syringe, __instance.myInfo.playerNum))
+                return;
+
+            __instance.myInfo.currentSyringe = __state.Lerp(__instance.myInfo.currentSyringe, _settingsByCogType[CogType.Syringe].CurrentEffectValue / 2f / 100f);
+            PseudoSingleton<LifeBarsManager>.instance.syringeList[__instance.myInfo.playerNum].UpdateBar();
+        }
+
+        // Revive health
+        [HarmonyPatch(typeof(PlayerInfo), nameof(PlayerInfo.HealPlayer)), HarmonyPrefix]
+        static private void PlayerInfo_HealPlayer_Pre(PlayerInfo __instance, ref int amount)
+        {
+            if (amount >= 99999
+            && __instance.currentLife <= 0)
+                amount = _settingsByCogType[CogType.Revive].CurrentEffectValue - __instance.currentLife;
         }
     }
 }
