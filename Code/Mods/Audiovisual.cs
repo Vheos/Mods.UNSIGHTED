@@ -10,6 +10,7 @@
     using Tools.Extensions.Math;
     using Tools.Extensions.General;
     using Tools.UtilityN;
+    using Vheos.Tools.Extensions.Collections;
 
     public class Audiovisual : AMod
     {
@@ -18,18 +19,38 @@
             "Mods that affect the graphics and sound" +
             "\n\nExamples:" +
             "\n• Brighten up dark areas" +
+            "\n• Customize loadout-switching text and SFX" +
             "\n• Customize Alma's color palette" +
-            "\n• Change volume / pitch of menu SFX";
+            "\n• Change volume and pitch of menu SFX";
         override protected string SectionOverride
         => Sections.QOL;
 
         // Settings
         static private ModSetting<int> _extraBrightness;
+        static private ModSetting<LoadoutText> _loadoutText;
+        static private ModSetting<LetterCase> _loadoutTextCase;
+        static private ModSetting<float> _loadoutTextDuration;
+        static private ModSetting<int> _loadoutTextSize;
+        static private ModSetting<int> _loadoutTextStartHeight;
+        static private ModSetting<int> _loadoutTextFloatUpSpeed;
+        static private ModSetting<LoadoutSFX> _loadoutSFX;
+        static private ModSetting<int> _loadoutSFXVolume;
+        static private ModSetting<int> _loadoutSFXPitch;
         static private Dictionary<int, PaletteSettings> _paletteSettingsByPlayerID;
         static private Dictionary<SFX, SFXSettings> _sfxSettingsBySFX;
         override protected void Initialize()
         {
             _extraBrightness = CreateSetting(nameof(_extraBrightness), 0, IntRange(0, 100));
+
+            _loadoutSFX = CreateSetting(nameof(_loadoutSFX), LoadoutSFX.Original);
+            _loadoutSFXVolume = CreateSetting(nameof(_loadoutSFXVolume), 100, IntRange(0, 100));
+            _loadoutSFXPitch = CreateSetting(nameof(_loadoutSFXPitch), 100, IntRange(25, 400));
+            _loadoutText = CreateSetting(nameof(_loadoutText), LoadoutText.Original);
+            _loadoutTextCase = CreateSetting(nameof(_loadoutTextCase), LetterCase.Upper);
+            _loadoutTextDuration = CreateSetting(nameof(_loadoutTextDuration), 0.5f, FloatRange(0.5f, 2f));
+            _loadoutTextSize = CreateSetting(nameof(_loadoutTextSize), 100, IntRange(50, 200));
+            _loadoutTextStartHeight = CreateSetting(nameof(_loadoutTextStartHeight), 83, IntRange(0, 200));
+            _loadoutTextFloatUpSpeed = CreateSetting(nameof(_loadoutTextFloatUpSpeed), 70, IntRange(0, 100));
 
             _paletteSettingsByPlayerID = new Dictionary<int, PaletteSettings>();
             for (int playerID = 0; playerID < 2; playerID++)
@@ -48,9 +69,59 @@
                 "\n(requires game restart to take effect)" +
                 "\n\nUnit: arbitrary linear scale";
 
-            CreateHeader("Alma's color palette").Description =
-                "Allows you to override Alma's sprite colors" +
-                "\nYou can define separate palettes for each player";
+            CreateHeader("Loadouts").Description =
+                "Allows you to customize the SFX and text pop-up that accompany switching loadouts";
+            using (Indent)
+            {
+                _loadoutText.Format("Text");
+                _loadoutText.Description =
+                    "What is actually displayed in the text pop-up" +
+                    $"\n• {LoadoutText.None} - don't display anything" +
+                    $"\n• {LoadoutText.LetterOnly} - display loadout letter only (eg. \"A\")" +
+                    $"\n• {LoadoutText.Original} - the original format (eg. \"Loadout A\")" +
+                    $"\n• {LoadoutText.FirstWeapon} - display the first weapon's name (eg. \"Iron Edge\")" +
+                    $"\n• {LoadoutText.BothWeapons} - display both weapons' names, vertically";
+                using (Indent)
+                {
+                    _loadoutTextCase.Format("letter case", _loadoutText, LoadoutText.None, false);
+                    _loadoutTextCase.Description =
+                        "What case is used in the text pop-up:" +
+                        $"\n• {LetterCase.Lower} - lower case (eg. \"loadout a\", \"iron edge\")" +
+                        $"\n• {LetterCase.Proper} - proper case (eg. \"Loadout A\", \"Iron Edge\")" +
+                        $"\n• {LetterCase.Upper} - upper case (eg. \"LOADOUT A\", \"IRON EDGE\")";
+                    _loadoutTextDuration.Format("duration", _loadoutText, LoadoutText.None, false);
+                    _loadoutTextDuration.Description =
+                        "How long the text pop-up stays up before disappearing" +
+                        "\n\nUnit: seconds";
+                    _loadoutTextSize.Format("size", _loadoutText, LoadoutText.None, false);
+                    _loadoutTextSize.Description =
+                         "How big the text pop-up is" +
+                        "\n\nUnit: percent of original scale";
+                    _loadoutTextStartHeight.Format("height above sprite", _loadoutText, LoadoutText.None, false);
+                    _loadoutTextStartHeight.Description =
+                        "How high above Alma's sprite the text pops up" +
+                        "\n\nUnit: arbitrary, Unity-defined units";
+                    _loadoutTextFloatUpSpeed.Format("float-up speed", _loadoutText, LoadoutText.None, false);
+                    _loadoutTextFloatUpSpeed.Description =
+                        "How fast the text moves upwards" +
+                        "\n\nUnit: arbitrary linear scale";
+                }
+                _loadoutSFX.Format("SFX");
+                _loadoutSFX.Description =
+                    "What SFX is actually played" +
+                    $"\n• {LoadoutSFX.None} - don't play any SFX" +
+                    $"\n• {LoadoutSFX.Original} - the original, high-pitched menu SFX" +
+                    $"\n• {LoadoutSFX.GunReload} - SFX used when performing a perfect reload" +
+                    $"\n• {LoadoutSFX.SwordZing} - SFX used when starting to charge a spin attack";
+                using (Indent)
+                {
+                    _loadoutSFXVolume.Format("volume", _loadoutSFX, LoadoutSFX.None, false);
+                    _loadoutSFXPitch.Format("pitch", _loadoutSFX, LoadoutSFX.None, false);
+                }
+            }
+
+            CreateHeader("Color palettes").Description =
+                "Allows you to override Alma's sprite colors for each player";
             using (Indent)
                 foreach (var settings in _paletteSettingsByPlayerID)
                     settings.Value.Format();
@@ -79,12 +150,22 @@
                 case nameof(SettingsPreset.Vheos_UI):
                     ForceApply();
                     _extraBrightness.Value = 33;
+                    _loadoutSFX.Value = LoadoutSFX.GunReload;
+                    _loadoutSFXVolume.Value = 75;
+                    _loadoutSFXPitch.Value = 150;
+                    _loadoutText.Value = LoadoutText.BothWeapons;
+                    _loadoutTextCase.Value = LetterCase.Upper;
+                    _loadoutTextDuration.Value = 1f;
+                    _loadoutTextSize.Value = 50;
+                    _loadoutTextStartHeight.Value = 50;
+                    _loadoutTextFloatUpSpeed.Value = 25;
                     break;
             }
         }
 
         // Privates
         private const float EXPOSURE_LERP_TARGET = 1.5f;
+        private const float ORIGINAL_STAMINA_BAR_HIDE_DELAY = 1.15f;
         static private string GetLocalizedString(string key)
         => TranslationSystem.FindTerm("Terms", key, true);
 
@@ -127,31 +208,35 @@
                 WeaponToggle = _mod.CreateSetting(PlayerPrefix + nameof(WeaponToggle), false);
 
                 Highlight = _mod.CreateSetting(PlayerPrefix + nameof(Highlight), _playerID == 0 ?
-                    new Color(0.9059f, 0.9451f, 0.9451f, 1f) : new Color(0.7961f, 0.7216f, 0.9843f, 1f));
+                    new Color(0.9059f, 0.9451f, 0.9451f) : new Color(0.7961f, 0.7216f, 0.9843f));
 
                 HairDark = _mod.CreateSetting(PlayerPrefix + nameof(HairDark), _playerID == 0 ?
-                    new Color(0.6f, 0.5804f, 0.549f, 1f) : new Color(0f, 0.0784f, 0.4706f, 1f));
+                    new Color(0.6f, 0.5804f, 0.549f) : new Color(0f, 0.0784f, 0.4706f));
                 HairRegular = _mod.CreateSetting(PlayerPrefix + nameof(HairRegular), _playerID == 0 ?
-                    new Color(0.7333f, 0.7098f, 0.6784f, 1f) : new Color(0f, 0.1373f, 0.6431f, 1f));
+                    new Color(0.7333f, 0.7098f, 0.6784f) : new Color(0f, 0.1373f, 0.6431f));
                 HairBright = _mod.CreateSetting(PlayerPrefix + nameof(HairBright), _playerID == 0 ?
-                    new Color(0.8706f, 0.8706f, 0.8706f, 1f) : new Color(0f, 0.3843f, 0.9608f, 1f));
+                    new Color(0.8706f, 0.8706f, 0.8706f) : new Color(0f, 0.3843f, 0.9608f));
 
                 SkinDark = _mod.CreateSetting(PlayerPrefix + nameof(SkinDark), _playerID == 0 ?
-                    new Color(0.2588f, 0.1294f, 0.1333f, 1f) : new Color(0.2588f, 0.1294f, 0.1333f, 1f));
+                    new Color(0.2588f, 0.1294f, 0.1333f) : new Color(0.2588f, 0.1294f, 0.1333f));
                 SkinRegular = _mod.CreateSetting(PlayerPrefix + nameof(SkinRegular), _playerID == 0 ?
-                    new Color(0.4627f, 0.2863f, 0.1765f, 1f) : new Color(0.5255f, 0.3961f, 0.2941f, 1f));
+                    new Color(0.4627f, 0.2863f, 0.1765f) : new Color(0.5255f, 0.3961f, 0.2941f));
                 SkinBright = _mod.CreateSetting(PlayerPrefix + nameof(SkinBright), _playerID == 0 ?
-                    new Color(0.5255f, 0.4706f, 0.3059f, 1f) : new Color(0.7608f, 0.6353f, 0.4706f, 1f));
+                    new Color(0.5255f, 0.4706f, 0.3059f) : new Color(0.7608f, 0.6353f, 0.4706f));
 
-                ArmorMainDark = _mod.CreateSetting(PlayerPrefix + nameof(ArmorMainDark), new Color(0.1255f, 0.102f, 0.2314f, 1f));
-                ArmorMainRegular = _mod.CreateSetting(PlayerPrefix + nameof(ArmorMainRegular), new Color(0.149f, 0.2275f, 0.5608f, 1f));
-                ArmorSideDark = _mod.CreateSetting(PlayerPrefix + nameof(ArmorSideDark), new Color(0.5216f, 0.4667f, 0.6588f, 1f));
-                ArmorSideRegular = _mod.CreateSetting(PlayerPrefix + nameof(ArmorSideRegular), new Color(0.749f, 0.6745f, 0.8078f, 1f));
+                ArmorMainDark = _mod.CreateSetting(PlayerPrefix + nameof(ArmorMainDark), _playerID == 0 ?
+                    new Color(0.1255f, 0.102f, 0.2314f) : new Color(0.2157f, 0.1686f, 0f));
+                ArmorMainRegular = _mod.CreateSetting(PlayerPrefix + nameof(ArmorMainRegular), _playerID == 0 ?
+                    new Color(0.149f, 0.2275f, 0.5608f) : new Color(0.4353f, 0.3567f, 0.01569f));
+                ArmorSideDark = _mod.CreateSetting(PlayerPrefix + nameof(ArmorSideDark), _playerID == 0 ?
+                    new Color(0.5216f, 0.4667f, 0.6588f) : new Color(0.6588f, 0.6314f, 0.4667f));
+                ArmorSideRegular = _mod.CreateSetting(PlayerPrefix + nameof(ArmorSideRegular), _playerID == 0 ?
+                    new Color(0.749f, 0.6745f, 0.8078f) : new Color(0.8078f, 0.8f, 0.6745f));
 
-                WeaponMain = _mod.CreateSetting(PlayerPrefix + nameof(WeaponMain), new Color(0.8902f, 0.8902f, 0.5216f, 1f));
-                WeaponSlash = _mod.CreateSetting(PlayerPrefix + nameof(WeaponSlash), new Color(0.902f, 0.902f, 0.9216f, 1f));
-                WeaponFlames = _mod.CreateSetting(PlayerPrefix + nameof(WeaponFlames), new Color(0.6549f, 0.5451f, 0.5608f, 1f));
-                WeaponSparks = _mod.CreateSetting(PlayerPrefix + nameof(WeaponSparks), new Color(0.8902f, 0.7725f, 0.4549f, 1f));
+                WeaponMain = _mod.CreateSetting(PlayerPrefix + nameof(WeaponMain), new Color(0.8902f, 0.8902f, 0.5216f));
+                WeaponSlash = _mod.CreateSetting(PlayerPrefix + nameof(WeaponSlash), new Color(0.902f, 0.902f, 0.9216f));
+                WeaponFlames = _mod.CreateSetting(PlayerPrefix + nameof(WeaponFlames), new Color(0.6549f, 0.5451f, 0.5608f));
+                WeaponSparks = _mod.CreateSetting(PlayerPrefix + nameof(WeaponSparks), new Color(0.8902f, 0.7725f, 0.4549f));
 
                 _colorsByToggle = new Dictionary<ModSetting<bool>, ModSetting<Color>[]>()
                 {
@@ -228,10 +313,11 @@
             }
 
             // Publics
-            internal void Apply(PlayersManager playerManager)
+            internal void TryApply(PlayersManager playerManager)
             {
-                // Create new palette
-                Texture2D palette = playerManager.newColorPalette[_playerID];
+                if (!playerManager.newColorPalette.TryGetNonNull(_playerID, out var palette))
+                    return;
+
                 for (int i = 0; i < palette.width; i++)
                     if (_paletteSettingsByPlayerID[_playerID].TryGetColor(i, out var customColor))
                         palette.SetPixel(i, 0, customColor);
@@ -290,7 +376,7 @@
                 }
 
                 if (PseudoSingleton<PlayersManager>.instance.TryNonNull(out var playerManager))
-                    Apply(playerManager);
+                    TryApply(playerManager);
 
                 ActionsSetting.SetSilently(0);
             }
@@ -441,6 +527,28 @@
             MenuEscape,
         }
 
+        private enum LetterCase
+        {
+            Lower,
+            Proper,
+            Upper,
+        }
+        private enum LoadoutSFX
+        {
+            None,
+            Original,
+            GunReload,
+            SwordZing,
+        }
+        private enum LoadoutText
+        {
+            None,
+            LetterOnly,
+            Original,
+            FirstWeapon,
+            BothWeapons,
+        }
+
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
 
@@ -469,14 +577,87 @@
                     }
         }
 
+        // Loadouts
+        [HarmonyPatch(typeof(BasicCharacterController), nameof(BasicCharacterController.ShowCurrentLoadout)), HarmonyPrefix]
+        static private bool BasicCharacterController_ShowCurrentLoadout_Pre(BasicCharacterController __instance)
+        {
+            // Text
+            if (_loadoutText != LoadoutText.None)
+            {
+                var playerData = Helpers.instance.GetPlayerData();
+                var playerID = __instance.myInfo.playerNum;
+                int currentLoadoutID = playerID == 0 ? playerData.currentLoadoutP1 : playerData.currentLoadoutP2;
+                string text = "";
+                switch (_loadoutText.Value)
+                {
+                    case LoadoutText.Original:
+                        switch (currentLoadoutID)
+                        {
+                            case 0: text = "Loadout A"; break;
+                            case 1: text = "Loadout B"; break;
+                            case 2: text = "Loadout C"; break;
+                        }
+                        break;
+                    case LoadoutText.LetterOnly:
+                        switch (currentLoadoutID)
+                        {
+                            case 0: text = "A"; break;
+                            case 1: text = "B"; break;
+                            case 2: text = "C"; break;
+                        }
+                        break;
+                    case LoadoutText.FirstWeapon:
+                        text = TranslationSystem.FindTerm("ItemNames", playerData.playersEquipData[playerID].weapons[0].Replace(" ", ""), false);
+                        break;
+                    case LoadoutText.BothWeapons:
+                        text = TranslationSystem.FindTerm("ItemNames", playerData.playersEquipData[playerID].weapons[0].Replace(" ", ""), false) + "\n\n"
+                             + TranslationSystem.FindTerm("ItemNames", playerData.playersEquipData[playerID].weapons[1].Replace(" ", ""), false);
+                        break;
+                }
+
+                // case
+                if (_loadoutTextCase == LetterCase.Lower)
+                    text = text.ToLower();
+                else if (_loadoutTextCase == LetterCase.Upper)
+                    text = text.ToUpper();
+
+                // offset
+                float popupOffset = __instance.myPhysics.globalHeight + __instance.myPhysics.Zsize + _loadoutTextStartHeight / 100f;
+                if (Time.time - __instance.lastStaminaRechargeTime <= ORIGINAL_STAMINA_BAR_HIDE_DELAY)
+                    popupOffset += 0.5f;
+
+                // display
+                InGameTextController.instance.ShowText
+                    (text, __instance.transform.position + Vector3.up * popupOffset,
+                    _loadoutTextDuration, ColorNames.White, 0f, _loadoutTextFloatUpSpeed * 2 / 100f, false, ColorNames.White, _loadoutTextSize / 100f, ColorNames.Black);
+            }
+
+            // SFX
+            if (_loadoutSFX != LoadoutSFX.None)
+            {
+                var gameSounds = GlobalGameManager.instance.gameSounds;
+                float volume = _loadoutSFXVolume / 100f;
+                float pitch = _loadoutSFXPitch / 100f;
+                switch (_loadoutSFX.Value)
+                {
+                    case LoadoutSFX.Original: AudioController.Play(gameSounds.menuSelect, volume, pitch); break;
+                    case LoadoutSFX.GunReload: AudioController.Play(gameSounds.playerReloadSound, volume, pitch).setParameterValue("perfectReload", 1f); break;
+                    case LoadoutSFX.SwordZing: AudioController.Play(gameSounds.playerDeathSheen, volume, pitch); break;
+                }
+            }
+
+            return false;
+        }
+
         // Skin
         [HarmonyPatch(typeof(PlayersManager), nameof(PlayersManager.UpdatePlayerPalette)), HarmonyPostfix]
         static private void PlayersManager_UpdatePlayerPalette_Post(PlayersManager __instance, int playerNum)
         {
-            if (!__instance.playerObjects[playerNum].gameObject.activeInHierarchy)
+            if (!__instance.playerObjects[playerNum].gameObject.activeInHierarchy
+            || !_paletteSettingsByPlayerID[playerNum].Toggle)
                 return;
 
-            _paletteSettingsByPlayerID[playerNum].Apply(__instance);
+            _paletteSettingsByPlayerID[playerNum].TryApply(__instance);
         }
 
         // SFX
