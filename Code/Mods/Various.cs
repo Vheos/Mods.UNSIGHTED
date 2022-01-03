@@ -28,13 +28,11 @@
         // Settings
         static private ModSetting<bool> _runInBackground;
         static private ModSetting<bool> _introLogos;
-        static private ModSetting<bool> _gamepadVibrations;
         static private ModSetting<int> _bolts;
         static private ModSetting<int> _meteorDusts;
         static private ModSetting<GunCrateBreakMode> _breakCratesWithGuns;
         static private ModSetting<int> _breakCratesWithGunsChance;
         static private ModSetting<bool> _irisTutorials;
-        static private ModSetting<IrisCombatHelp> _irisCombatHelp;
         static private ModSetting<int> _staminaHealGain;
         static private ModSetting<int> _staminaHealDuration;
         static private ModSetting<bool> _staminaHealCancelling;
@@ -43,7 +41,6 @@
         {
             _runInBackground = CreateSetting(nameof(_runInBackground), false);
             _introLogos = CreateSetting(nameof(_introLogos), true);
-            _gamepadVibrations = CreateSetting(nameof(_gamepadVibrations), true);
 
             _bolts = CreateSetting(nameof(_bolts), 0, IntRange(0, 100000));
             _meteorDusts = CreateSetting(nameof(_meteorDusts), 0, IntRange(0, 100));
@@ -52,7 +49,6 @@
             _breakCratesWithGunsChance = CreateSetting(nameof(_breakCratesWithGunsChance), 100, IntRange(0, 100));
 
             _irisTutorials = CreateSetting(nameof(_irisTutorials), true);
-            _irisCombatHelp = CreateSetting(nameof(_irisCombatHelp), IrisCombatHelp.AtMaxAffinity);
 
             _staminaHealGain = CreateSetting(nameof(_staminaHealGain), 100, IntRange(0, 100));
             _staminaHealDuration = CreateSetting(nameof(_staminaHealDuration), 100, IntRange(50, 200));
@@ -75,10 +71,6 @@
             _introLogos.Description =
                 "Allows you to disable all the unskippable logo animations, as well as the input choice screen, and go straight to the main menu" +
                 "\nYou'll save about 30 seconds of your precious life each time you start the game";
-            _gamepadVibrations.Format("Gamepad vibrations");
-            _gamepadVibrations.Description =
-                "Makes your gamepad vibrate when doing almost anything in the game" +
-                "\nDisable if you care for battery life, or your wrists, or both";
 
             CreateHeader("Override currency").Description =
                 "Allows you to override your current amount of bolts and meteor dusts";
@@ -104,9 +96,6 @@
             _irisTutorials.Description =
                 "Allows you to disable most Iris tutorials" +
                 "\nEstimated time savings: your entire lifetime";
-            _irisCombatHelp.Format("Iris combat help");
-            _irisCombatHelp.Description =
-                "When should Iris start \"helping\" you in combat?";
 
             _staminaHealGain.Format("\"Stamina Heal\" gain");
             _staminaHealGain.Description =
@@ -132,13 +121,11 @@
                 case nameof(SettingsPreset.Vheos_CoopRebalance):
                     ForceApply();
                     _introLogos.Value = false;
-                    _gamepadVibrations.Value = false;
 
                     _breakCratesWithGuns.Value = GunCrateBreakMode.ChancePerBullet;
                     _breakCratesWithGunsChance.Value = 50;
 
                     _irisTutorials.Value = false;
-                    _irisCombatHelp.Value = IrisCombatHelp.AtMaxAffinity;
 
                     _staminaHealGain.Value = 50;
                     _staminaHealDuration.Value = 100;
@@ -196,12 +183,6 @@
             Disabled,
             ChancePerBullet,
             ChancePerDamage,
-        }
-        private enum IrisCombatHelp
-        {
-            AtMaxAffinity,
-            Always,
-            Never,
         }
 
         // Hooks
@@ -300,38 +281,10 @@
             hitObject.myType = __state;
         }
 
-        // Vibrations
-        [HarmonyPatch(typeof(GamePad), nameof(GamePad.SetVibration)), HarmonyPrefix]
-        static private bool GamePad_SetVibration_Pre(GlobalInputManager __instance)
-            => _gamepadVibrations;
-
         // Iris tutorials
         [HarmonyPatch(typeof(MonoBehaviour), nameof(MonoBehaviour.StartCoroutine), new[] { typeof(string) }), HarmonyPrefix]
         static private bool MonoBehaviour_StartCoroutine_Pre(MonoBehaviour __instance, string methodName)
         => _irisTutorials || methodName != "IrisTutorial";
-
-        // Iris combat help
-        [HarmonyPatch(typeof(IrisBotController), nameof(IrisBotController.FindBestTarget)), HarmonyPrefix]
-        static private void IrisBotController_FindBestTarget_Pre(IrisBotController __instance, ref int __state)
-        {
-            if (_irisCombatHelp == IrisCombatHelp.AtMaxAffinity)
-                return;
-
-            // Cache and set temporary value
-            NPCData irisData = PseudoSingleton<Helpers>.instance.GetNPCData("IrisNPC");
-            __state = irisData.affinity;
-            irisData.affinity = _irisCombatHelp == IrisCombatHelp.Always ? 4 : 0;
-        }
-
-        [HarmonyPatch(typeof(IrisBotController), nameof(IrisBotController.FindBestTarget)), HarmonyPostfix]
-        static private void IrisBotController_FindBestTarget_Post(IrisBotController __instance, ref int __state)
-        {
-            if (_irisCombatHelp == IrisCombatHelp.AtMaxAffinity)
-                return;
-
-            // Restore original value
-            PseudoSingleton<Helpers>.instance.GetNPCData("IrisNPC").affinity = __state;
-        }
 
         // Stamina
         [HarmonyPatch(typeof(BasicCharacterController), nameof(BasicCharacterController.FillStamina)), HarmonyPrefix]

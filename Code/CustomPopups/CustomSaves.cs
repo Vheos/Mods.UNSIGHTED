@@ -64,6 +64,9 @@
                     if (ix.IsOdd())
                         buttonsTable[ix][iy].localScale *= new Vector2(-1, +1);
 
+                    var newGameText = slotButton.dontHaveSaveStuff.GetChildComponent<FText>();
+                    newGameText.originalText = newGameText.text = "New Game";
+
                     // customize children                   
                     foreach (var childGroup in new[] { slotButton.haveSaveStuff, slotButton.dontHaveSaveStuff })
                         foreach (RectTransform child in childGroup.transform)
@@ -86,6 +89,9 @@
                         }
                 }
             }
+
+            // disable page button
+            _menuPrefab.pageText.transform.parent.gameObject.SetActive(false);
 
             // update navigation
             var returnButton = _menuPrefab.GetComponentInChildren<ClosePopupButton>().gameObject;
@@ -149,13 +155,12 @@
         }
         static private SaveSlotPopup _menuPrefab;
         static private int GetSaveSlotID(GameType gameType, int buttonID)
-        => buttonID < 3
-        ? buttonID + 3 * (int)gameType
-        : buttonID * 3 + (int)gameType;
+        => (int)gameType * 3
+        + buttonID / 3 * 9
+        + buttonID % 3;
         static private int GetButtonID(int saveSlotID)
-        => saveSlotID < 9
-        ? saveSlotID % 3
-        : saveSlotID / 3;
+        => saveSlotID / 9 * 3
+        + saveSlotID % 9;
 
         // Settings
         static private readonly Rect SCREEN_RECT = Rect.MinMaxRect(0, 2, 400, 162);
@@ -190,11 +195,15 @@
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
 
-        [HarmonyPatch(typeof(SaveSlotPopup), nameof(SaveSlotPopup.ChangeGameType)), HarmonyPrefix]
-        static private bool SaveSlotPopup_ChangeGameType_Pre(SaveSlotPopup __instance, int targetTypeId)
+        [HarmonyPatch(typeof(SaveSlotPopup), nameof(SaveSlotPopup.ChangeGameType), new[] { typeof(int), typeof(bool) }), HarmonyPrefix]
+        static private bool SaveSlotPopup_ChangeGameType_Pre(SaveSlotPopup __instance, int targetTypeId, bool resetPage)
         {
             if (__instance.saveSlotButtons.Length <= ORIGINAL_BUTTONS_COUNT)
                 return true;
+
+            if (resetPage)
+                __instance.currentPage = 0;
+            __instance.UpdatePageLabel();
 
             __instance.currentGameType = (GameType)targetTypeId;
             __instance.mainStoryButton.GetChildComponent<Image>().color = __instance.currentGameType == GameType.MainStory ? Color.white : Color.grey * 0.5f;
@@ -256,15 +265,5 @@
         [HarmonyPatch(typeof(SaveSlotButton), nameof(SaveSlotButton.AdjustSpritePivot)), HarmonyPrefix]
         static private bool SaveSlotButton_AdjustSpritePivot_Pre(SaveSlotButton __instance)
         => __instance.mySaveSlotPopup.saveSlotButtons.Length <= ORIGINAL_BUTTONS_COUNT;
-
-        [HarmonyPatch(typeof(TryNewGamePlusPopup), nameof(TryNewGamePlusPopup.LoadGame)), HarmonyPrefix]
-        static private bool TryNewGamePlusPopup_LoadGame_Pre(TryNewGamePlusPopup __instance)
-        {
-            var saveSlotPopup = __instance.GetSiblingComponent<SaveSlotPopup>();
-            saveSlotPopup.gameObject.SetActive(true);
-            saveSlotPopup.saveSlotButtons[GetButtonID(PseudoSingleton<GlobalGameData>.instance.loadedSlot)].StartCoroutine("LoadGameCoroutine");
-            __instance.gameObject.SetActive(false);
-            return false;
-        }
     }
 }

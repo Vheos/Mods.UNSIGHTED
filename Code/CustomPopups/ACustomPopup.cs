@@ -1,16 +1,10 @@
 ﻿namespace Vheos.Mods.UNSIGHTED
 {
     using System;
-    using System.Linq;
-    using System.Collections.Generic;
     using UnityEngine;
     using HarmonyLib;
     using Tools.ModdingCore;
-    using Tools.Extensions.General;
     using Tools.Extensions.UnityObjects;
-    using Tools.Extensions.Math;
-    using Tools.Extensions.Reflection;
-    using Tools.Extensions.Collections;
 
     abstract internal class ACustomPopup<T> where T : ACustomPopup<T>
     {

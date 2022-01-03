@@ -11,7 +11,6 @@
     using Tools.Extensions.Math;
     using Tools.Extensions.Reflection;
     using Tools.Extensions.Collections;
-    using Vheos.Tools.Extensions.DumpN;
 
     internal class CustomControls : ACustomPopup<CustomControls>
     {
@@ -146,6 +145,7 @@
             ("left", "left"),
             ("right", "right"),
             ("down", "down"),
+            ("loadout", "loadout"),
         };
         #endregion
 

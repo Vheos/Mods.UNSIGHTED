@@ -185,44 +185,46 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>set Release=E:\Creativity\Programs\C#\Mods\UNSIGHTED\Private\Release\
-set Debug=D:\Multiplayer\UNSIGHTED\
-set Plugin=BepInEx\plugins\Vheos\
-set SteamGOGFull=%25Release%25\SteamGOG\%25Plugin%25
-set GamePassFull=%25Release%25\GamePass\%25Plugin%25
-set FileMain=$(TargetDir)$(TargetName).dll
-set FileModdingCore=$(TargetDir)Vheos.Tools.ModdingCore.dll
-set FileExtensions=$(TargetDir)Vheos.Tools.Extensions.dll
-set FileUtility=$(TargetDir)Vheos.Tools.Utility.dll
-set ZipName=UNSIGHTED++_vX.Y.Z
+    <PostBuildEvent>:: Global settings
+set Releases_Global=E:\Creativity\Programs\C#\Mods\UNSIGHTED\Private\Releases\
+set Plugins_Local=BepInEx\Plugins\Vheos\
+set Version_Suffix=_vX.Y.Z
+set TempCopy=$(ProjectDir)\bin\.tmpcpy\
+rd /s /q %25TempCopy%25
+xcopy /y $(TargetDir)$(TargetName).dll %25TempCopy%25
+xcopy /y $(TargetDir)Vheos.Tools.ModdingCore.dll %25TempCopy%25
+xcopy /y $(TargetDir)Vheos.Tools.Extensions.dll %25TempCopy%25
+xcopy /y $(TargetDir)Vheos.Tools.Utility.dll %25TempCopy%25
 
-if $(DefineConstants.Contains('GAMEPASS'))==False (
-    if $(DefineConstants.Contains('RELEASE'))==True (
-        if not exist %25SteamGOGFull%25 mkdir %25SteamGOGFull%25
-        copy %25FileMain%25 %25SteamGOGFull%25
-        copy %25FileModdingCore%25 %25SteamGOGFull%25
-        copy %25FileExtensions%25 %25SteamGOGFull%25
-        copy %25FileUtility%25 %25SteamGOGFull%25
-        powershell Compress-Archive -Path %25Release%25\SteamGOG\BepInEx -DestinationPath %25Release%25\%25ZipName%25_SteamGOG.zip -Force
-    ) else (
-        if not exist %25Debug%25%25Plugin%25 mkdir %25Debug%25%25Plugin%25
-        copy %25FileMain%25 %25Debug%25%25Plugin%25
-        copy %25FileModdingCore%25 %25Debug%25%25Plugin%25
-        copy %25FileExtensions%25 %25Debug%25%25Plugin%25
-        copy %25FileUtility%25 %25Debug%25%25Plugin%25
-        start "" "D:\Multiplayer\UNSIGHTED\UNSIGHTED.exe"
-    )
-)
+    :: Project settings
+    set Game_Global=D:\Multiplayer\UNSIGHTED\
+    set Game_EXE=UNSIGHTED.exe
+    set Zip_Name=UNSIGHTED++
+    set SteamGOG_Global=%25Releases_Global%25\SteamGOG\%25Plugins_Local%25
+    set GamePass_Global=%25Releases_Global%25\GamePass\%25Plugins_Local%25
 
-if $(DefineConstants.Contains('GAMEPASS'))==True (
-    if $(DefineConstants.Contains('RELEASE'))==True (
-        if not exist %25GamePassFull%25 mkdir %25GamePassFull%25
-        copy %25FileMain%25 %25GamePassFull%25
-        copy %25FileModdingCore%25 %25GamePassFull%25
-        copy %25FileExtensions%25 %25GamePassFull%25
-        copy %25FileUtility%25 %25GamePassFull%25
-        powershell Compress-Archive -Path %25Release%25\GamePass\BepInEx -DestinationPath %25Release%25\%25ZipName%25_GamePass_Experimental.zip -Force
-    ) 
-)</PostBuildEvent>
+    if $(DefineConstants.Contains('DEBUG'))==True (
+        if $(DefineConstants.Contains('GAMEPASS'))==False (
+            :: Debug, SteamGOG
+            rd /s /q %25Game_Global%25%25Plugins_Local%25 
+            xcopy /e /y %25TempCopy%25 %25Game_Global%25%25Plugins_Local%25
+            start "" %25Game_Global%25%25Game_EXE%25
+
+        )
+    ) else if $(DefineConstants.Contains('RELEASE'))==True (
+        if $(DefineConstants.Contains('GAMEPASS'))==False (
+            :: Release, SteamGOG
+            rd /s /q %25SteamGOG_Global%25 
+            xcopy /e /y %25TempCopy%25 %25SteamGOG_Global%25
+            powershell Compress-Archive -Path %25Releases_Global%25\SteamGOG\BepInEx -DestinationPath %25Releases_Global%25\%25Zip_Name%25%25Version_Suffix%25_SteamGOG.zip -Force
+
+        ) else if $(DefineConstants.Contains('GAMEPASS'))==True (
+            :: Release, GamePass
+            rd /s /q %25GamePass_Global%25 
+            xcopy /e /y %25TempCopy%25 %25GamePass_Global%25
+            powershell Compress-Archive -Path %25Releases_Global%25\GamePass\BepInEx -DestinationPath %25Releases_Global%25\%25Zip_Name%25%25Version_Suffix%25_GamePass_Experimental.zip -Force
+
+        )
+    )</PostBuildEvent>
   </PropertyGroup>
 </Project>
