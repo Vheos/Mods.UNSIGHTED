@@ -7,7 +7,7 @@
 <p align="center">
     <a href="">
         <img src="https://img.shields.io/github/v/release/Vheos777/Mods.UNSIGHTED?labelColor=808080&color=404040&label=Mod" height=25/>
-        <img src="https://img.shields.io/static/v1?labelColor=808080&color=404040&label=Game&message=v1.0.7.3" height=25/>
+        <img src="https://img.shields.io/static/v1?labelColor=808080&color=404040&label=Game&message=v1.1.2" height=25/>
         <img src="https://img.shields.io/github/downloads/Vheos777/Mods.UNSIGHTED/total?labelColor=808080&color=404040&label=Downloads" height=25/>
     </a>
 </p>
@@ -35,8 +35,8 @@
 # Table of contents
 - [UNSIGHTED++?](https://github.com/Vheos777/Mods.UNSIGHTED#unsighted)
 - [Highlights](https://github.com/Vheos777/Mods.UNSIGHTED#highlights)
-  - [Extra Save Slots](https://github.com/Vheos777/Mods.UNSIGHTED#extra-save-slots)
-  - [Weapon Loadouts](https://github.com/Vheos777/Mods.UNSIGHTED#weapon-loadouts)
+  - [~~Extra Save Slots~~](https://github.com/Vheos777/Mods.UNSIGHTED#extra-save-slots) *(added to core game)*
+  - [~~Weapon Loadouts~~](https://github.com/Vheos777/Mods.UNSIGHTED#weapon-loadouts) *(added to core game)*
   - [Skin Editor ](https://github.com/Vheos777/Mods.UNSIGHTED#skin-editor)
   - [Player 2 Equality](https://github.com/Vheos777/Mods.UNSIGHTED#player-2-equality)
 - [Settings overview](https://github.com/Vheos777/Mods.UNSIGHTED#settings-overview-as-of-v100)
@@ -58,12 +58,12 @@ Cool name, huh? Should be called **UNSIGHTED#** (as both the game and this plugi
 
 # Highlights
 
-### Extra Save Slots
+### ~~Extra Save Slots~~ *(added to core game)*
 Wow, 8 save slots for the price of 3! You can finally keep mementos of past playthroughs instead of being forced to delete your precious memories ;)
 
 https://user-images.githubusercontent.com/9155825/147118791-82ced823-0b6a-4f56-afe6-80f73d73c33b.mp4
 
-### Weapon Loadouts
+### ~~Weapon Loadouts~~ *(added to core game)*
 No more opening menu every minute to switch between shuriken, hookshot, ice-maker and your actual combat weapons. Now you can switch between your favourite loadouts with the press of one button! Comes with in-game **custom controls menu** and **co-op support** :)
 
 https://user-images.githubusercontent.com/9155825/146574388-3daf9b3a-ec14-4690-a4e7-06cfd41fafa9.mp4
@@ -239,6 +239,18 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 
 
 # Changelog
+- **1.6.0**
+    - updated for game version 1.1.2 (Steam and GOG only)
+    - conflicting core game settings and corresponding UNSIGHTED++ changes:
+        - `Weapon loadouts`: removed `Menus: Loadouts`
+        - `6 Save slots`: didn't remove as `Menus: Alternate load menu` still grants 2 extra slots and displays all the slots on one page
+        - `Turn Iris attack on/off`: removed `Various: Iris combat help`
+        - `Turn low-health FX on/off`: didn't remove `UI: Hit effect intensity` as it allows for more customization and also works when taking damage and getting frozen
+        - `Turn controller vibration on/off`: removed `Various: Gamepad vibrations`
+        - `Turn camera shake on/off`: didn't remove `Camera: Shake multiplier` as it allows for more customization
+    - `Menus`: renamed `Extra save slots` to `Alternate load menu`    
+    - `Audiovisual`: updated Player 2's default color palette
+    - `Audiovisual`: added settings to customize loadout-switching text and SFX
 - **1.5.0**
     - `Various`: added setting to break crates with guns
     - `Various`: added settings to override current bolts and meteor dusts
