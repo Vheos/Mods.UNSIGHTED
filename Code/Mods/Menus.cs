@@ -21,11 +21,13 @@
             "\n• Allow unbinding/duplicate controls";
 
         // Settings
+        static private ModSetting<bool> _developerCheats;
         static private ModSetting<bool> _alternateLoadMenu;
         static private ModSetting<string> _undbindButton;
         static private ModSetting<BindingConflictResolution> _bindigsConflictResolution;
         override protected void Initialize()
         {
+            _developerCheats = CreateSetting(nameof(_developerCheats), false);
             _alternateLoadMenu = CreateSetting(nameof(_alternateLoadMenu), false);
             _undbindButton = CreateSetting(nameof(_undbindButton), "Delete");
             _bindigsConflictResolution = CreateSetting(nameof(_bindigsConflictResolution), BindingConflictResolution.Swap);
@@ -39,6 +41,11 @@
         }
         override protected void SetFormatting()
         {
+            _developerCheats.Format("Developer cheats");
+            _developerCheats.Description =
+                "Allows you to access the developer cheats menu" +
+                "\nAfter you enable this setting, open your inventory, navigate to the settings menu (the one with \"Controls\" and \"Options\") " +
+                "then click the new \"Cheats\" button at the top";
             _alternateLoadMenu.Format("Alternate load menu");
             _alternateLoadMenu.Description =
                 "Adds 2 extra save slots and displays all save slots on one page" +
@@ -75,5 +82,10 @@
 
         // Hooks
 #pragma warning disable IDE0051, IDE0060, IDE1006
+
+        // Cheats menu
+        [HarmonyPatch(typeof(EnableOnlyInDebugMode), nameof(EnableOnlyInDebugMode.Start)), HarmonyPrefix]
+        static private bool EnableOnlyInDebugMode_Start_Pre(EnableOnlyInDebugMode __instance)
+        => !_developerCheats;
     }
 }
