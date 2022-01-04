@@ -28,11 +28,11 @@
         // Settings
         static private ModSetting<bool> _runInBackground;
         static private ModSetting<bool> _introLogos;
+        static private ModSetting<bool> _irisTutorials;
         static private ModSetting<int> _bolts;
         static private ModSetting<int> _meteorDusts;
         static private ModSetting<GunCrateBreakMode> _breakCratesWithGuns;
         static private ModSetting<int> _breakCratesWithGunsChance;
-        static private ModSetting<bool> _irisTutorials;
         static private ModSetting<int> _staminaHealGain;
         static private ModSetting<int> _staminaHealDuration;
         static private ModSetting<bool> _staminaHealCancelling;
@@ -41,14 +41,13 @@
         {
             _runInBackground = CreateSetting(nameof(_runInBackground), false);
             _introLogos = CreateSetting(nameof(_introLogos), true);
+            _irisTutorials = CreateSetting(nameof(_irisTutorials), true);
 
             _bolts = CreateSetting(nameof(_bolts), 0, IntRange(0, 100000));
             _meteorDusts = CreateSetting(nameof(_meteorDusts), 0, IntRange(0, 100));
 
             _breakCratesWithGuns = CreateSetting(nameof(_breakCratesWithGuns), GunCrateBreakMode.Disabled);
             _breakCratesWithGunsChance = CreateSetting(nameof(_breakCratesWithGunsChance), 100, IntRange(0, 100));
-
-            _irisTutorials = CreateSetting(nameof(_irisTutorials), true);
 
             _staminaHealGain = CreateSetting(nameof(_staminaHealGain), 100, IntRange(0, 100));
             _staminaHealDuration = CreateSetting(nameof(_staminaHealDuration), 100, IntRange(50, 200));
@@ -71,6 +70,10 @@
             _introLogos.Description =
                 "Allows you to disable all the unskippable logo animations, as well as the input choice screen, and go straight to the main menu" +
                 "\nYou'll save about 30 seconds of your precious life each time you start the game";
+            _irisTutorials.Format("Iris tutorials");
+            _irisTutorials.Description =
+                "Allows you to disable most Iris tutorials" +
+                "\nEstimated time savings: your entire lifetime";
 
             CreateHeader("Override currency").Description =
                 "Allows you to override your current amount of bolts and meteor dusts";
@@ -91,11 +94,6 @@
                 $"\n(requires area change to take effect)";
             using (Indent)
                 _breakCratesWithGunsChance.Format("chance", _breakCratesWithGuns, GunCrateBreakMode.Disabled, false);
-
-            _irisTutorials.Format("Iris tutorials");
-            _irisTutorials.Description =
-                "Allows you to disable most Iris tutorials" +
-                "\nEstimated time savings: your entire lifetime";
 
             _staminaHealGain.Format("\"Stamina Heal\" gain");
             _staminaHealGain.Description =
@@ -222,6 +220,11 @@
             BetaTitleScreen.logoShown = true;
         }
 
+        // Iris tutorials
+        [HarmonyPatch(typeof(MonoBehaviour), nameof(MonoBehaviour.StartCoroutine), new[] { typeof(string) }), HarmonyPrefix]
+        static private bool MonoBehaviour_StartCoroutine_Pre(MonoBehaviour __instance, string methodName)
+        => _irisTutorials || methodName != "IrisTutorial";
+
         // Break crates with guns
         [HarmonyPatch(typeof(EnemyHitBox), nameof(EnemyHitBox.OnEnable)), HarmonyPostfix]
         static private void EnemyHitBox_OnEnable_Post(EnemyHitBox __instance)
@@ -280,11 +283,6 @@
 
             hitObject.myType = __state;
         }
-
-        // Iris tutorials
-        [HarmonyPatch(typeof(MonoBehaviour), nameof(MonoBehaviour.StartCoroutine), new[] { typeof(string) }), HarmonyPrefix]
-        static private bool MonoBehaviour_StartCoroutine_Pre(MonoBehaviour __instance, string methodName)
-        => _irisTutorials || methodName != "IrisTutorial";
 
         // Stamina
         [HarmonyPatch(typeof(BasicCharacterController), nameof(BasicCharacterController.FillStamina)), HarmonyPrefix]
