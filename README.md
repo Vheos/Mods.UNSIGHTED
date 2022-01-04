@@ -49,7 +49,7 @@
 
 
 # UNSIGHTED++?
-Cool name, huh? Should be called **UNSIGHTED#** (as both the game and this plugin is written in **C#**), but come on - **++** is way more self-explanatory. So, it's my personal collection of mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/), which include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
+Cool name, huh? Should be called **UNSIGHTED#**, as both the game and this plugin are written in **C#**, but oh well... So, it's my personal collection of mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/), which include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
 
 (actually some people might, I wouldn't know)
 <br/><br/><br/>
@@ -243,7 +243,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
     - updated for game version 1.1.2 (Steam and GOG only)
     - conflicting core game settings and corresponding UNSIGHTED++ changes:
         - `Weapon loadouts`: removed `Menus: Loadouts`
-        - `6 Save slots`: didn't remove as `Menus: Alternate load menu` still grants 2 extra slots and displays all the slots on one page
+        - `6 Save slots`: didn't remove `Menus: Alternate load menu` as it still grants 2 more slots and displays all the slots on one page
         - `Turn Iris attack on/off`: removed `Various: Iris combat help`
         - `Turn low-health FX on/off`: didn't remove `UI: Hit effect intensity` as it allows for more customization and also works when taking damage and getting frozen
         - `Turn controller vibration on/off`: removed `Various: Gamepad vibrations`
