@@ -11,11 +11,10 @@
     [BepInPlugin(GUID, NAME, VERSION)]
     public class Main : BepInExEntryPoint
     {
-        #region SETTINGS
+        // Metadata
         public const string GUID = "Vheos.Mods.UNSIGHTED";
         public const string NAME = "UNSIGHTED++";
-        public const string VERSION = "1.6.0";
-        #endregion
+        public const string VERSION = "1.7.0";
 
         // User logic
         override protected Assembly CurrentAssembly
