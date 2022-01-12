@@ -61,6 +61,10 @@
         => t = t.ClampMax(a);
         static public void SetClampMin(this ref int t, int a)
         => t = t.ClampMin(a);
+        static public bool IsHex(this char t)
+        => (t >= '0' && t <= '9')
+        || (t >= 'a' && t <= 'f')
+        || (t >= 'A' && t <= 'F');
 
         static public IEnumerable<T> GetComponentsInHierarchy<T>(this Component t, int fromDepth, int toDepth) where T : Component
         {
