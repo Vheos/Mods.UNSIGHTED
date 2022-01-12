@@ -11,6 +11,7 @@
     using Tools.Extensions.General;
     using Tools.UtilityN;
     using Vheos.Tools.Extensions.Collections;
+    using System.Linq;
 
     public class Audiovisual : AMod
     {
@@ -181,21 +182,21 @@
             private readonly ModSetting<bool> SkinToggle;
             private readonly ModSetting<bool> ArmorToggle;
             private readonly ModSetting<bool> WeaponToggle;
-            private readonly ModSetting<Color> Highlight;
-            private readonly ModSetting<Color> HairDark;
-            private readonly ModSetting<Color> HairRegular;
-            private readonly ModSetting<Color> HairBright;
-            private readonly ModSetting<Color> SkinDark;
-            private readonly ModSetting<Color> SkinRegular;
-            private readonly ModSetting<Color> SkinBright;
-            private readonly ModSetting<Color> ArmorMainDark;
-            private readonly ModSetting<Color> ArmorMainRegular;
-            private readonly ModSetting<Color> ArmorSideDark;
-            private readonly ModSetting<Color> ArmorSideRegular;
-            private readonly ModSetting<Color> WeaponMain;
-            private readonly ModSetting<Color> WeaponSlash;
-            private readonly ModSetting<Color> WeaponFlames;
-            private readonly ModSetting<Color> WeaponSparks;
+            private readonly ColorSettings Highlight;
+            private readonly ColorSettings HairDark;
+            private readonly ColorSettings HairRegular;
+            private readonly ColorSettings HairBright;
+            private readonly ColorSettings SkinDark;
+            private readonly ColorSettings SkinRegular;
+            private readonly ColorSettings SkinBright;
+            private readonly ColorSettings ArmorMainDark;
+            private readonly ColorSettings ArmorMainRegular;
+            private readonly ColorSettings ArmorSideDark;
+            private readonly ColorSettings ArmorSideRegular;
+            private readonly ColorSettings WeaponMain;
+            private readonly ColorSettings WeaponSlash;
+            private readonly ColorSettings WeaponFlames;
+            private readonly ColorSettings WeaponSparks;
             internal PaletteSettings(Audiovisual mod, int playerID) : base(mod, playerID)
             {
                 SerializedData = _mod.CreateSetting(PlayerPrefix + nameof(SerializedData), "");
@@ -207,44 +208,44 @@
                 ArmorToggle = _mod.CreateSetting(PlayerPrefix + nameof(ArmorToggle), false);
                 WeaponToggle = _mod.CreateSetting(PlayerPrefix + nameof(WeaponToggle), false);
 
-                Highlight = _mod.CreateSetting(PlayerPrefix + nameof(Highlight), _playerID == 0 ?
+                Highlight = new ColorSettings(_mod, PlayerPrefix + nameof(Highlight), _playerID == 0 ?
                     new Color(0.9059f, 0.9451f, 0.9451f) : new Color(0.7961f, 0.7216f, 0.9843f));
 
-                HairDark = _mod.CreateSetting(PlayerPrefix + nameof(HairDark), _playerID == 0 ?
+                HairDark = new ColorSettings(_mod, PlayerPrefix + nameof(HairDark), _playerID == 0 ?
                     new Color(0.6f, 0.5804f, 0.549f) : new Color(0f, 0.0784f, 0.4706f));
-                HairRegular = _mod.CreateSetting(PlayerPrefix + nameof(HairRegular), _playerID == 0 ?
+                HairRegular = new ColorSettings(_mod, PlayerPrefix + nameof(HairRegular), _playerID == 0 ?
                     new Color(0.7333f, 0.7098f, 0.6784f) : new Color(0f, 0.1373f, 0.6431f));
-                HairBright = _mod.CreateSetting(PlayerPrefix + nameof(HairBright), _playerID == 0 ?
+                HairBright = new ColorSettings(_mod, PlayerPrefix + nameof(HairBright), _playerID == 0 ?
                     new Color(0.8706f, 0.8706f, 0.8706f) : new Color(0f, 0.3843f, 0.9608f));
 
-                SkinDark = _mod.CreateSetting(PlayerPrefix + nameof(SkinDark), _playerID == 0 ?
+                SkinDark = new ColorSettings(_mod, PlayerPrefix + nameof(SkinDark), _playerID == 0 ?
                     new Color(0.2588f, 0.1294f, 0.1333f) : new Color(0.2588f, 0.1294f, 0.1333f));
-                SkinRegular = _mod.CreateSetting(PlayerPrefix + nameof(SkinRegular), _playerID == 0 ?
+                SkinRegular = new ColorSettings(_mod, PlayerPrefix + nameof(SkinRegular), _playerID == 0 ?
                     new Color(0.4627f, 0.2863f, 0.1765f) : new Color(0.5255f, 0.3961f, 0.2941f));
-                SkinBright = _mod.CreateSetting(PlayerPrefix + nameof(SkinBright), _playerID == 0 ?
+                SkinBright = new ColorSettings(_mod, PlayerPrefix + nameof(SkinBright), _playerID == 0 ?
                     new Color(0.5255f, 0.4706f, 0.3059f) : new Color(0.7608f, 0.6353f, 0.4706f));
 
-                ArmorMainDark = _mod.CreateSetting(PlayerPrefix + nameof(ArmorMainDark), _playerID == 0 ?
+                ArmorMainDark = new ColorSettings(_mod, PlayerPrefix + nameof(ArmorMainDark), _playerID == 0 ?
                     new Color(0.1255f, 0.102f, 0.2314f) : new Color(0.2157f, 0.1686f, 0f));
-                ArmorMainRegular = _mod.CreateSetting(PlayerPrefix + nameof(ArmorMainRegular), _playerID == 0 ?
+                ArmorMainRegular = new ColorSettings(_mod, PlayerPrefix + nameof(ArmorMainRegular), _playerID == 0 ?
                     new Color(0.149f, 0.2275f, 0.5608f) : new Color(0.4353f, 0.3567f, 0.01569f));
-                ArmorSideDark = _mod.CreateSetting(PlayerPrefix + nameof(ArmorSideDark), _playerID == 0 ?
+                ArmorSideDark = new ColorSettings(_mod, PlayerPrefix + nameof(ArmorSideDark), _playerID == 0 ?
                     new Color(0.5216f, 0.4667f, 0.6588f) : new Color(0.6588f, 0.6314f, 0.4667f));
-                ArmorSideRegular = _mod.CreateSetting(PlayerPrefix + nameof(ArmorSideRegular), _playerID == 0 ?
+                ArmorSideRegular = new ColorSettings(_mod, PlayerPrefix + nameof(ArmorSideRegular), _playerID == 0 ?
                     new Color(0.749f, 0.6745f, 0.8078f) : new Color(0.8078f, 0.8f, 0.6745f));
 
-                WeaponMain = _mod.CreateSetting(PlayerPrefix + nameof(WeaponMain), new Color(0.8902f, 0.8902f, 0.5216f));
-                WeaponSlash = _mod.CreateSetting(PlayerPrefix + nameof(WeaponSlash), new Color(0.902f, 0.902f, 0.9216f));
-                WeaponFlames = _mod.CreateSetting(PlayerPrefix + nameof(WeaponFlames), new Color(0.6549f, 0.5451f, 0.5608f));
-                WeaponSparks = _mod.CreateSetting(PlayerPrefix + nameof(WeaponSparks), new Color(0.8902f, 0.7725f, 0.4549f));
+                WeaponMain = new ColorSettings(_mod, PlayerPrefix + nameof(WeaponMain), new Color(0.8902f, 0.8902f, 0.5216f));
+                WeaponSlash = new ColorSettings(_mod, PlayerPrefix + nameof(WeaponSlash), new Color(0.902f, 0.902f, 0.9216f));
+                WeaponFlames = new ColorSettings(_mod, PlayerPrefix + nameof(WeaponFlames), new Color(0.6549f, 0.5451f, 0.5608f));
+                WeaponSparks = new ColorSettings(_mod, PlayerPrefix + nameof(WeaponSparks), new Color(0.8902f, 0.7725f, 0.4549f));
 
                 _colorsByToggle = new Dictionary<ModSetting<bool>, ModSetting<Color>[]>()
                 {
-                    [CommonToggle] = new[] { Highlight },
-                    [HairToggle] = new[] { HairDark, HairRegular, HairBright },
-                    [SkinToggle] = new[] { SkinDark, SkinRegular, SkinBright },
-                    [ArmorToggle] = new[] { ArmorMainDark, ArmorMainRegular, ArmorSideDark, ArmorSideRegular },
-                    [WeaponToggle] = new[] { WeaponMain, WeaponSlash, WeaponFlames, WeaponSparks },
+                    [CommonToggle] = new ModSetting<Color>[] { Highlight },
+                    [HairToggle] = new ModSetting<Color>[] { HairDark, HairRegular, HairBright },
+                    [SkinToggle] = new ModSetting<Color>[] { SkinDark, SkinRegular, SkinBright },
+                    [ArmorToggle] = new ModSetting<Color>[] { ArmorMainDark, ArmorMainRegular, ArmorSideDark, ArmorSideRegular },
+                    [WeaponToggle] = new ModSetting<Color>[] { WeaponMain, WeaponSlash, WeaponFlames, WeaponSparks },
                 };
 
                 // events
@@ -363,7 +364,10 @@
                 if (ActionsSetting.Value.HasFlag(Actions.Save))
                     SerializedData.SetSilently(Serialize());
                 if (ActionsSetting.Value.HasFlag(Actions.Load))
+                {
+                    SerializedData.Value = new string(SerializedData.Value.Where(t => t.IsHex()).ToArray());
                     Deserialize(SerializedData);
+                }
                 if (ActionsSetting.Value.HasFlag(Actions.Reset))
                 {
                     SerializedData.SetSilently("");
