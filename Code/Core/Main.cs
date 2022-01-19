@@ -4,7 +4,7 @@
     using System.Linq;
     using System.Reflection;
     using BepInEx;
-    using Tools.ModdingCore;
+    using Mods.Core;
     using Utility = Tools.UtilityN.Utility;
 
     [BepInDependency("com.bepis.bepinex.configurationmanager", BepInDependency.DependencyFlags.SoftDependency)]

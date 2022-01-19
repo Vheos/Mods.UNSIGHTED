@@ -4,7 +4,7 @@
     using System.Collections;
     using UnityEngine;
     using HarmonyLib;
-    using Tools.ModdingCore;
+    using Mods.Core;
     using Tools.Extensions.Math;
     using Vheos.Tools.Extensions.General;
     using System.Collections.Generic;

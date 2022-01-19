@@ -4,7 +4,7 @@
     using System.Collections;
     using UnityEngine;
     using HarmonyLib;
-    using Tools.ModdingCore;
+    using Mods.Core;
     using Tools.Extensions.Math;
     using Tools.Extensions.General;
     using DG.Tweening;
@@ -147,7 +147,7 @@
         }
 
         // Privates
-        static private List<CatchCues> _cachedRandomCues = new List<CatchCues>();
+        private static readonly List<CatchCues> _cachedRandomCues = new List<CatchCues>();
         static private void TryCacheRandomCues()
         {
             if (!_catchCues.Value.HasFlag(CatchCues.Random))

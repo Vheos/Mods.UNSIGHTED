@@ -6,7 +6,7 @@
     using UnityEngine;
     using UnityEngine.PostProcessing;
     using HarmonyLib;
-    using Tools.ModdingCore;
+    using Mods.Core;
     using Tools.Extensions.Math;
     using Tools.Extensions.General;
     using Tools.UtilityN;
@@ -512,15 +512,13 @@
             private readonly SFX _sfx;
             private string _internalSFXName;
             private string GetInternalSFXName(SFX sfx, SoundEffectDatabase sfxDatabase)
+            => sfx switch
             {
-                switch (sfx)
-                {
-                    case SFX.MenuNavigate: return sfxDatabase.menuSelect;
-                    case SFX.MenuEnter: return sfxDatabase.menuClick;
-                    case SFX.MenuEscape: return sfxDatabase.menuNegative;
-                    default: return null;
-                }
-            }
+                SFX.MenuNavigate => sfxDatabase.menuSelect,
+                SFX.MenuEnter => sfxDatabase.menuClick,
+                SFX.MenuEscape => sfxDatabase.menuNegative,
+                _ => null,
+            };
         }
         #endregion
 
@@ -560,7 +558,7 @@
         [HarmonyPatch(typeof(Lists), nameof(Lists.Start)), HarmonyPostfix]
         static private void Lists_Start_Post(Lists __instance)
         {
-            PostProcessingProfile[] GetCameraProfiles(AreaDescription areaDescription)
+            static PostProcessingProfile[] GetCameraProfiles(AreaDescription areaDescription)
             => new[]
             {
                 areaDescription.morningCameraProfile,

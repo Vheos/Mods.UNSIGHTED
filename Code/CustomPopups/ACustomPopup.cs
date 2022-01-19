@@ -3,7 +3,7 @@
     using System;
     using UnityEngine;
     using HarmonyLib;
-    using Tools.ModdingCore;
+    using Mods.Core;
     using Tools.Extensions.UnityObjects;
 
     abstract internal class ACustomPopup<T> where T : ACustomPopup<T>

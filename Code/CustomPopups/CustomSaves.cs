@@ -6,7 +6,7 @@
     using UnityEngine;
     using UnityEngine.UI;
     using HarmonyLib;
-    using Tools.ModdingCore;
+    using Mods.Core;
     using Tools.Extensions.UnityObjects;
     using Tools.Extensions.Math;
     using Tools.Extensions.Collections;
@@ -40,7 +40,6 @@
                 foreach (var gameType in Utility.GetEnumValues<GameType>())
                 {
                     int slotID = GetSaveSlotID(gameType, i);
-
                     if (globalGameData.currentData.playerDataSlots.TryGet(slotID, out var playerData)
                     && playerData.dataStrings == null)
                         globalGameData.CreateDefaultDataSlot(slotID);
@@ -130,7 +129,7 @@
                 var newButton = GameObject.Instantiate(prefab);
                 newButton.BecomeChildOf(slotButton.haveSaveStuff);
                 newButton.name = name;
-
+                
                 var ftext = newButton.GetChildComponent<FText>();
                 ftext.text = ftext.originalText = name;
                 ftext.GetComponent<UITranslateText>().enabled = false;

@@ -5,7 +5,7 @@
     using System.Collections.Generic;
     using UnityEngine;
     using HarmonyLib;
-    using Tools.ModdingCore;
+    using Mods.Core;
     using Tools.Extensions.General;
     using Tools.Extensions.UnityObjects;
     using Tools.Extensions.Math;
@@ -19,8 +19,10 @@
         {
             // setting
             string settingGUID = GetSettingGUID(playerID, name);
-            var setting = new ModSetting<string>("", settingGUID, KeyCode.None.ToString());
-            setting.IsVisible = false;
+            var setting = new ModSetting<string>("", settingGUID, KeyCode.None.ToString())
+            {
+                IsVisible = false
+            };
 
             string buttonGUID = GetButtonGUID(name);
             if (!_settingsByButtonGUID.ContainsKey(buttonGUID))

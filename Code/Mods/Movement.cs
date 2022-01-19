@@ -3,7 +3,7 @@
     using System;
     using UnityEngine;
     using HarmonyLib;
-    using Tools.ModdingCore;
+    using Mods.Core;
 
     public class Movement : AMod
     {

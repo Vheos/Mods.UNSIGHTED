@@ -5,7 +5,7 @@
     using System.Collections.Generic;
     using UnityEngine;
     using HarmonyLib;
-    using Tools.ModdingCore;
+    using Mods.Core;
     using Tools.Extensions.Math;
     using Tools.Extensions.General;
     using Tools.Extensions.Collections;
@@ -181,18 +181,20 @@
         static private void SortAndCacheDamageTakenOperations()
         {
             // local functions
-            void ApplyDefenseChip(ref int damageTaken, int playerID)
+            static void ApplyDefenseChip(ref int damageTaken, int playerID)
             {
                 damageTaken -= PseudoSingleton<Helpers>.instance.NumberOfChipsEquipped("DefenseChip", playerID);
                 damageTaken.SetClampMin(0);
             }
-            void ApplyNegativeChips(ref int damageTaken, int playerID)
+
+            static void ApplyNegativeChips(ref int damageTaken, int playerID)
             {
                 var helpers = PseudoSingleton<Helpers>.instance;
                 damageTaken += helpers.NumberOfChipsEquipped("OffenseChip", playerID)
                             + helpers.NumberOfChipsEquipped("GlitchChip", playerID);
             }
-            void ApplyDefenseCog(ref int damageTaken, int playerID)
+
+            static void ApplyDefenseCog(ref int damageTaken, int playerID)
             {
                 if (!PseudoSingleton<Helpers>.instance.PlayerHaveBuff(PlayerBuffTypes.Defense, playerID))
                     return;
@@ -201,17 +203,22 @@
                 damageTaken.SetClampMin(0);
                 PseudoSingleton<BuffsInterfaceController>.instance.ReduceBuff(playerID, PlayerBuffTypes.Defense, 1);
             }
-            void ClampToOne(ref int damageTaken, int playerID)
-            => damageTaken.SetClampMin(1);
-            void ApplyCombatAssist(ref int damageTaken, int playerID)
+
+            static void ClampToOne(ref int damageTaken, int playerID)
             {
-                if (!PseudoSingleton<Helpers>.instance.GetPlayerData().combatAssist)
+                damageTaken.SetClampMin(1);
+            }
+
+            static void ApplyCombatAssist(ref int damageTaken, int playerID)
+            {
+                if (!Helpers.instance.GetPlayerData().combatAssist)
                     return;
 
                 damageTaken--;
                 damageTaken.SetClampMin(0);
             }
-            void ApplyRobotApocalypse(ref int damageTaken, int playerID)
+
+            static void ApplyRobotApocalypse(ref int damageTaken, int playerID)
             {
                 if (PseudoSingleton<Helpers>.instance.GetPlayerData().difficulty != Difficulty.Hard)
                     return;
@@ -323,19 +330,17 @@
             private string KeyPrefix
             => $"{_cogType}_";
             private PlayerBuffTypes GetInternalCogType(CogType cogType)
+            => cogType switch
             {
-                switch (cogType)
-                {
-                    case CogType.Attack: return PlayerBuffTypes.Attack;
-                    case CogType.Stamina: return PlayerBuffTypes.Stamina;
-                    case CogType.Reload: return PlayerBuffTypes.Reload;
-                    case CogType.Speed: return PlayerBuffTypes.Speed;
-                    case CogType.Defense: return PlayerBuffTypes.Defense;
-                    case CogType.Syringe: return PlayerBuffTypes.Syringe;
-                    case CogType.Revive: return PlayerBuffTypes.Revive;
-                    default: return PlayerBuffTypes.None;
-                }
-            }
+                CogType.Attack => PlayerBuffTypes.Attack,
+                CogType.Stamina => PlayerBuffTypes.Stamina,
+                CogType.Reload => PlayerBuffTypes.Reload,
+                CogType.Speed => PlayerBuffTypes.Speed,
+                CogType.Defense => PlayerBuffTypes.Defense,
+                CogType.Syringe => PlayerBuffTypes.Syringe,
+                CogType.Revive => PlayerBuffTypes.Revive,
+                _ => PlayerBuffTypes.None,
+            };
             private void ApplyDuration()
             {
                 var buff = _cogPrefab.myBuff;

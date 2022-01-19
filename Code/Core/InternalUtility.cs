@@ -5,7 +5,7 @@
     using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.UI;
-    using Tools.ModdingCore;
+    using Mods.Core;
     using Tools.Extensions.General;
     using Tools.Extensions.Math;
     using Tools.Extensions.UnityObjects;
@@ -81,18 +81,16 @@
         static public RectTransform Rect(this Component t)
         => t.gameObject.Rect();
         static public TextAnchor FlipHorizontally(this TextAnchor t)
+        => t switch
         {
-            switch (t)
-            {
-                case TextAnchor.UpperLeft: return TextAnchor.UpperRight;
-                case TextAnchor.UpperRight: return TextAnchor.UpperLeft;
-                case TextAnchor.MiddleLeft: return TextAnchor.MiddleRight;
-                case TextAnchor.MiddleRight: return TextAnchor.MiddleLeft;
-                case TextAnchor.LowerLeft: return TextAnchor.LowerRight;
-                case TextAnchor.LowerRight: return TextAnchor.LowerLeft;
-                default: return t;
-            }
-        }
+            TextAnchor.UpperLeft => TextAnchor.UpperRight,
+            TextAnchor.UpperRight => TextAnchor.UpperLeft,
+            TextAnchor.MiddleLeft => TextAnchor.MiddleRight,
+            TextAnchor.MiddleRight => TextAnchor.MiddleLeft,
+            TextAnchor.LowerLeft => TextAnchor.LowerRight,
+            TextAnchor.LowerRight => TextAnchor.LowerLeft,
+            _ => t,
+        };
         static public void FlipAlignmentHorizontally(this LayoutGroup t)
         => t.childAlignment = t.childAlignment.FlipHorizontally();
         static public void CreateMutualLinkWith(this TButtonNavigation t, TButtonNavigation a, AxisDirections direction)
