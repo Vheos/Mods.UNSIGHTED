@@ -9,128 +9,122 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Vheos.Mods.UNSIGHTED</RootNamespace>
     <AssemblyName>Vheos.Mods.UNSIGHTED</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup>
-    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DEBUG_UNITY2018|AnyCPU' ">
-    <DefineConstants>DEBUG;UNITY;UNITY2018</DefineConstants>
-    <OutputPath>bin\UNITY2018\</OutputPath>
-    <LangVersion>9.0</LangVersion>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <ErrorReport>prompt</ErrorReport>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '-|AnyCPU'">
     <Prefer32Bit>false</Prefer32Bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RELEASE_UNITY2018|AnyCPU' ">
-    <DefineConstants>RELEASE;UNITY;UNITY2018</DefineConstants>
-    <OutputPath>bin\UNITY2018\</OutputPath>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UNITY|AnyCPU' ">
+    <OutputPath>bin\UNITY\</OutputPath>
+    <DocumentationFile>bin\UNITY\Vheos.Tools.UNSIGHTED.xml</DocumentationFile>
+    <DefineConstants>DEBUG;UNITY</DefineConstants>
     <LangVersion>9.0</LangVersion>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RELEASE_UNITY2019_GAMEPASS|AnyCPU' ">
-    <DefineConstants>RELEASE;UNITY;UNITY2019;GAMEPASS</DefineConstants>
-    <OutputPath>bin\UNITY2019_GAMEPASS\</OutputPath>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RELEASE_UNITY|AnyCPU' ">
+    <OutputPath>bin\UNITY\</OutputPath>
+    <DocumentationFile>bin\UNITY\Vheos.Tools.UNSIGHTED.xml</DocumentationFile>
+    <DefineConstants>UNITY</DefineConstants>
     <LangVersion>9.0</LangVersion>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RELEASE_UNITY_GAMEPASS|AnyCPU' ">    
+    <OutputPath>bin\UNITY_GAMEPASS\</OutputPath>
+    <DocumentationFile>bin\UNITY_GAMEPASS\Vheos.Tools.UNSIGHTED.xml</DocumentationFile>
+    <DefineConstants>UNITY;GAMEPASS</DefineConstants>
+    <LangVersion>9.0</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <Prefer32Bit>false</Prefer32Bit>    
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == '-|AnyCPU' ">
-    <OutputPath>bin\-\</OutputPath>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp_publicized" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2018'))">
-      <HintPath>Private\Libraries\2018.4.32_Assembly-CSharp_publicized.dll</HintPath>
+    <Reference Include="Assembly-CSharp_publicized" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('GAMEPASS'))">
+      <HintPath>Private\Libraries\v1.0.7.3 (GamePass)\Assembly-CSharp_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2018'))">
-      <HintPath>Private\Libraries\2018.4.32_Assembly-CSharp-firstpass.dll</HintPath>
+    <Reference Include="Assembly-CSharp-firstpass" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('GAMEPASS'))">
+      <HintPath>Private\Libraries\v1.0.7.3 (GamePass)\Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DOTween">
-      <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\DOTween.dll</HintPath>
-    </Reference>
-    <Reference Include="DOTween43">
-      <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\DOTween43.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2018'))">
-      <HintPath>Private\Libraries\2018.4.32_UnityEngine.dll</HintPath>
+    <Reference Include="UnityEngine" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('GAMEPASS'))">
+      <HintPath>Private\Libraries\v1.0.7.3 (GamePass)\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2018'))">
-      <HintPath>Private\Libraries\2018.4.32_UnityEngine.CoreModule.dll</HintPath>
+    <Reference Include="UnityEngine.CoreModule" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('GAMEPASS'))">
+      <HintPath>Private\Libraries\v1.0.7.3 (GamePass)\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp_publicized" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2019'))">
-      <HintPath>Private\Libraries\2019.4.28_Assembly-CSharp_publicized.dll</HintPath>
+    <Reference Include="UnityEngine.InputLegacyModule" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('GAMEPASS'))">
+      <HintPath>Private\Libraries\v1.0.7.3 (GamePass)\UnityEngine.InputLegacyModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2019'))">
-      <HintPath>Private\Libraries\2019.4.28_Assembly-CSharp-firstpass.dll</HintPath>
+    <Reference Include="FMODUnity" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('GAMEPASS'))">
+      <HintPath>Private\Libraries\v1.0.7.3 (GamePass)\FMODUnity.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2019'))">
-      <HintPath>Private\Libraries\2019.4.28_UnityEngine.dll</HintPath>
+
+    <Reference Include="Assembly-CSharp_publicized" Condition="$(DefineConstants.Contains('UNITY')) AND !$(DefineConstants.Contains('GAMEPASS'))">
+      <HintPath>Private\Libraries\v1.1.4 (Steam, GOG)\Assembly-CSharp_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2019'))">
-      <HintPath>Private\Libraries\2019.4.28_UnityEngine.CoreModule.dll</HintPath>
+    <Reference Include="Assembly-CSharp-firstpass" Condition="$(DefineConstants.Contains('UNITY')) AND !$(DefineConstants.Contains('GAMEPASS'))">
+      <HintPath>Private\Libraries\v1.1.4 (Steam, GOG)\Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.InputLegacyModule" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2019'))">
-      <HintPath>Private\Libraries\2019.4.28_UnityEngine.InputLegacyModule.dll</HintPath>
+    <Reference Include="UnityEngine" Condition="$(DefineConstants.Contains('UNITY')) AND !$(DefineConstants.Contains('GAMEPASS'))">
+      <HintPath>Private\Libraries\v1.1.4 (Steam, GOG)\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="FMODUnity" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2019'))">
-      <HintPath>Private\Libraries\2019.4.28_FMODUnity.dll</HintPath>
+    <Reference Include="UnityEngine.CoreModule" Condition="$(DefineConstants.Contains('UNITY')) AND !$(DefineConstants.Contains('GAMEPASS'))">
+      <HintPath>Private\Libraries\v1.1.4 (Steam, GOG)\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.Physics2DModule;Version=0.0.0.0;Culture=neutral;processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
+    <Reference Include="UnityEngine.Physics2DModule">
+      <HintPath>Private\Libraries\v1.1.4 (Steam, GOG)\UnityEngine.Physics2DModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>Private\Libraries\v1.1.4 (Steam, GOG)\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.TextRenderingModule;Version=0.0.0.0;Culture=neutral;processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>Private\Libraries\v1.1.4 (Steam, GOG)\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <HintPath>Private\Libraries\v1.1.4 (Steam, GOG)\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="XInputDotNetPure">
-      <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\XInputDotNetPure.dll</HintPath>
+      <HintPath>Private\Libraries\v1.1.4 (Steam, GOG)\XInputDotNetPure.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="System" />
+    <Reference Include="DOTween">
+      <HintPath>Private\Libraries\v1.1.4 (Steam, GOG)\DOTween.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DOTween43">
+      <HintPath>Private\Libraries\v1.1.4 (Steam, GOG)\DOTween43.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="BepInEx">
-      <HintPath>..\..\Libraries\BepInEx (v5.4.11)\BepInEx.dll</HintPath>
+      <HintPath>..\Core\Private\Libraries\BepInEx.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="0Harmony">
-      <HintPath>..\..\Libraries\BepInEx (v5.4.11)\0Harmony.dll</HintPath>
+      <HintPath>..\Core\Private\Libraries\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="ConfigurationManager">
-      <HintPath>..\..\Libraries\ConfigurationManager (v16.3)\ConfigurationManager.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Code\CustomPopups\ACustomPopup.cs" />
@@ -162,15 +156,14 @@
       <Name>Vheos.Tools.Extensions</Name>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\Tools\ModdingCore\Vheos.Tools.ModdingCore.csproj">
-      <Project>{a48747d8-e698-4c2c-bf11-0efed7d79ef0}</Project>
-      <Name>Vheos.Tools.ModdingCore</Name>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\Tools\Utility\Vheos.Tools.Utility.csproj">
       <Project>{96d2cdb1-5ee9-4666-812d-9ecb8df005c4}</Project>
       <Name>Vheos.Tools.Utility</Name>
       <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\Vheos.Mods.Core.csproj">
+      <Project>{a48747d8-e698-4c2c-bf11-0efed7d79ef0}</Project>
+      <Name>Vheos.Mods.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -184,7 +177,7 @@ set Version_Suffix=_vX.Y.Z
 set TempCopy=$(ProjectDir)\bin\.tmpcpy\
 rd /s /q %25TempCopy%25
 xcopy /y $(TargetDir)$(TargetName).dll %25TempCopy%25
-xcopy /y $(TargetDir)Vheos.Tools.ModdingCore.dll %25TempCopy%25
+xcopy /y $(TargetDir)Vheos.Mods.Core.dll %25TempCopy%25
 xcopy /y $(TargetDir)Vheos.Tools.Extensions.dll %25TempCopy%25
 xcopy /y $(TargetDir)Vheos.Tools.Utility.dll %25TempCopy%25
 
@@ -204,7 +197,7 @@ xcopy /y $(TargetDir)Vheos.Tools.Utility.dll %25TempCopy%25
             start "" %25Game_Global%25%25Game_EXE%25
 
         )
-    ) else if $(DefineConstants.Contains('RELEASE'))==True (
+    ) else if $(DefineConstants.Contains('DEBUG'))==False (
         if $(DefineConstants.Contains('GAMEPASS'))==False (
             :: Release;SteamGOG
             rd /s /q %25SteamGOG_Global%25 
