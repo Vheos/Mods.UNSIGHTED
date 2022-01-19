@@ -14,52 +14,43 @@
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == '-|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\-\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\-\Vheos.Mods.UNSIGHTED.xml</DocumentationFile>
-  </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RELEASE_UNITY_2018|AnyCPU' ">
-    <OutputPath>bin\UNITY_2018\</OutputPath>
-    <DefineConstants>TRACE;RELEASE, UNITY, UNITY2018</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DEBUG_UNITY2018|AnyCPU' ">
+    <DefineConstants>DEBUG;UNITY;UNITY2018</DefineConstants>
+    <OutputPath>bin\UNITY2018\</OutputPath>
+    <LangVersion>9.0</LangVersion>
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
+    <Optimize>true</Optimize>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RELEASE_UNITY_2019_GAMEPASS|AnyCPU' ">
-    <OutputPath>bin\UNITY_2019\</OutputPath>
-    <DefineConstants>TRACE;RELEASE, UNITY, UNITY2019, GAMEPASS</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RELEASE_UNITY2018|AnyCPU' ">
+    <DefineConstants>RELEASE;UNITY;UNITY2018</DefineConstants>
+    <OutputPath>bin\UNITY2018\</OutputPath>
+    <LangVersion>9.0</LangVersion>
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
+    <Optimize>true</Optimize>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DEBUG_UNITY_2018|AnyCPU' ">
-    <OutputPath>bin\UNITY_2018\</OutputPath>
-    <DefineConstants>TRACE;DEBUG, UNITY, UNITY2018</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RELEASE_UNITY2019_GAMEPASS|AnyCPU' ">
+    <DefineConstants>RELEASE;UNITY;UNITY2019;GAMEPASS</DefineConstants>
+    <OutputPath>bin\UNITY2019_GAMEPASS\</OutputPath>
+    <LangVersion>9.0</LangVersion>
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
+    <Optimize>true</Optimize>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == '-|AnyCPU' ">
+    <OutputPath>bin\-\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp_publicized" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('UNITY2018'))">
@@ -108,7 +99,7 @@
       <HintPath>Private\Libraries\2019.4.28_FMODUnity.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.Physics2DModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="UnityEngine.Physics2DModule;Version=0.0.0.0;Culture=neutral;processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
       <Private>False</Private>
@@ -116,13 +107,16 @@
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="UnityEngine.TextRenderingModule;Version=0.0.0.0;Culture=neutral;processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="XInputDotNetPure">
+      <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\XInputDotNetPure.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="BepInEx">
@@ -136,9 +130,6 @@
     <Reference Include="ConfigurationManager">
       <HintPath>..\..\Libraries\ConfigurationManager (v16.3)\ConfigurationManager.dll</HintPath>
       <Private>False</Private>
-    </Reference>
-    <Reference Include="XInputDotNetPure">
-      <HintPath>D:\Multiplayer\UNSIGHTED\UNSIGHTED_Data\Managed\XInputDotNetPure.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -162,7 +153,6 @@
     <Compile Include="Code\Mods\Enemies.cs" />
     <Compile Include="Code\Mods\Various.cs" />
     <Compile Include="Code\Core\Main.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Code\Mods\TimeMods.cs" />
     <Compile Include="Code\Mods\Camera.cs" />
   </ItemGroup>
@@ -183,10 +173,12 @@
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>:: Global settings
-set Releases_Global=E:\Creativity\Programs\C#\Mods\UNSIGHTED\Private\Releases\
 set Plugins_Local=BepInEx\Plugins\Vheos\
 set Version_Suffix=_vX.Y.Z
 set TempCopy=$(ProjectDir)\bin\.tmpcpy\
@@ -200,12 +192,13 @@ xcopy /y $(TargetDir)Vheos.Tools.Utility.dll %25TempCopy%25
     set Game_Global=D:\Multiplayer\UNSIGHTED\
     set Game_EXE=UNSIGHTED.exe
     set Zip_Name=UNSIGHTED++
+    set Releases_Global=E:\Creativity\Programs\C#\Mods\UNSIGHTED\Private\Releases\
     set SteamGOG_Global=%25Releases_Global%25\SteamGOG\%25Plugins_Local%25
     set GamePass_Global=%25Releases_Global%25\GamePass\%25Plugins_Local%25
 
     if $(DefineConstants.Contains('DEBUG'))==True (
         if $(DefineConstants.Contains('GAMEPASS'))==False (
-            :: Debug, SteamGOG
+            :: Debug;SteamGOG
             rd /s /q %25Game_Global%25%25Plugins_Local%25 
             xcopy /e /y %25TempCopy%25 %25Game_Global%25%25Plugins_Local%25
             start "" %25Game_Global%25%25Game_EXE%25
@@ -213,13 +206,13 @@ xcopy /y $(TargetDir)Vheos.Tools.Utility.dll %25TempCopy%25
         )
     ) else if $(DefineConstants.Contains('RELEASE'))==True (
         if $(DefineConstants.Contains('GAMEPASS'))==False (
-            :: Release, SteamGOG
+            :: Release;SteamGOG
             rd /s /q %25SteamGOG_Global%25 
             xcopy /e /y %25TempCopy%25 %25SteamGOG_Global%25
             powershell Compress-Archive -Path %25Releases_Global%25\SteamGOG\BepInEx -DestinationPath %25Releases_Global%25\%25Zip_Name%25%25Version_Suffix%25_SteamGOG.zip -Force
 
         ) else if $(DefineConstants.Contains('GAMEPASS'))==True (
-            :: Release, GamePass
+            :: Release;GamePass
             rd /s /q %25GamePass_Global%25 
             xcopy /e /y %25TempCopy%25 %25GamePass_Global%25
             powershell Compress-Archive -Path %25Releases_Global%25\GamePass\BepInEx -DestinationPath %25Releases_Global%25\%25Zip_Name%25%25Version_Suffix%25_GamePass_Experimental.zip -Force
