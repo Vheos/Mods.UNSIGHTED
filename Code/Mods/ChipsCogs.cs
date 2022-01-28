@@ -9,7 +9,7 @@
     using Tools.Extensions.Math;
     using Tools.Extensions.General;
     using Tools.Extensions.Collections;
-    using Vheos.Tools.UtilityN;
+    using Vheos.Tools.Utilities;
     using BepInEx.Configuration;
 
     public class ChipsCogs : AMod

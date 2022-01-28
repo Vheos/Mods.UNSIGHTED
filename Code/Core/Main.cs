@@ -5,7 +5,7 @@
     using System.Reflection;
     using BepInEx;
     using Mods.Core;
-    using Utility = Tools.UtilityN.Utility;
+    using Utility = Tools.Utilities.Utility;
 
     [BepInDependency("com.bepis.bepinex.configurationmanager", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInPlugin(GUID, NAME, VERSION)]

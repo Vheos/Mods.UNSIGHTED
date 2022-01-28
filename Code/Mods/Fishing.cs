@@ -8,7 +8,7 @@
     using Tools.Extensions.Math;
     using Tools.Extensions.General;
     using DG.Tweening;
-    using Vheos.Tools.UtilityN;
+    using Vheos.Tools.Utilities;
     using System.Collections.Generic;
 
     public class Fishing : AMod

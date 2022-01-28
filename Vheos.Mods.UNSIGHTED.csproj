@@ -14,7 +14,6 @@
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '-|AnyCPU'">
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -36,16 +35,15 @@
     <Optimize>true</Optimize>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RELEASE_UNITY_GAMEPASS|AnyCPU' ">    
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RELEASE_UNITY_GAMEPASS|AnyCPU' ">
     <OutputPath>bin\UNITY_GAMEPASS\</OutputPath>
     <DocumentationFile>bin\UNITY_GAMEPASS\Vheos.Tools.UNSIGHTED.xml</DocumentationFile>
     <DefineConstants>UNITY;GAMEPASS</DefineConstants>
     <LangVersion>9.0</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
-    <Prefer32Bit>false</Prefer32Bit>    
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-
   <ItemGroup>
     <Reference Include="Assembly-CSharp_publicized" Condition="$(DefineConstants.Contains('UNITY')) AND $(DefineConstants.Contains('GAMEPASS'))">
       <HintPath>Private\Libraries\v1.0.7.3 (GamePass)\Assembly-CSharp_publicized.dll</HintPath>
@@ -71,7 +69,6 @@
       <HintPath>Private\Libraries\v1.0.7.3 (GamePass)\FMODUnity.dll</HintPath>
       <Private>False</Private>
     </Reference>
-
     <Reference Include="Assembly-CSharp_publicized" Condition="$(DefineConstants.Contains('UNITY')) AND !$(DefineConstants.Contains('GAMEPASS'))">
       <HintPath>Private\Libraries\v1.1.4 (Steam, GOG)\Assembly-CSharp_publicized.dll</HintPath>
       <Private>False</Private>
@@ -156,9 +153,9 @@
       <Name>Vheos.Tools.Extensions</Name>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\Tools\Utility\Vheos.Tools.Utility.csproj">
+    <ProjectReference Include="..\..\Tools\Utilities\Vheos.Tools.Utilities.csproj">
       <Project>{96d2cdb1-5ee9-4666-812d-9ecb8df005c4}</Project>
-      <Name>Vheos.Tools.Utility</Name>
+      <Name>Vheos.Tools.Utilities</Name>
       <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\Core\Vheos.Mods.Core.csproj">
@@ -179,7 +176,7 @@ rd /s /q %25TempCopy%25
 xcopy /y $(TargetDir)$(TargetName).dll %25TempCopy%25
 xcopy /y $(TargetDir)Vheos.Mods.Core.dll %25TempCopy%25
 xcopy /y $(TargetDir)Vheos.Tools.Extensions.dll %25TempCopy%25
-xcopy /y $(TargetDir)Vheos.Tools.Utility.dll %25TempCopy%25
+xcopy /y $(TargetDir)Vheos.Tools.Utilities.dll %25TempCopy%25
 
     :: Project settings
     set Game_Global=D:\Multiplayer\UNSIGHTED\
