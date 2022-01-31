@@ -1,8 +1,8 @@
 ﻿namespace Vheos.Mods.UNSIGHTED
 {
     using System;
-    using UnityEngine;
     using HarmonyLib;
+    using UnityEngine;
     using Mods.Core;
 
     public class Movement : AMod
