@@ -1,14 +1,14 @@
 <p align="center">
     <a href="">
-        <img src="https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Logo.png"/>
+        <img src="https://github.com/Vheos/Mods.UNSIGHTED/blob/master/ReadmeAssets/Logo.png"/>
     </a>
 </p>    
 
 <p align="center">
     <a href="">
-        <img src="https://img.shields.io/github/v/release/Vheos777/Mods.UNSIGHTED?labelColor=808080&color=404040&label=Mod" height=25/>
+        <img src="https://img.shields.io/github/v/release/Vheos/Mods.UNSIGHTED?labelColor=808080&color=404040&label=Mod" height=25/>
         <img src="https://img.shields.io/static/v1?labelColor=808080&color=404040&label=Game&message=v1.1.2" height=25/>
-        <img src="https://img.shields.io/github/downloads/Vheos777/Mods.UNSIGHTED/total?labelColor=808080&color=404040&label=Downloads" height=25/>
+        <img src="https://img.shields.io/github/downloads/Vheos/Mods.UNSIGHTED/total?labelColor=808080&color=404040&label=Downloads" height=25/>
     </a>
 </p>
     
@@ -19,13 +19,13 @@
     <a href="https://www.reddit.com/r/UNSIGHTED/comments/rkhnrg/unsighted/">   
         <img src="https://img.shields.io/static/v1?logo=reddit&color=ff4500&logoColor=white&label=%20&message=Reddit" height=25/>
     </a>
-    <a href="https://github.com/Vheos777/Mods.UNSIGHTED/issues">
+    <a href="https://github.com/Vheos/Mods.UNSIGHTED/issues">
         <img src="https://img.shields.io/static/v1?logo=github&color=282828&logoColor=white&label=%20&message=GitHub" height=25/>
     </a>
     <a href="">   
         <img src="https://img.shields.io/static/v1?logo=discord&color=657ac7&logoColor=white&label=%20&message=Vheos%235865" height=25/>
     </a>
-    <a href="https://ko-fi.com/vheos777">
+    <a href="https://ko-fi.com/Vheos">
         <img src="https://img.shields.io/static/v1?logo=kofi&color=ff5e5b&logoColor=white&label=%20&message=Ko-fi" height="25"/>
     </a>
 </p>
@@ -33,23 +33,23 @@
 
 
 # Table of contents
-- [UNSIGHTED++?](https://github.com/Vheos777/Mods.UNSIGHTED#unsighted)
-- [Highlights](https://github.com/Vheos777/Mods.UNSIGHTED#highlights)
-  - [~~Extra Save Slots~~](https://github.com/Vheos777/Mods.UNSIGHTED#extra-save-slots) *(added to core game)*
-  - [~~Weapon Loadouts~~](https://github.com/Vheos777/Mods.UNSIGHTED#weapon-loadouts) *(added to core game)*
-  - [Skin Editor ](https://github.com/Vheos777/Mods.UNSIGHTED#skin-editor)
-  - [Player 2 Equality](https://github.com/Vheos777/Mods.UNSIGHTED#player-2-equality)
-- [Settings overview](https://github.com/Vheos777/Mods.UNSIGHTED#settings-overview-as-of-v100)
-- [How to?](https://github.com/Vheos777/Mods.UNSIGHTED#how-to)
-- [FAQ](https://github.com/Vheos777/Mods.UNSIGHTED#faq)
-- [Contact](https://github.com/Vheos777/Mods.UNSIGHTED#contact)
-- [Changelog](https://github.com/Vheos777/Mods.UNSIGHTED#changelog)
+- [UNSIGHTED++?](https://github.com/Vheos/Mods.UNSIGHTED#unsighted)
+- [Highlights](https://github.com/Vheos/Mods.UNSIGHTED#highlights)
+  - [~~Extra Save Slots~~](https://github.com/Vheos/Mods.UNSIGHTED#extra-save-slots) *(added to core game)*
+  - [~~Weapon Loadouts~~](https://github.com/Vheos/Mods.UNSIGHTED#weapon-loadouts) *(added to core game)*
+  - [Skin Editor](https://github.com/Vheos/Mods.UNSIGHTED#skin-editor)
+  - [Player 2 Equality](https://github.com/Vheos/Mods.UNSIGHTED#player-2-equality)
+- [Settings overview](https://github.com/Vheos/Mods.UNSIGHTED#settings-overview-as-of-v100)
+- [How to?](https://github.com/Vheos/Mods.UNSIGHTED#how-to)
+- [FAQ](https://github.com/Vheos/Mods.UNSIGHTED#faq)
+- [Contact](https://github.com/Vheos/Mods.UNSIGHTED#contact)
+- [Changelog](https://github.com/Vheos/Mods.UNSIGHTED#changelog)
 <br/>
 
 
 
 # UNSIGHTED++?
-Cool name, huh? Should be called **UNSIGHTED#** (as both the game and this plugin is written in **C#**), but come on - **++** is way more self-explanatory. So, it's my personal collection of mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/), which include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
+Cool name, huh? Should be called **UNSIGHTED#**, as both the game and this plugin are written in **C#**, but oh well... So, it's my personal collection of mods for the amazing game [UNSIGHTED](https://store.steampowered.com/app/1062110/UNSIGHTED/), which include **co-op improvements**, **difficulty tweaks**, **QoL features** and **audiovisual stuff** - all highly configurable, because who knows better how to enjoy their game than ***YOU!?***
 
 (actually some people might, I wouldn't know)
 <br/><br/><br/>
@@ -86,7 +86,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 
 
 
-# Settings overview *(as of [v1.0.0](https://github.com/Vheos777/Mods.UNSIGHTED/releases/tag/v1.0.0))*
+# Settings overview *(as of [v1.0.0](https://github.com/Vheos/Mods.UNSIGHTED/releases/tag/v1.0.0))*
 <details>
     <summary>Time</summary>
 
@@ -95,7 +95,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 - Change the cinematic framestop / slowmo
 - Override current day, hour and minute
 
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Time.png)
+![](https://github.com/Vheos/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Time.png)
 </details>
 
 <details>
@@ -105,7 +105,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 - Change run/spin stamina drain 
 - Customize `Runner Chip`
 
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Movement.png)
+![](https://github.com/Vheos/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Movement.png)
 </details>
 
 <details>
@@ -115,7 +115,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 - Guard longer by holding the button 
 - Guard without melee weapons 
 
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Guard.png)
+![](https://github.com/Vheos/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Guard.png)
 </details>
 
 <details>
@@ -125,7 +125,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 - Change combo gain values per weapon type 
 - Change syringe gained along with combo
 
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Combo.png)
+![](https://github.com/Vheos/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Combo.png)
 </details>
 
 <details>
@@ -135,7 +135,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 - Change number of cog slots 
 - Limit number of active cog types
 
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/ChipsAndCogs.png)
+![](https://github.com/Vheos/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/ChipsAndCogs.png)
 </details>
 
 <details>
@@ -145,7 +145,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 - Enable co-op screen stretching 
 - Put an end to player 2's oppression
 
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Camera.png)
+![](https://github.com/Vheos/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Camera.png)
 </details>
 
 <details>
@@ -156,7 +156,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 - Customize crosshair 
 - Customize combo display
 
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/UI.png)
+![](https://github.com/Vheos/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/UI.png)
 </details>
 
 <details>
@@ -166,7 +166,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 - Customize Alma's color palette 
 - Change volume / pitch of menu SFX
 
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Audiovisual.png)
+![](https://github.com/Vheos/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Audiovisual.png)
 </details>
 
 <details>
@@ -176,7 +176,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 - Change thresholds for getting rewards
 - Try out the 5 predefined presets
     
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/ParryChallenge.png)
+![](https://github.com/Vheos/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/ParryChallenge.png)
 </details>
 
 <details>
@@ -187,29 +187,29 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 - Scale enemies' and bosses' HP 
 - Make enemies in groups attack more often
 
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Various.png)
+![](https://github.com/Vheos/Mods.UNSIGHTED/blob/master/ReadmeAssets/Config%20Screenshots/Various.png)
 </details>
 <br/>
 
 
 
 # How to?
-### • Download [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest/), [ConfigurationManager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases/latest) and [UNSIGHTED++](https://github.com/Vheos777/Mods.UNSIGHTED/releases/latest)
+### • Download [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest/), [ConfigurationManager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases/latest) and [UNSIGHTED++](https://github.com/Vheos/Mods.UNSIGHTED/releases/latest)
 
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/DownloadFiles.png)
+![](https://github.com/Vheos/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/DownloadFiles.png)
 
 ### • For `GamePass` version of the game, follow [this guide](https://www.reddit.com/r/NoMansSkyTheGame/comments/h9z1bd/how_to_mod_xbox_game_pass_nms)
 ### • For `Steam` and `GOG` versions, extract all files to the game folder
 
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/ExtractFiles.png)
+![](https://github.com/Vheos/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/ExtractFiles.png)
 
 ### • Press `F1` in-game to open the `Configuration Manager` window
 
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/ConfigurationManager.png)
+![](https://github.com/Vheos/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/ConfigurationManager.png)
 
 ### • Choose a mod and click `Apply` to expand its settings
 
-![](https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/SettingDescription.png)
+![](https://github.com/Vheos/Mods.UNSIGHTED/blob/master/ReadmeAssets/HowTo/SettingDescription.png)
 <br/><br/><br/>
 
 
@@ -224,7 +224,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 - **I found a bug! How to report?**
     - choose one of the contact options below, then describe what's wrong and [pastebin](https://pastebin.com/) output log at `C:\Users\YOUR_USERNAME\AppData\LocalLow\Studio Pixel Punk\UNSIGHTED\output_log.txt`
 - **Can I see the source code?**
-    - yep, all [my mods](https://github.com/stars/Vheos777/lists/mods) are open source! Feel free to study, clone and/or edit the code as you please :)
+    - yep, all [my mods](https://github.com/stars/Vheos/lists/mods) are open source! Feel free to study, clone and/or edit the code as you please :)
 <br/><br/><br/>
 
 
@@ -232,7 +232,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
 # Contact
 - [Steam discussion](https://steamcommunity.com/app/1062110/discussions/0/4739473745767880713/)
 - [Reddit post](https://www.reddit.com/r/UNSIGHTED/comments/rkhnrg/unsighted/)
-- [GitHub Issue](https://github.com/Vheos777/Mods.UNSIGHTED/issues)
+- [GitHub Issue](https://github.com/Vheos/Mods.UNSIGHTED/issues)
 - Discord DM: `Vheos#5865`
 <br/><br/><br/>
 
@@ -243,7 +243,7 @@ https://user-images.githubusercontent.com/9155825/146353031-51dce301-af60-4b92-8
     - updated for game version 1.1.2 (Steam and GOG only)
     - conflicting core game settings and corresponding UNSIGHTED++ changes:
         - `Weapon loadouts`: removed `Menus: Loadouts`
-        - `6 Save slots`: didn't remove as `Menus: Alternate load menu` still grants 2 extra slots and displays all the slots on one page
+        - `6 Save slots`: didn't remove `Menus: Alternate load menu` as it still grants 2 more slots and displays all the slots on one page
         - `Turn Iris attack on/off`: removed `Various: Iris combat help`
         - `Turn low-health FX on/off`: didn't remove `UI: Hit effect intensity` as it allows for more customization and also works when taking damage and getting frozen
         - `Turn controller vibration on/off`: removed `Various: Gamepad vibrations`
