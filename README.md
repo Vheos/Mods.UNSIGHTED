@@ -1,14 +1,14 @@
 <p align="center">
     <a href="">
-        <img src="https://github.com/Vheos777/Mods.UNSIGHTED/blob/master/ReadmeAssets/Logo.png"/>
+        <img src="https://github.com/Vheos/Mods.UNSIGHTED/blob/master/ReadmeAssets/Logo.png"/>
     </a>
 </p>    
 
 <p align="center">
     <a href="">
-        <img src="https://img.shields.io/github/v/release/Vheos777/Mods.UNSIGHTED?labelColor=808080&color=404040&label=Mod" height=25/>
+        <img src="https://img.shields.io/github/v/release/Vheos/Mods.UNSIGHTED?labelColor=808080&color=404040&label=Mod" height=25/>
         <img src="https://img.shields.io/static/v1?labelColor=808080&color=404040&label=Game&message=v1.1.2" height=25/>
-        <img src="https://img.shields.io/github/downloads/Vheos777/Mods.UNSIGHTED/total?labelColor=808080&color=404040&label=Downloads" height=25/>
+        <img src="https://img.shields.io/github/downloads/Vheos/Mods.UNSIGHTED/total?labelColor=808080&color=404040&label=Downloads" height=25/>
     </a>
 </p>
     
@@ -19,13 +19,13 @@
     <a href="https://www.reddit.com/r/UNSIGHTED/comments/rkhnrg/unsighted/">   
         <img src="https://img.shields.io/static/v1?logo=reddit&color=ff4500&logoColor=white&label=%20&message=Reddit" height=25/>
     </a>
-    <a href="https://github.com/Vheos777/Mods.UNSIGHTED/issues">
+    <a href="https://github.com/Vheos/Mods.UNSIGHTED/issues">
         <img src="https://img.shields.io/static/v1?logo=github&color=282828&logoColor=white&label=%20&message=GitHub" height=25/>
     </a>
     <a href="">   
         <img src="https://img.shields.io/static/v1?logo=discord&color=657ac7&logoColor=white&label=%20&message=Vheos%235865" height=25/>
     </a>
-    <a href="https://ko-fi.com/vheos777">
+    <a href="https://ko-fi.com/vheos">
         <img src="https://img.shields.io/static/v1?logo=kofi&color=ff5e5b&logoColor=white&label=%20&message=Ko-fi" height="25"/>
     </a>
 </p>
