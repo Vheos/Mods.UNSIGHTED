@@ -33,17 +33,17 @@
 
 
 # Table of contents
-- [UNSIGHTED++?](https://github.com/Vheos777/Mods.UNSIGHTED#unsighted)
-- [Highlights](https://github.com/Vheos777/Mods.UNSIGHTED#highlights)
-  - [~~Extra Save Slots~~](https://github.com/Vheos777/Mods.UNSIGHTED#extra-save-slots) *(added to core game)*
-  - [~~Weapon Loadouts~~](https://github.com/Vheos777/Mods.UNSIGHTED#weapon-loadouts) *(added to core game)*
-  - [Skin Editor ](https://github.com/Vheos777/Mods.UNSIGHTED#skin-editor)
-  - [Player 2 Equality](https://github.com/Vheos777/Mods.UNSIGHTED#player-2-equality)
-- [Settings overview](https://github.com/Vheos777/Mods.UNSIGHTED#settings-overview-as-of-v100)
-- [How to?](https://github.com/Vheos777/Mods.UNSIGHTED#how-to)
-- [FAQ](https://github.com/Vheos777/Mods.UNSIGHTED#faq)
-- [Contact](https://github.com/Vheos777/Mods.UNSIGHTED#contact)
-- [Changelog](https://github.com/Vheos777/Mods.UNSIGHTED#changelog)
+- [UNSIGHTED++?](https://github.com/Vheos/Mods.UNSIGHTED#unsighted)
+- [Highlights](https://github.com/Vheos/Mods.UNSIGHTED#highlights)
+  - [~~Extra Save Slots~~](https://github.com/Vheos/Mods.UNSIGHTED#extra-save-slots) *(added to core game)*
+  - [~~Weapon Loadouts~~](https://github.com/Vheos/Mods.UNSIGHTED#weapon-loadouts) *(added to core game)*
+  - [Skin Editor ](https://github.com/Vheos/Mods.UNSIGHTED#skin-editor)
+  - [Player 2 Equality](https://github.com/Vheos/Mods.UNSIGHTED#player-2-equality)
+- [Settings overview](https://github.com/Vheos/Mods.UNSIGHTED#settings-overview-as-of-v100)
+- [How to?](https://github.com/Vheos/Mods.UNSIGHTED#how-to)
+- [FAQ](https://github.com/Vheos/Mods.UNSIGHTED#faq)
+- [Contact](https://github.com/Vheos/Mods.UNSIGHTED#contact)
+- [Changelog](https://github.com/Vheos/Mods.UNSIGHTED#changelog)
 <br/>
 
 
