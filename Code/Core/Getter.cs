@@ -1,6 +1,5 @@
 
 using System;
-using UnityEngine;
 
 namespace Vheos.Mods.UNSIGHTED;
 public abstract class AGetter
@@ -9,7 +8,7 @@ public abstract class AGetter
     protected bool TestForWarnings(Type type) => _hasBeenSet && WarningInputAlreadySet(type);
     protected bool WarningInputAlreadySet(Type type)
     {
-        Debug.LogWarning($"InputAlreadySet:\ttrying to override an already defined component input of type {type.Name}\n" +
+        UnityEngine.Debug.LogWarning($"InputAlreadySet:\ttrying to override an already defined component input of type {type.Name}\n" +
         $"Fallback:\treturn without changing anything");
         return true;
     }
