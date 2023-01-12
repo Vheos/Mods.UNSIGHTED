@@ -1,58 +1,57 @@
-﻿namespace Vheos.Mods.UNSIGHTED
+﻿
+using BepInEx;
+using System;
+using System.Linq;
+using System.Reflection;
+using Vheos.Mods.Core;
+using Utility = Vheos.Helpers.Common.Utility;
+
+namespace Vheos.Mods.UNSIGHTED;
+[BepInDependency("com.bepis.bepinex.configurationmanager", BepInDependency.DependencyFlags.SoftDependency)]
+[BepInPlugin(GUID, NAME, VERSION)]
+public class Main : BepInExEntryPoint
 {
-    using System;
-    using System.Linq;
-    using System.Reflection;
-    using BepInEx;
-    using Mods.Core;
-    using Utility = Tools.Utilities.Utility;
+    // Metadata
+    public const string GUID = "Vheos.Mods.UNSIGHTED";
+    public const string NAME = "UNSIGHTED++";
+    public const string VERSION = "1.7.0";
 
-    [BepInDependency("com.bepis.bepinex.configurationmanager", BepInDependency.DependencyFlags.SoftDependency)]
-    [BepInPlugin(GUID, NAME, VERSION)]
-    public class Main : BepInExEntryPoint
+    // User logic
+    protected override Assembly CurrentAssembly
+    => Assembly.GetExecutingAssembly();
+    protected override void Initialize()
     {
-        // Metadata
-        public const string GUID = "Vheos.Mods.UNSIGHTED";
-        public const string NAME = "UNSIGHTED++";
-        public const string VERSION = "1.7.0";
+        Log.Debug($"Initializing {typeof(CustomControls).Name}...");
+        new CustomControls();
 
-        // User logic
-        override protected Assembly CurrentAssembly
-        => Assembly.GetExecutingAssembly();
-        protected override void Initialize()
-        {
-            Log.Debug($"Initializing {typeof(CustomControls).Name}...");
-            new CustomControls();
-
-            Log.Debug($"Initializing {typeof(CustomSaves).Name}...");
-            new CustomSaves();
-        }
-        protected override bool DelayedInitializeCondition
-        => CustomControls.IsFullyInitialized;
-        override protected Type[] ModsOrderingList
-        => new[]
-        {
-            // Difficulty
-            typeof(TimeMods),
-            typeof(Movement),
-            typeof(Guard),
-            typeof(Combo),
-            typeof(Enemies),
-            typeof(ChipsCogs),
-            typeof(Fishing),
-            typeof(ParryChallenge),
-
-            // QoL
-            typeof(Menus),
-            typeof(Camera),
-            typeof(UI),
-            typeof(Audiovisual),
-
-            // Various
-            typeof(Various),
-            typeof(SFXPlayer),
-        };
-        override protected string[] PresetNames
-        => Utility.GetEnumValuesAsStrings<SettingsPreset>().ToArray();
+        Log.Debug($"Initializing {typeof(CustomSaves).Name}...");
+        new CustomSaves();
     }
+    protected override bool DelayedInitializeCondition
+    => CustomControls.IsFullyInitialized;
+    protected override Type[] ModsOrderingList
+    => new[]
+    {
+        // Difficulty
+        typeof(TimeMods),
+        typeof(Movement),
+        typeof(Guard),
+        typeof(Combo),
+        typeof(Enemies),
+        typeof(ChipsCogs),
+        typeof(Fishing),
+        typeof(ParryChallenge),
+
+        // QoL
+        typeof(Menus),
+        typeof(Camera),
+        typeof(UI),
+        typeof(Audiovisual),
+
+        // Various
+        typeof(Various),
+        typeof(SFXPlayer),
+    };
+    protected override string[] PresetNames
+    => Utility.GetEnumValuesAsStrings<SettingsPreset>().ToArray();
 }

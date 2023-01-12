@@ -21,7 +21,7 @@
     <OutputPath>bin\UNITY\</OutputPath>
     <DocumentationFile>bin\UNITY\Vheos.Tools.UNSIGHTED.xml</DocumentationFile>
     <DefineConstants>DEBUG;UNITY</DefineConstants>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <Prefer32Bit>false</Prefer32Bit>
@@ -30,7 +30,7 @@
     <OutputPath>bin\UNITY\</OutputPath>
     <DocumentationFile>bin\UNITY\Vheos.Tools.UNSIGHTED.xml</DocumentationFile>
     <DefineConstants>UNITY</DefineConstants>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <Prefer32Bit>false</Prefer32Bit>
@@ -39,7 +39,7 @@
     <OutputPath>bin\UNITY_GAMEPASS\</OutputPath>
     <DocumentationFile>bin\UNITY_GAMEPASS\Vheos.Tools.UNSIGHTED.xml</DocumentationFile>
     <DefineConstants>UNITY;GAMEPASS</DefineConstants>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <Prefer32Bit>false</Prefer32Bit>
@@ -128,6 +128,7 @@
     <Compile Include="Code\CustomPopups\CustomSaves.cs" />
     <Compile Include="Code\Core\Sections.cs" />
     <Compile Include="Code\Core\Getter.cs" />
+    <Compile Include="Code\GlobalUsings.cs" />
     <Compile Include="Code\Mods\UI.cs" />
     <Compile Include="Code\Mods\Movement.cs" />
     <Compile Include="Code\Mods\ChipsCogs.cs" />
@@ -148,15 +149,9 @@
     <Compile Include="Code\Mods\Camera.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Tools\Extensions\Vheos.Tools.Extensions.csproj">
-      <Project>{4afe5e8c-29c0-4389-aaa0-55584146becf}</Project>
-      <Name>Vheos.Tools.Extensions</Name>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Tools\Utilities\Vheos.Tools.Utilities.csproj">
+    <ProjectReference Include="..\..\Tools\Utilities\Vheos.Helpers.csproj">
       <Project>{96d2cdb1-5ee9-4666-812d-9ecb8df005c4}</Project>
-      <Name>Vheos.Tools.Utilities</Name>
-      <Private>True</Private>
+      <Name>Vheos.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\Core\Vheos.Mods.Core.csproj">
       <Project>{a48747d8-e698-4c2c-bf11-0efed7d79ef0}</Project>
@@ -175,14 +170,13 @@ set TempCopy=$(ProjectDir)\bin\.tmpcpy\
 rd /s /q %25TempCopy%25
 xcopy /y $(TargetDir)$(TargetName).dll %25TempCopy%25
 xcopy /y $(TargetDir)Vheos.Mods.Core.dll %25TempCopy%25
-xcopy /y $(TargetDir)Vheos.Tools.Extensions.dll %25TempCopy%25
-xcopy /y $(TargetDir)Vheos.Tools.Utilities.dll %25TempCopy%25
+xcopy /y $(TargetDir)Vheos.Helpers.dll %25TempCopy%25
 
     :: Project settings
     set Game_Global=D:\Multiplayer\UNSIGHTED\
     set Game_EXE=UNSIGHTED.exe
     set Zip_Name=UNSIGHTED++
-    set Releases_Global=E:\Creativity\Programs\C#\Mods\UNSIGHTED\Private\Releases\
+    set Releases_Global=C:\Users\Vheos\Craft\Programs\C#\Mods\UNSIGHTED\Private\Releases\
     set SteamGOG_Global=%25Releases_Global%25\SteamGOG\%25Plugins_Local%25
     set GamePass_Global=%25Releases_Global%25\GamePass\%25Plugins_Local%25
 
