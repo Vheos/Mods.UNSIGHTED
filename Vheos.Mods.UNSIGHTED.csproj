@@ -143,6 +143,7 @@
     <Compile Include="Code\Mods\ParryChallenge.cs" />
     <Compile Include="Code\Mods\Fishing.cs" />
     <Compile Include="Code\Mods\Enemies.cs" />
+    <Compile Include="Code\Mods\Debug.cs" />
     <Compile Include="Code\Mods\Various.cs" />
     <Compile Include="Code\Core\Main.cs" />
     <Compile Include="Code\Mods\TimeMods.cs" />
